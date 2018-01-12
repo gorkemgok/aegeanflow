@@ -1,5 +1,6 @@
-package com.aegeanflow.core;
+package com.aegeanflow.core.example;
 
+import com.aegeanflow.core.AbstractNode;
 import com.aegeanflow.core.annotation.NodeConfig;
 import com.aegeanflow.core.annotation.NodeEntry;
 import com.aegeanflow.core.annotation.NodeInput;
@@ -11,12 +12,19 @@ public class TestNode extends AbstractNode<String> {
 
     private Integer input2;
 
+    private Long inputTestFlow;
+
     private String config1;
 
     private Double config2;
 
     public String call() throws Exception {
         return null;
+    }
+
+    @NodeInput
+    public void setInputTestFlow(Long inputTestFlow) {
+        this.inputTestFlow = inputTestFlow;
     }
 
     @NodeConfig(label = "testC")

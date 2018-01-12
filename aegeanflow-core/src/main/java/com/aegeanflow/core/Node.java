@@ -6,4 +6,6 @@ import java.util.concurrent.Callable;
 public interface Node<T> extends Callable<T>{
 
     void setUUID(UUID uuid);
+
+    UUID getUUID();
 }

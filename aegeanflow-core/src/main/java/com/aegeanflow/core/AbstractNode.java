@@ -10,4 +10,9 @@ public abstract class AbstractNode<T> implements Node<T>{
     public void setUUID(UUID uuid) {
         this.uuid = uuid;
     }
+
+    @Override
+    public UUID getUUID() {
+        return uuid;
+    }
 }
