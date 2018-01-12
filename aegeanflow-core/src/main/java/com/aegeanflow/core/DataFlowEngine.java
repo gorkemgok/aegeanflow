@@ -25,7 +25,7 @@ public class DataFlowEngine {
 
     private final List<Node<?>> nodeList;
 
-    private final Map<UUID, Object> outputState;
+    private final Map<UUID, FlowFuture> outputState;
 
     private final Map<UUID, FlowFuture> runningTasks;
 
@@ -45,6 +45,10 @@ public class DataFlowEngine {
         this.runningTasks = new Hashtable<>();
     }
 
+    public FlowFuture getResult() throws NoSuchNodeException, NodeRuntimeException {
+        return getResult(flow.getNodeList().get(flow.getNodeList().size() - 1).getUUID());
+    }
+
     public FlowFuture getResult(UUID nodeUUID) throws NoSuchNodeException, NodeRuntimeException {
         for (FlowNode flowNode : flow.getNodeList()){
             setNodeConfig(getNode(flowNode.getUUID()), flowNode.getConfiguration());
@@ -56,7 +60,7 @@ public class DataFlowEngine {
     private <T> FlowFuture<T> runNode(Node<T> node, boolean useState) throws NodeRuntimeException {
         try {
             if (useState && outputState.containsKey(node.getUUID())){
-                return new FlowFuture<>(CompletableFuture.completedFuture((T) outputState.get(node.getUUID())));
+                return outputState.get(node.getUUID());
             }
             List<InputNodePair> inputNodePairList = getInputNodes(node.getUUID());
             List<InputFuture> inputFutures = new ArrayList<>();
@@ -76,7 +80,9 @@ public class DataFlowEngine {
             setNodeInputs(node, inputList);
             LOGGER.info("Running node {}", node.getUUID());
             Future<T> future = executor.submit(node);
-            return new FlowFuture<>(future);
+            FlowFuture<T> flowFuture = new FlowFuture<>(future);
+            outputState.put(node.getUUID(), flowFuture);
+            return flowFuture;
         } catch (Exception e) {
             throw new NodeRuntimeException(e);
         }
