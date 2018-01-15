@@ -1,8 +1,8 @@
 package com.aegeanflow.core.node;
 
 import com.aegeanflow.core.AbstractNode;
-import com.aegeanflow.core.annotation.NodeConfig;
-import com.aegeanflow.core.annotation.NodeEntry;
+import com.aegeanflow.core.spi.annotation.NodeConfig;
+import com.aegeanflow.core.spi.annotation.NodeEntry;
 
 import java.sql.Connection;
 import java.sql.Driver;

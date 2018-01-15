@@ -2,9 +2,9 @@ package com.aegeanflow.core.definition;
 
 import com.aegeanflow.core.CompiledNodeInfo;
 import com.aegeanflow.core.Node;
-import com.aegeanflow.core.annotation.NodeConfig;
-import com.aegeanflow.core.annotation.NodeEntry;
-import com.aegeanflow.core.annotation.NodeInput;
+import com.aegeanflow.core.spi.annotation.NodeConfig;
+import com.aegeanflow.core.spi.annotation.NodeEntry;
+import com.aegeanflow.core.spi.annotation.NodeInput;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
 
 import java.beans.Introspector;
@@ -27,6 +27,10 @@ public class CompilerUtil {
             List<NodeInputDefinition> nodeInputDefinitionList = new ArrayList<>();
             List<NodeConfigurationDefinition> nodeConfigurationDefinitionList = new ArrayList<>();
             for (Method method : nodeClass.getMethods()) {
+                if (method.getName().equals("call") && method.getParameterCount() == 0){
+                    nodeDefinition.setReturnType(method.getReturnType());
+                    break;
+                }
                 NodeInput nodeInput = method.getAnnotation(NodeInput.class);
                 String varName = getVarName(method);
                 if (nodeInput != null) {
@@ -37,6 +41,7 @@ public class CompilerUtil {
                         nodeInputDefinition.setName(varName);
                         nodeInputDefinition.setLabel(!nodeInput.label().isEmpty() ? nodeInput.label() : getVarName(method));
                         nodeInputDefinitionList.add(nodeInputDefinition);
+                        break;
                     } else {
                         throw new IllegalNodeConfigurationException("Input setter method must have exactly one parameter");
                     }
@@ -50,13 +55,14 @@ public class CompilerUtil {
                         nodeConfigurationDefinition.setName(varName);
                         nodeConfigurationDefinition.setLabel(!nodeConfig.label().isEmpty() ? nodeConfig.label() : getVarName(method));
                         nodeConfigurationDefinitionList.add(nodeConfigurationDefinition);
+                        break;
                     } else {
                         throw new IllegalNodeConfigurationException("Config setter method must have exactly one parameter");
                     }
                 }
-                nodeDefinition.setInputs(nodeInputDefinitionList);
-                nodeDefinition.setConfigurations(nodeConfigurationDefinitionList);
             }
+            nodeDefinition.setInputs(nodeInputDefinitionList);
+            nodeDefinition.setConfigurations(nodeConfigurationDefinitionList);
             return new CompiledNodeInfo(nodeClass, nodeDefinition, inputMethods, configMethods);
         }
         throw new IllegalNodeConfigurationException("Node type must have @NodeEntry annotation");

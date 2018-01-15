@@ -10,6 +10,9 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>aegeanflow-core</module>
+        <module>aegeanflow-ui</module>
+        <module>aegeanflow-rest</module>
+        <module>aegeanflow-application</module>
     </modules>
 
     <properties>

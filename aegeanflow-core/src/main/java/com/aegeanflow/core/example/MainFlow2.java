@@ -1,6 +1,6 @@
 package com.aegeanflow.core.example;
 
-import com.aegeanflow.core.BootstrapModule;
+import com.aegeanflow.core.CoreModule;
 import com.aegeanflow.core.DataFlowEngine;
 import com.aegeanflow.core.DataFlowEngineFactory;
 import com.aegeanflow.core.FlowFuture;
@@ -47,7 +47,7 @@ public class MainFlow2 {
         flow.setNodeList(Arrays.asList(stringSourceNode, stringSuffixNode));
         flow.setConnectionList(Arrays.asList(flowConnection));
 
-        Injector injector = Guice.createInjector(new BootstrapModule());
+        Injector injector = Guice.createInjector(new CoreModule());
         DataFlowEngineFactory dataFlowEngineFactory = injector.getInstance(DataFlowEngineFactory.class);
         try {
             DataFlowEngine dataFlowEngine = dataFlowEngineFactory.create(flow);

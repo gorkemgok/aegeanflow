@@ -1,6 +1,6 @@
 package com.aegeanflow.core;
 
-import com.aegeanflow.core.annotation.NodeEntry;
+import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.definition.CompilerUtil;
 import com.aegeanflow.core.example.ExampleModule;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
@@ -19,8 +19,8 @@ import java.util.Set;
 /**
  * Created by gorkem on 12.01.2018.
  */
-public class BootstrapModule extends AbstractModule {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BootstrapModule.class);
+public class CoreModule extends AbstractModule {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoreModule.class);
     @Override
     protected void configure() {
         bind(DataFlowEngineFactory.class).in(Singleton.class);

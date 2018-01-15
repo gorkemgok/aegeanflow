@@ -1,9 +1,9 @@
 package com.aegeanflow.core.example;
 
 import com.aegeanflow.core.AbstractNode;
-import com.aegeanflow.core.annotation.NodeConfig;
-import com.aegeanflow.core.annotation.NodeEntry;
-import com.aegeanflow.core.annotation.NodeInput;
+import com.aegeanflow.core.spi.annotation.NodeConfig;
+import com.aegeanflow.core.spi.annotation.NodeEntry;
+import com.aegeanflow.core.spi.annotation.NodeInput;
 
 /**
  * Created by gorkem on 12.01.2018.

@@ -4,8 +4,8 @@ import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.flow.FlowNode;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.sun.istack.internal.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -36,3 +36,5 @@ buildNumber.properties
 
 *.iml
 .idea/
+node_modules/
+aegeanflow-ui/node/

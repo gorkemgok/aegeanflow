@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>aegeanflow</artifactId>
+        <groupId>com.aegeanflow</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>aegeanflow-rest</artifactId>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>../aegeanflow-ui/dist</directory>
+                <targetPath>ui</targetPath>
+            </resource>
+        </resources>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.sparkjava</groupId>
+            <artifactId>spark-core</artifactId>
+            <version>2.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aegeanflow</groupId>
+            <artifactId>aegeanflow-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aegeanflow</groupId>
+            <artifactId>aegeanflow-ui</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</project>

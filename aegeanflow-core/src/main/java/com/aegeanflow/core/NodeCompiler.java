@@ -1,6 +1,6 @@
 package com.aegeanflow.core;
 
-import com.aegeanflow.core.annotation.NodeInput;
+import com.aegeanflow.core.spi.annotation.NodeInput;
 import com.google.inject.Inject;
 
 import java.lang.reflect.Method;

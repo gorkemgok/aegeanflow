@@ -14,6 +14,16 @@ public class NodeDefinition {
 
     private List<NodeConfigurationDefinition> configurations;
 
+    private Class<?> returnType;
+
+    public Class<?> getReturnType() {
+        return returnType;
+    }
+
+    public void setReturnType(Class<?> returnType) {
+        this.returnType = returnType;
+    }
+
     public Class<? extends Node> getType() {
         return type;
     }
