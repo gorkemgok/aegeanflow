@@ -1,8 +1,10 @@
-package com.aegeanflow.core;
+package com.aegeanflow.core.spi;
+
+import com.aegeanflow.core.spi.Node;
 
 import java.util.UUID;
 
-public abstract class AbstractNode<T> implements Node<T>{
+public abstract class AbstractNode<T> implements Node<T> {
 
     private UUID uuid;
 

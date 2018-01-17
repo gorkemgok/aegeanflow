@@ -1,5 +1,6 @@
 package com.aegeanflow.core;
 
+import com.aegeanflow.core.spi.Node;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 import com.google.inject.Inject;
 

@@ -4,6 +4,7 @@ import com.aegeanflow.core.exception.NoSuchNodeException;
 import com.aegeanflow.core.exception.NodeRuntimeException;
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.flow.FlowNode;
+import com.aegeanflow.core.spi.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

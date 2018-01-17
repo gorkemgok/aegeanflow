@@ -2,6 +2,7 @@ package com.aegeanflow.core;
 
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.flow.FlowNode;
+import com.aegeanflow.core.spi.Node;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 

@@ -1,6 +1,7 @@
 package com.aegeanflow.core;
 
 import com.aegeanflow.core.definition.NodeDefinition;
+import com.aegeanflow.core.spi.Node;
 
 import java.lang.reflect.Method;
 import java.util.Collections;

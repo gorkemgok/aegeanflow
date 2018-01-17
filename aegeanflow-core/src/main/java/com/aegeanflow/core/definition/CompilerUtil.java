@@ -1,7 +1,7 @@
 package com.aegeanflow.core.definition;
 
 import com.aegeanflow.core.CompiledNodeInfo;
-import com.aegeanflow.core.Node;
+import com.aegeanflow.core.spi.Node;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;

@@ -1,6 +1,6 @@
 package com.aegeanflow.core.flow;
 
-import com.aegeanflow.core.Node;
+import com.aegeanflow.core.spi.Node;
 
 import java.util.HashMap;
 import java.util.Map;

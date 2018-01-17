@@ -1,6 +1,6 @@
 package com.aegeanflow.core.node;
 
-import com.aegeanflow.core.AbstractNode;
+import com.aegeanflow.core.spi.AbstractNode;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 

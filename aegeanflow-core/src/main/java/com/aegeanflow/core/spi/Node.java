@@ -1,4 +1,4 @@
-package com.aegeanflow.core;
+package com.aegeanflow.core.spi;
 
 import java.util.UUID;
 import java.util.concurrent.Callable;

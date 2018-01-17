@@ -1,5 +1,6 @@
 package com.aegeanflow.core;
 
+import com.aegeanflow.core.spi.Node;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.definition.CompilerUtil;
 import com.aegeanflow.core.example.ExampleModule;
