@@ -1,6 +1,9 @@
-package com.aegeanflow.core.definition;
+package com.aegeanflow.core.node;
 
 import com.aegeanflow.core.CompiledNodeInfo;
+import com.aegeanflow.core.definition.NodeConfigurationDefinition;
+import com.aegeanflow.core.definition.NodeDefinition;
+import com.aegeanflow.core.definition.NodeInputDefinition;
 import com.aegeanflow.core.spi.Node;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
@@ -26,11 +29,13 @@ public class CompilerUtil {
             nodeDefinition.setLabel(!nodeEntry.label().isEmpty() ? nodeEntry.label() : nodeClass.getSimpleName());
             List<NodeInputDefinition> nodeInputDefinitionList = new ArrayList<>();
             List<NodeConfigurationDefinition> nodeConfigurationDefinitionList = new ArrayList<>();
+            try {
+                Method callMethod = nodeClass.getMethod("call");
+                nodeDefinition.setReturnType(callMethod.getReturnType());
+            } catch (NoSuchMethodException e) {
+                throw new IllegalNodeConfigurationException("Node class must have a call() method with no parameter");
+            }
             for (Method method : nodeClass.getMethods()) {
-                if (method.getName().equals("call") && method.getParameterCount() == 0){
-                    nodeDefinition.setReturnType(method.getReturnType());
-                    break;
-                }
                 NodeInput nodeInput = method.getAnnotation(NodeInput.class);
                 String varName = getVarName(method);
                 if (nodeInput != null) {
@@ -41,7 +46,7 @@ public class CompilerUtil {
                         nodeInputDefinition.setName(varName);
                         nodeInputDefinition.setLabel(!nodeInput.label().isEmpty() ? nodeInput.label() : getVarName(method));
                         nodeInputDefinitionList.add(nodeInputDefinition);
-                        break;
+                        continue;
                     } else {
                         throw new IllegalNodeConfigurationException("Input setter method must have exactly one parameter");
                     }
@@ -55,7 +60,7 @@ public class CompilerUtil {
                         nodeConfigurationDefinition.setName(varName);
                         nodeConfigurationDefinition.setLabel(!nodeConfig.label().isEmpty() ? nodeConfig.label() : getVarName(method));
                         nodeConfigurationDefinitionList.add(nodeConfigurationDefinition);
-                        break;
+                        continue;
                     } else {
                         throw new IllegalNodeConfigurationException("Config setter method must have exactly one parameter");
                     }

@@ -4,6 +4,7 @@ import com.aegeanflow.core.exception.NoSuchNodeException;
 import com.aegeanflow.core.exception.NodeRuntimeException;
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.flow.FlowNode;
+import com.aegeanflow.core.node.NodeRepository;
 import com.aegeanflow.core.spi.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +33,12 @@ public class DataFlowEngine {
 
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
 
-    private final List<CompiledNodeInfo> compiledNodeInfoList;
+    private final NodeRepository nodeRepository;
 
-    public DataFlowEngine(Flow flow, List<Node<?>> nodeList, @Nullable DataFlowEngine stateProvider, List<CompiledNodeInfo> compiledNodeInfoList) {
+    public DataFlowEngine(Flow flow, List<Node<?>> nodeList, @Nullable DataFlowEngine stateProvider, NodeRepository nodeRepository) {
         this.flow = flow;
         this.nodeList = nodeList;
-        this.compiledNodeInfoList = compiledNodeInfoList;
+        this.nodeRepository = nodeRepository;
         if (stateProvider != null) {
             this.outputState = stateProvider.outputState;
         }else{
@@ -91,7 +92,7 @@ public class DataFlowEngine {
 
     private void setNodeInputs(Node node, List<FlowInput> inputs){
         try {
-            Optional<CompiledNodeInfo> compiledNodeInfoOptional = compiledNodeInfoList.stream()
+            Optional<CompiledNodeInfo> compiledNodeInfoOptional = nodeRepository.getCompiledNodeInfoList().stream()
                     .filter(compiledNodeInfo -> compiledNodeInfo.getNodeClass().equals(node.getClass()))
                     .findFirst();
             if (compiledNodeInfoOptional.isPresent()) {
@@ -110,7 +111,7 @@ public class DataFlowEngine {
 
     private void setNodeConfig(Node node, Map<String, Object> configs){
         try {
-            Optional<CompiledNodeInfo> compiledNodeInfoOptional = compiledNodeInfoList.stream()
+            Optional<CompiledNodeInfo> compiledNodeInfoOptional = nodeRepository.getCompiledNodeInfoList().stream()
                     .filter(compiledNodeInfo -> compiledNodeInfo.getNodeClass().equals(node.getClass()))
                     .findFirst();
             if (compiledNodeInfoOptional.isPresent()) {

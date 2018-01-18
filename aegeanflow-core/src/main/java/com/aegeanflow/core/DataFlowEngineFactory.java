@@ -2,6 +2,7 @@ package com.aegeanflow.core;
 
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.flow.FlowNode;
+import com.aegeanflow.core.node.NodeRepository;
 import com.aegeanflow.core.spi.Node;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -17,12 +18,12 @@ public class DataFlowEngineFactory {
 
     private final Injector injector;
 
-    private final List<CompiledNodeInfo> compiledNodeInfoList;
+    private final NodeRepository nodeRepository;
 
     @Inject
-    public DataFlowEngineFactory(Injector injector, List<CompiledNodeInfo> compiledNodeInfoList) {
+    public DataFlowEngineFactory(Injector injector, NodeRepository nodeRepository) {
         this.injector = injector;
-        this.compiledNodeInfoList = compiledNodeInfoList;
+        this.nodeRepository = nodeRepository;
     }
 
     public DataFlowEngine create(Flow flow) throws ClassNotFoundException {
@@ -37,6 +38,6 @@ public class DataFlowEngineFactory {
             node.setUUID(flowNode.getUUID());
             nodeList.add(node);
         }
-        return new DataFlowEngine(flow, nodeList, stateProvider, compiledNodeInfoList);
+        return new DataFlowEngine(flow, nodeList, stateProvider, nodeRepository);
     }
 }

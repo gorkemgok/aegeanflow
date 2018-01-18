@@ -1,5 +1,6 @@
 package com.aegeanflow.core;
 
+import com.aegeanflow.core.node.NodeRepository;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -12,11 +13,11 @@ import java.util.List;
 public class AegeanFlow {
 
     private static class AegeanFlowSingletons{
-        public final List<CompiledNodeInfo> nodeInfoList;
+        public final NodeRepository nodeRepository;
 
         @Inject
-        private AegeanFlowSingletons(List<CompiledNodeInfo> nodeInfoList) {
-            this.nodeInfoList = nodeInfoList;
+        private AegeanFlowSingletons(NodeRepository nodeRepository) {
+            this.nodeRepository = nodeRepository;
         }
     }
 
@@ -48,8 +49,8 @@ public class AegeanFlow {
         return injector.getInstance(DataFlowEngineFactory.class);
     }
 
-    public List<CompiledNodeInfo> getNodeInfoList(){
-        return singletons.nodeInfoList;
+    public NodeRepository getNodeRepository(){
+        return singletons.nodeRepository;
     }
 
     public Injector getInjector() {

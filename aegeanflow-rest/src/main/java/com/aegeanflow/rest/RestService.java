@@ -5,8 +5,6 @@ import com.aegeanflow.core.AegeanFlow;
 import com.aegeanflow.core.spi.AegeanFlowService;
 import com.google.inject.Inject;
 
-import java.util.stream.Collectors;
-
 /**
  * Created by gorkem on 15.01.2018.
  */
@@ -33,15 +31,12 @@ public class RestService implements AegeanFlowService {
 
         get("node/list", "application/json", (req, res) -> {
             res.type("application/json");
-            return aegeanFlow.getNodeInfoList().stream()
-                    .map(nodeInfo -> nodeInfo.getNodeClass()).collect(Collectors.toList());
+            return aegeanFlow.getNodeRepository().getNodeDefinitionList();
         }, jsonTransformer);
     }
 
     @Override
     public void run() {
-        aegeanFlow.getNodeInfoList().forEach(
-                compiledNodeInfo -> System.out.println(compiledNodeInfo.getNodeClass().getName()));
     }
 
     @Override
