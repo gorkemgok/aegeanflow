@@ -19,3 +19,17 @@ export const POS_CALC = {
     }
   }
 }
+
+export const TYPES = {
+  checkType (node, input) {
+    if (node && input) {
+      if (node.definition.returnType === input.type) {
+        return 'ok'
+      } else {
+        return 'not-ok'
+      }
+    } else {
+      return 'notr'
+    }
+  }
+}

@@ -1,39 +1,45 @@
 <template>
   <div>
     <h1>AegeanFlow Editor</h1>
-    <button v-for="nodeDef in nodeRepository" :key="nodeDef.type"
-            @click="addNode(nodeDef)">Add {{nodeDef.label}} Node</button>
-    <button @click="saveFlow">Save Flow</button>
+    <at-button v-for="nodeDef in nodeRepository" :key="nodeDef.type"
+            @click="addNode(nodeDef)">Add {{nodeDef.label}} Node</at-button>
+    <at-button @click="saveFlow">Save Flow</at-button>
     <svg @mouseup="mouseUp" @mousemove="mouseMove" class="editor-canvas">
-      <template v-for="connection in connections">
-        <path v-if="connection.type == 'line'"
-              :key="connection.uuid"
-              :d="calculateConnectionPoints(connection)"
-              style="fill:none;stroke:black;stroke-width:3">
-        </path>
-      </template>
-      <template v-for="node in nodes">
-        <node :key="node.uuid"
-              :node="node"
-              @nodeMouseDown="beginDrag"
-              @nodeMouseUp="endDrag"
-              @outputMouseDown="beginConnection"
-              @inputMouseUp="endConnection">
-        </node>
-      </template>
+      <!--Temporary connection-->
       <template v-if="connectingNode">
-        <path :d="calculateConnectionPoints({source: connectingSourcePos, target: connectingTargetPos}, 10)"
-                  style="fill:none;stroke:silver;stroke-width:3">
+        <path class="temporary-connection rolling-dashes"
+              :d="calculateConnectionPoints({source: connectingSourcePos, target: connectingTargetPos}, 10)">
         </path>
       </template>
 
+      <!--Connections-->
+      <template v-for="connection in connections">
+        <path class="connection" v-if="connection.type == 'line'"
+              :key="connection.uuid"
+              :d="calculateConnectionPoints(connection)">
+        </path>
+      </template>
+
+      <!--Nodes-->
+      <template v-for="node in nodes">
+        <node :key="node.uuid"
+              :node="node"
+              :connectingNode="connectingNode"
+              @nodeMouseDown="beginDrag"
+              @nodeMouseUp="endDrag"
+              @outputMouseDown="beginConnection"
+              @inputMouseUp="endConnection"
+              @inputMouseOver="inputMouseOver"
+              @inputMouseOut="inputMouseOut">
+        </node>
+      </template>
     </svg>
   </div>
 </template>
 <script>
 import Node from '@/flow/Node'
 import { uuid } from 'vue-uuid'
-import { POS_CALC } from '@/helpers/node-helpers.js'
+import { POS_CALC, TYPES } from '@/helpers/node-helpers.js'
 import { HTTP } from '@/helpers/http-helpers.js'
 
 export default {
@@ -41,6 +47,7 @@ export default {
   components: {Node},
   data: function () {
     return {
+      percent: 30,
       nodeRepository: [],
       nodes: [],
       connections: [],
@@ -60,6 +67,13 @@ export default {
       }
     }
   },
+  computed: {
+    candidateType: function () {
+      if (this.connectingNode) {
+        return this.connectingNode.returnType
+      }
+    }
+  },
   methods: {
     saveFlow: function () {
       console.log({
@@ -68,21 +82,7 @@ export default {
       })
     },
     addNode: function (nodeDef) {
-      /* const node = {
-        uuid: uuid.v1(),
-        type: 'com.aegeanflow.node.DatabaseConnection',
-        x: 50,
-        y: 50,
-        w: 50,
-        h: 50,
-        definition: {
-          label: 'Database Reader',
-          inputs: [
-            {name: 'connection', type: 'com.aegeanflow.core.node.DatabaseConnection', label: 'Database Connection'},
-            {name: 'query', type: 'java.lang.String', label: 'Query'}
-          ]
-        }
-      } */
+      const colors = ['#F9D194', '#FF6C57', '#977CD5', '#54B375']
       const node = {
         uuid: uuid.v1(),
         type: nodeDef.type,
@@ -90,19 +90,30 @@ export default {
         y: 50,
         w: 50,
         h: 50,
+        color: colors[Math.floor(Math.random() * 3)],
         definition: nodeDef
       }
       this.nodes.push(node)
     },
     connectNodes: function (sourceNode, targetNode, targetInput) {
-      const connection = {
-        uuid: uuid.v1(),
-        type: 'line',
-        source: sourceNode,
-        target: targetNode,
-        targetInput: targetInput
+      if (sourceNode === targetNode) {
+        return
       }
-      this.connections.push(connection)
+      for (let i = 0; i < this.connections.length; i++) {
+        if (this.connections[i].target === targetNode) {
+          return
+        }
+      }
+      if (TYPES.checkType(sourceNode, targetInput) === 'ok') {
+        const connection = {
+          uuid: uuid.v1(),
+          type: 'line',
+          source: sourceNode,
+          target: targetNode,
+          targetInput: targetInput.name
+        }
+        this.connections.push(connection)
+      }
     },
     beginDrag: function (node, $event) {
       this.dragOffset.x = node.x - $event.offsetX
@@ -112,6 +123,14 @@ export default {
     },
     endDrag: function () {
       this.draggingNode = null
+    },
+    inputMouseOver: function (input) {
+      if (this.connectingNode) {
+        this.$set(input, 'candidateType', this.connectingNode.definition.returnType)
+      }
+    },
+    inputMouseOut: function (input) {
+      this.$set(input, 'candidateType', null)
     },
     mouseMove: function ($event) {
       if (this.draggingNode) {
@@ -135,7 +154,7 @@ export default {
     },
     endConnection: function (targetNode, input, $event) {
       if (targetNode && this.connectingNode) {
-        this.connectNodes(this.connectingNode, targetNode, input.name)
+        this.connectNodes(this.connectingNode, targetNode, input)
       }
       this.connectingNode = null
     },
@@ -175,6 +194,26 @@ export default {
     box-shadow: #111111;
     width: 100%;
     height: 800px;
+    background-image: url("../../static/grid-bg.jpg");
+    background-size: 2%;
+  }
+  .temporary-connection{
+    fill:none;stroke:white;stroke-width:3;
+  }
+  .rolling-dashes{
+    stroke-dasharray: 5;
+    stroke-dasharray:"5, 5";
+    animation: dash 2s linear;
+    animation-iteration-count: infinite;
+  }
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -50;
+    }
+  }
+
+  .connection{
+    fill:none;stroke:white;stroke-width:3
   }
   svg text {
     -webkit-user-select: none;

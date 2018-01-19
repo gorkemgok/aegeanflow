@@ -1,12 +1,9 @@
 <template>
   <g>
-    <text ref="dummyLabel" v-show="false" x="0" y="0" font-family="Verdana" font-size="11">
-      {{node.definition.label}}
-    </text>
     <rect class="main-rect" @mousedown="nodeMouseDown" @mouseup="nodeMouseUp"
           :x="node.x" :y="node.y" :width="node.w" :height="node.h"
-          rx="4" ry="4" ></rect>
-    <text :x="node.x" :y="calculateLabelY()" font-family="Verdana" font-size="11">
+          rx="4" ry="4" :style="{fill: node.color}"></rect>
+    <text class="node-label" :x="node.x" :y="labelY" font-family="Verdana" font-size="11">
       {{node.definition.label}}
     </text>
     <circle class="output-circle"
@@ -16,16 +13,19 @@
             @mousedown="outputMouseDown">
     </circle>
     <circle v-for="(input, idx) in node.definition.inputs" :key="input.name"
-            class="output-circle"
+            :class="'check-type-' + typeMatches[input.name]"
+            class="input-circle"
             r="6"
-            :cx="calculateInputX(idx)"
-            :cy="calculateInputY(idx)"
-            @mouseup="inputMouseUp(input)">
+            :cx="node.x"
+            :cy="inputY[idx]"
+            @mouseup="inputMouseUp(input)"
+            @mouseover="inputMouseOver(input)"
+            @mouseout="inputMouseOut(input)">
     </circle>
   </g>
 </template>
 <script>
-import {POS_CALC} from '@/helpers/node-helpers.js'
+import {POS_CALC, TYPES} from '@/helpers/node-helpers.js'
 
 export default {
   name: 'node',
@@ -33,7 +33,8 @@ export default {
     node: {
       type: Object,
       required: true
-    }
+    },
+    connectingNode: null
   },
   methods: {
     nodeMouseDown: function ($event) {
@@ -48,6 +49,12 @@ export default {
     inputMouseUp: function (input) {
       this.$emit('inputMouseUp', this.node, input)
     },
+    inputMouseOver: function (input) {
+      this.$emit('inputMouseOver', input)
+    },
+    inputMouseOut: function (input) {
+      this.$emit('inputMouseOut', input)
+    },
     calculateInputX: function (idx) {
       return this.node.x
     },
@@ -59,6 +66,27 @@ export default {
     }
   },
   computed: {
+    inputY: function () {
+      const inputYArr = []
+      for (let i = 0; i < this.node.definition.inputs.length; i++) {
+        inputYArr.push(this.node.y + (14 * i))
+      }
+      return inputYArr
+    },
+    labelY: function () {
+      return this.node.y + this.node.h + 10
+    },
+    typeMatches: function () {
+      const matches = {}
+      this.node.definition.inputs.forEach(input => {
+        if (this.connectingNode === this.node) {
+          matches[input.name] = 'notr'
+        } else {
+          matches[input.name] = TYPES.checkType(this.connectingNode, input)
+        }
+      })
+      return matches
+    },
     outputPos: function () {
       return POS_CALC.calculateOutputPos(this.node)
     }
@@ -68,14 +96,29 @@ export default {
 }
 </script>
 <style scoped>
+  .check-type-ok{
+    fill: green;
+  }
+  .check-type-not-ok{
+    fill: red;
+  }
+  .check-type-notr{
+    fill: white;
+  }
   .main-rect{
-    fill:lightgray;
+    stroke:silver;
+    stroke-width:1;
+  }
+  .input-circle{
     stroke:silver;
     stroke-width:1;
   }
   .output-circle{
-    fill:black;
+    fill:white;
     stroke:silver;
     stroke-width:1;
+  }
+  .node-label{
+    fill: white;
   }
 </style>
