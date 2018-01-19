@@ -55,10 +55,6 @@ export default {
       return this.node.y + (14 * idx)
     },
     calculateLabelY: function () {
-      console.log(this.$refs)
-      if (this.$refs.dummyLabel) {
-        console.log(this.$refs)
-      }
       return this.node.y + this.node.h + 10
     }
   },
@@ -68,7 +64,6 @@ export default {
     }
   },
   created: function () {
-    console.log(this.$refs)
   }
 }
 </script>

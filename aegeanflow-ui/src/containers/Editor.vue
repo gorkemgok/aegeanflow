@@ -1,15 +1,16 @@
 <template>
   <div>
     <h1>AegeanFlow Editor</h1>
-    <button @click="addNode">Add Node</button>
+    <button v-for="nodeDef in nodeRepository" :key="nodeDef.type"
+            @click="addNode(nodeDef)">Add {{nodeDef.label}} Node</button>
     <button @click="saveFlow">Save Flow</button>
-    <svg @mousemove="mouseMove" class="editor-canvas">
+    <svg @mouseup="mouseUp" @mousemove="mouseMove" class="editor-canvas">
       <template v-for="connection in connections">
-        <polyline v-if="connection.type == 'line'"
+        <path v-if="connection.type == 'line'"
               :key="connection.uuid"
-              :points="calculatePolylinePoints(connection)"
+              :d="calculateConnectionPoints(connection)"
               style="fill:none;stroke:black;stroke-width:3">
-        </polyline>
+        </path>
       </template>
       <template v-for="node in nodes">
         <node :key="node.uuid"
@@ -21,10 +22,11 @@
         </node>
       </template>
       <template v-if="connectingNode">
-        <polyline :points="calculatePolylinePoints({source: connectingSourcePos, target: connectingTargetPos}, 10)"
+        <path :d="calculateConnectionPoints({source: connectingSourcePos, target: connectingTargetPos}, 10)"
                   style="fill:none;stroke:silver;stroke-width:3">
-        </polyline>
+        </path>
       </template>
+
     </svg>
   </div>
 </template>
@@ -32,12 +34,14 @@
 import Node from '@/flow/Node'
 import { uuid } from 'vue-uuid'
 import { POS_CALC } from '@/helpers/node-helpers.js'
+import { HTTP } from '@/helpers/http-helpers.js'
 
 export default {
   name: 'Editor',
   components: {Node},
   data: function () {
     return {
+      nodeRepository: [],
       nodes: [],
       connections: [],
       draggingNode: null,
@@ -63,8 +67,8 @@ export default {
         connections: this.connections
       })
     },
-    addNode: function (type) {
-      const node = {
+    addNode: function (nodeDef) {
+      /* const node = {
         uuid: uuid.v1(),
         type: 'com.aegeanflow.node.DatabaseConnection',
         x: 50,
@@ -78,6 +82,15 @@ export default {
             {name: 'query', type: 'java.lang.String', label: 'Query'}
           ]
         }
+      } */
+      const node = {
+        uuid: uuid.v1(),
+        type: nodeDef.type,
+        x: 50,
+        y: 50,
+        w: 50,
+        h: 50,
+        definition: nodeDef
       }
       this.nodes.push(node)
     },
@@ -126,12 +139,15 @@ export default {
       }
       this.connectingNode = null
     },
-    calculatePolylinePoints: function (connection, padding = 0) {
+    calculateConnectionPoints: function (connection, padding = 0, bezier = true) {
       let outputPos = connection.source
       let inputPos = connection.target
       if (connection.uuid) {
         outputPos = POS_CALC.calculateOutputPos(connection.source)
         inputPos = POS_CALC.calculateInputPos(connection.target, connection.targetInput)
+      }
+      if (bezier) {
+        return this._calculateBezierPoints(outputPos.x, outputPos.y, inputPos.x + padding, inputPos.y + padding)
       }
       return this._calculatePolylinePoints(outputPos.x, outputPos.y, inputPos.x + padding, inputPos.y + padding)
     },
@@ -139,10 +155,17 @@ export default {
       const cx = x2 + ((x1 - x2) / 2)
       return `${x1},${y1} ${cx},${y1} ${cx},${y2} ${x2},${y2}`
     },
+    _calculateBezierPoints: function (x1, y1, x2, y2) {
+      const cx = x2 + ((x1 - x2) / 2)
+      return `M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`
+    },
     click: function (object) {
     }
   },
   created: function () {
+    HTTP.get('node/list').then(res => {
+      this.nodeRepository = res.data
+    })
   }
 }
 </script>
@@ -152,5 +175,14 @@ export default {
     box-shadow: #111111;
     width: 100%;
     height: 800px;
+  }
+  svg text {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  svg text::selection {
+    background: none;
   }
 </style>

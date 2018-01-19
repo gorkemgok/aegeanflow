@@ -29,10 +29,12 @@ public class RestService implements AegeanFlowService {
 
         staticFiles.location("ui");
 
-        get("node/list", "application/json", (req, res) -> {
-            res.type("application/json");
-            return aegeanFlow.getNodeRepository().getNodeDefinitionList();
-        }, jsonTransformer);
+        path("/rest-api/v1", () -> {
+            get("/node/list", "application/json", (req, res) -> {
+                res.type("application/json");
+                return aegeanFlow.getNodeRepository().getNodeDefinitionList();
+            }, jsonTransformer);
+        });
     }
 
     @Override
