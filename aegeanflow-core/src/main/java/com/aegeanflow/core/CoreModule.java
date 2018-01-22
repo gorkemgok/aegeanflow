@@ -31,7 +31,7 @@ public class CoreModule extends AbstractModule {
         bind(DataFlowEngineFactory.class).in(Singleton.class);
         bind(NodeRepository.class).in(Singleton.class);
         install(new ExampleModule());
-        Reflections reflections = new Reflections();
+        Reflections reflections = new Reflections("com.aegeanflow");
         Set<Class<? extends Node>> nodeClasses = reflections.getSubTypesOf(Node.class);
         nodeClasses.stream()
                 .filter(nodeClass -> nodeClass.isAnnotationPresent(NodeEntry.class))
@@ -42,7 +42,7 @@ public class CoreModule extends AbstractModule {
     @Singleton
     @Named(NODE_CLASSES)
     Set<Class<? extends Node>> provideNodeClasses(){
-        Reflections reflections = new Reflections();
+        Reflections reflections = new Reflections("com.aegeanflow");
         Set<Class<? extends Node>> nodeClasses = reflections.getSubTypesOf(Node.class);
         return nodeClasses;
     }

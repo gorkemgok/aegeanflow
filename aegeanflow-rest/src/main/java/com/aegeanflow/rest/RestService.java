@@ -49,12 +49,12 @@ public class RestService implements AegeanFlowService {
 
             post("/flow",  (req, res) -> {
                 System.out.println(req.body());
-                FlowProxy flowProxy = new ObjectMapper().readValue(req.body(), FlowProxy.class);
-                //flow = workspace.save(flow);
-                return flowProxy.getUuid();
+                Flow flow = new ObjectMapper().readValue(req.body(), Flow.class);
+                flow = workspace.save(flow);
+                return flow.getUuid();
             });
 
-            get("/flow",  (req, res) -> {
+            get("/flow/list",  (req, res) -> {
                 List<Flow> flowList = workspace.getFlowList();
                 return flowList;
             }, jsonTransformer);

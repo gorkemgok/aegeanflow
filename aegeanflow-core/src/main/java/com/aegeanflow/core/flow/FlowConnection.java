@@ -9,11 +9,21 @@ public class FlowConnection {
 
     private UUID uuid;
 
+    private String type;
+
     private UUID fromUUID;
 
     private UUID toUUID;
 
     private String toInput;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public UUID getUuid() {
         return uuid;

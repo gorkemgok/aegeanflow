@@ -1,5 +1,6 @@
 package com.aegeanflow.rest;
 
+import com.aegeanflow.core.flow.FlowConnection;
 import com.aegeanflow.core.flow.FlowNode;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -13,7 +14,7 @@ import java.util.UUID;
 public class FlowProxy {
     private UUID uuid;
     private List<FlowNode> nodeList;
-    private List<FlowConnectionProxy> connectionList;
+    private List<FlowConnection> connectionList;
 
     public UUID getUuid() {
         return uuid;
@@ -31,11 +32,11 @@ public class FlowProxy {
         this.nodeList = nodeList;
     }
 
-    public List<FlowConnectionProxy> getConnectionList() {
+    public List<FlowConnection> getConnectionList() {
         return connectionList;
     }
 
-    public void setConnectionList(List<FlowConnectionProxy> connectionList) {
+    public void setConnectionList(List<FlowConnection> connectionList) {
         this.connectionList = connectionList;
     }
 }

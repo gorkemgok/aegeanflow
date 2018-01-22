@@ -22,7 +22,7 @@ public class ClassDeserializer extends StdDeserializer<Class> {
 
     @Override
     public Class deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-        String className = jsonParser.readValueAs(String.class);
+        String className = jsonParser.getText();
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {

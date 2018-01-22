@@ -16,6 +16,10 @@ public class ClassSerializer extends StdSerializer<Class>{
         super(t);
     }
 
+    public ClassSerializer() {
+        this(null);
+    }
+
     @Override
     public void serialize(Class aClass, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeString(aClass.getTypeName());

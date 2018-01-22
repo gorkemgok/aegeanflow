@@ -80,6 +80,7 @@ export default {
     return {
       percent: 30,
       nodeRepository: [],
+      uuid: null,
       nodes: [],
       selectedNode: null,
       selectedConnection: null,
@@ -145,12 +146,12 @@ export default {
           type: connection.type,
           fromUUID: connection.source.uuid,
           toUUID: connection.target.uuid,
-          toName: connection.targetInput,
-          fromName: ''
+          toInput: connection.targetInput
         }
       })
       console.log(connectionList)
       HTTP.post('/flow', {
+        uuid: this.uuid,
         nodeList: this.nodes,
         connectionList: connectionList
       }).then(res => {
@@ -158,9 +159,22 @@ export default {
       })
     },
     getFlows: function () {
-      HTTP.get('/flow')
+      HTTP.get('/flow/list')
         .then(res => {
-          console.log(res.data)
+          this.uuid = res.data[0].uuid
+          this.nodes = res.data[0].nodeList.map(node => {
+            node.definition = this.nodeRepository.filter(nodeDef => nodeDef.type === node.type)[0]
+            return node
+          })
+          this.connections = res.data[0].connectionList.map(connection => {
+            const newConn = {}
+            newConn.uuid = connection.uuid
+            newConn.type = connection.type
+            newConn.targetInput = connection.toInput
+            newConn.source = this.nodes.filter(node => node.uuid === connection.fromUUID)[0]
+            newConn.target = this.nodes.filter(node => node.uuid === connection.toUUID)[0]
+            return newConn
+          })
         })
     },
     addNode: function (nodeDef, x = 50, y = 50) {
@@ -173,6 +187,7 @@ export default {
         w: 50,
         h: 50,
         color: colors[Math.floor(Math.random() * 3)],
+        configuration: {},
         definition: nodeDef
       }
       this.nodes.push(node)

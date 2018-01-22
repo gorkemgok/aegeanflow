@@ -2,6 +2,7 @@ package com.aegeanflow.core.flow;
 
 import com.aegeanflow.core.spi.Node;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -19,6 +20,9 @@ public class FlowNode {
     private Class<? extends Node> nodeClass;
 
     private Map<String, Object> configuration;
+
+    private Double x, y, w, h;
+    private String color;
 
     public Map<String, Object> getConfiguration() {
         return configuration;
@@ -38,11 +42,52 @@ public class FlowNode {
 
     @JsonSerialize(using = ClassSerializer.class)
     @JsonDeserialize(using = ClassDeserializer.class)
+    @JsonProperty("type")
     public Class<? extends Node> getNodeClass() {
         return nodeClass;
     }
 
     public void setNodeClass(Class<? extends Node> nodeClass) {
         this.nodeClass = nodeClass;
+    }
+
+    public Double getX() {
+        return x;
+    }
+
+    public void setX(Double x) {
+        this.x = x;
+    }
+
+    public Double getY() {
+        return y;
+    }
+
+    public void setY(Double y) {
+        this.y = y;
+    }
+
+    public Double getW() {
+        return w;
+    }
+
+    public void setW(Double w) {
+        this.w = w;
+    }
+
+    public Double getH() {
+        return h;
+    }
+
+    public void setH(Double h) {
+        this.h = h;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }
