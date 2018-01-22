@@ -27,8 +27,8 @@ public class FlowNodeBuilder {
 
     public FlowNode build(){
         FlowNode flowNode = new FlowNode();
-        flowNode.setUuid(UUID.randomUUID());
-        flowNode.setNodeClass(nodeClass.getTypeName());
+        flowNode.setUUID(UUID.randomUUID());
+        flowNode.setNodeClass(nodeClass);
         flowNode.setConfiguration(configMap);
         return flowNode;
     }

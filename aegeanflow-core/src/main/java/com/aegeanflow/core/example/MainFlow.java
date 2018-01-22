@@ -17,15 +17,15 @@ import java.util.UUID;
 public class MainFlow {
     public static void main(String[] args) throws JsonProcessingException {
         FlowNode node1 = new FlowNode();
-        node1.setUuid(UUID.randomUUID());
-        node1.setNodeClass(TestNode.class.getTypeName());
+        node1.setUUID(UUID.randomUUID());
+        node1.setNodeClass(TestNode.class);
         Map<String, Object> config = new HashMap<>();
         config.put("testC", "testConfig");
         node1.setConfiguration(config);
 
         FlowNode node2 = new FlowNode();
-        node2.setUuid(UUID.randomUUID());
-        node2.setNodeClass(TestNode.class.getTypeName());
+        node2.setUUID(UUID.randomUUID());
+        node2.setNodeClass(TestNode.class);
         node2.setConfiguration(config);
 
         FlowConnection connection1 = new FlowConnection();

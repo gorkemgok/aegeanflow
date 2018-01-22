@@ -139,9 +139,20 @@ export default {
       }
     },
     saveFlow: function () {
+      const connectionList = this.connections.map(connection => {
+        return {
+          uuid: connection.uuid,
+          type: connection.type,
+          fromUUID: connection.source.uuid,
+          toUUID: connection.target.uuid,
+          toName: connection.targetInput,
+          fromName: ''
+        }
+      })
+      console.log(connectionList)
       HTTP.post('/flow', {
         nodeList: this.nodes,
-        connectionList: this.connections
+        connectionList: connectionList
       }).then(res => {
         console.log(res)
       })

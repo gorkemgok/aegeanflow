@@ -26,15 +26,15 @@ public class MainFlow2 {
         Flow flow = new Flow();
 
         FlowNode stringSourceNode = new FlowNode();
-        stringSourceNode.setUuid(UUID.randomUUID());
-        stringSourceNode.setNodeClass(StringSourceNode.class.getTypeName());
+        stringSourceNode.setUUID(UUID.randomUUID());
+        stringSourceNode.setNodeClass(StringSourceNode.class);
         Map<String, Object> stringSourceNodeConfig = new HashMap<>();
         stringSourceNodeConfig.put("prefix", "Test1");
         stringSourceNode.setConfiguration(stringSourceNodeConfig);
 
         FlowNode stringSuffixNode = new FlowNode();
-        stringSuffixNode.setUuid(UUID.randomUUID());
-        stringSuffixNode.setNodeClass(StringSuffixNode.class.getTypeName());
+        stringSuffixNode.setUUID(UUID.randomUUID());
+        stringSuffixNode.setNodeClass(StringSuffixNode.class);
         Map<String, Object> stringSuffixNodeConfig = new HashMap<>();
         stringSuffixNodeConfig.put("suffix", "Test2");
         stringSuffixNode.setConfiguration(stringSuffixNodeConfig);

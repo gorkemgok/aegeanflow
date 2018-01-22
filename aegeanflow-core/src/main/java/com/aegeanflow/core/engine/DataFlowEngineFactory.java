@@ -33,8 +33,7 @@ public class DataFlowEngineFactory {
     public DataFlowEngine create(Flow flow, @Nullable DataFlowEngine stateProvider) throws ClassNotFoundException {
         List<Node<?>> nodeList = new ArrayList<>();
         for (FlowNode flowNode : flow.getNodeList()){
-            Class<?> nodeClass = Class.forName(flowNode.getNodeClass());
-            Node node = (Node) injector.getInstance(nodeClass);
+            Node node = injector.getInstance(flowNode.getNodeClass());
             node.setUUID(flowNode.getUUID());
             nodeList.add(node);
         }

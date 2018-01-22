@@ -7,11 +7,21 @@ import java.util.UUID;
  */
 public class FlowConnection {
 
+    private UUID uuid;
+
     private UUID fromUUID;
 
     private UUID toUUID;
 
     private String toInput;
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
 
     public UUID getFromUUID() {
         return fromUUID;
