@@ -1,39 +1,65 @@
 <template>
-  <div>
-    <h1>AegeanFlow Editor</h1>
-    <at-button v-for="nodeDef in nodeRepository" :key="nodeDef.type"
-            @click="addNode(nodeDef)">Add {{nodeDef.label}} Node</at-button>
-    <at-button @click="saveFlow">Save Flow</at-button>
-    <svg @mouseup="mouseUp" @mousemove="mouseMove" class="editor-canvas">
-      <!--Temporary connection-->
-      <template v-if="connectingNode">
-        <path class="temporary-connection rolling-dashes"
-              :d="calculateConnectionPoints({source: connectingSourcePos, target: connectingTargetPos}, 10)">
-        </path>
-      </template>
-
-      <!--Connections-->
-      <template v-for="connection in connections">
-        <path class="connection" v-if="connection.type == 'line'"
-              :key="connection.uuid"
-              :d="calculateConnectionPoints(connection)">
-        </path>
-      </template>
-
-      <!--Nodes-->
-      <template v-for="node in nodes">
-        <node :key="node.uuid"
-              :node="node"
-              :connectingNode="connectingNode"
-              @nodeMouseDown="beginDrag"
-              @nodeMouseUp="endDrag"
-              @outputMouseDown="beginConnection"
-              @inputMouseUp="endConnection"
-              @inputMouseOver="inputMouseOver"
-              @inputMouseOut="inputMouseOut">
-        </node>
-      </template>
-    </svg>
+  <div class="editor-container">
+    <div class="toolbox-container">
+      <at-collapse simple accordion :value="0">
+        <at-collapse-item title="Base Components">
+            <template v-for="nodeDef in nodeRepository">
+              <drag class="component-container" :transferData="nodeDef" :key="nodeDef.type">
+                {{ nodeDef.label }}
+              </drag>
+            </template>
+        </at-collapse-item>
+      </at-collapse>
+    </div>
+    <div class="flow-container">
+      <h1>AegeanFlow Editor</h1>
+      <at-button @click="saveFlow">Save Flow</at-button>
+      <drop @drop="dropNode">
+        <svg @mouseup="mouseUp" @mousemove="mouseMove" class="editor-canvas">
+          <!--Temporary connection-->
+          <template v-if="connectingNode">
+            <path class="temporary-connection rolling-dashes"
+                  :d="calculateConnectionPoints({source: connectingSourcePos, target: connectingTargetPos}, 1)">
+            </path>
+          </template>
+          <!--Connections-->
+          <template v-for="(connection, idx) in connections">
+            <path class="connection" v-if="connection.type == 'line'"
+                  :key="connection.uuid"
+                  :class="isSelectedConnArr[idx] ? 'selected-connection' : ''"
+                  :d="calculateConnectionPoints(connection)"
+                  @click="selectConnection(connection)"
+                  @contextmenu.prevent="connectionContextMenu(connection)">
+            </path>
+          </template>
+          <!--Nodes-->
+          <template v-for="node in nodes">
+            <node :key="node.uuid"
+                  :node="node"
+                  :connectingNode="connectingNode"
+                  @nodeContextMenu="nodeContextMenu"
+                  @nodeClick="nodeClick"
+                  @nodeMouseDown="beginDrag"
+                  @nodeMouseUp="endDrag"
+                  @outputMouseDown="beginConnection"
+                  @inputMouseUp="endConnection"
+                  @inputMouseOver="inputMouseOver"
+                  @inputMouseOut="inputMouseOut">
+            </node>
+          </template>
+        </svg>
+      </drop>
+      <context-menu ref="nodeCtxMenu">
+        <at-menu mode="vertical" @on-select="nodeMenuClicked">
+          <at-menu-item name="remove"><i class="icon icon-x"></i>Remove</at-menu-item>
+        </at-menu>
+      </context-menu>
+      <context-menu ref="connectionCtxMenu">
+        <at-menu mode="vertical" @on-select="connectionMenuClicked">
+          <at-menu-item name="remove"><i class="icon icon-x"></i>Remove</at-menu-item>
+        </at-menu>
+      </context-menu>
+    </div>
   </div>
 </template>
 <script>
@@ -41,15 +67,22 @@ import Node from '@/flow/Node'
 import { uuid } from 'vue-uuid'
 import { POS_CALC, TYPES } from '@/helpers/node-helpers.js'
 import { HTTP } from '@/helpers/http-helpers.js'
+import contextMenu from 'vue-context-menu'
+import Vue from 'vue'
+import VueDragDrop from 'vue-drag-drop'
+
+Vue.use(VueDragDrop)
 
 export default {
   name: 'Editor',
-  components: {Node},
+  components: {Node, contextMenu},
   data: function () {
     return {
       percent: 30,
       nodeRepository: [],
       nodes: [],
+      selectedNode: null,
+      selectedConnection: null,
       connections: [],
       draggingNode: null,
       dragOffset: {
@@ -72,22 +105,60 @@ export default {
       if (this.connectingNode) {
         return this.connectingNode.returnType
       }
+    },
+    isSelectedConnArr: function () {
+      const arr = []
+      for (let connection of this.connections) {
+        arr.push(connection === this.selectedConnection)
+      }
+      return arr
     }
   },
   methods: {
+    dropNode: function (nodeDef, $event) {
+      const x = $event.offsetX
+      const y = $event.offsetY
+      this.addNode(nodeDef, x, y)
+    },
+    nodeMenuClicked: function (name) {
+      switch (name) {
+        case 'remove':
+          this.removeSelectedNode()
+          break
+        default:
+          break
+      }
+    },
+    connectionMenuClicked: function (name) {
+      switch (name) {
+        case 'remove':
+          this.removeSelectedConnection()
+          break
+        default:
+          break
+      }
+    },
     saveFlow: function () {
-      console.log({
-        nodes: this.nodes,
-        connections: this.connections
+      HTTP.post('/flow', {
+        nodeList: this.nodes,
+        connectionList: this.connections
+      }).then(res => {
+        console.log(res)
       })
     },
-    addNode: function (nodeDef) {
+    getFlows: function () {
+      HTTP.get('/flow')
+        .then(res => {
+          console.log(res.data)
+        })
+    },
+    addNode: function (nodeDef, x = 50, y = 50) {
       const colors = ['#F9D194', '#FF6C57', '#977CD5', '#54B375']
       const node = {
         uuid: uuid.v1(),
         type: nodeDef.type,
-        x: 50,
-        y: 50,
+        x: x,
+        y: y,
         w: 50,
         h: 50,
         color: colors[Math.floor(Math.random() * 3)],
@@ -114,6 +185,29 @@ export default {
         }
         this.connections.push(connection)
       }
+    },
+    connectionContextMenu: function (connection) {
+      this.selectedConnection = connection
+      this.$refs.connectionCtxMenu.open()
+    },
+    nodeContextMenu: function (node) {
+      this.selectedNode = node
+      this.$refs.nodeCtxMenu.open()
+    },
+    nodeClick: function (node) {
+      this.selectedNode = node
+    },
+    selectConnection: function (connection) {
+      this.selectedConnection = connection
+    },
+    removeSelectedNode: function () {
+      this.nodes = this.nodes.filter(node => node !== this.selectedNode)
+      this.connections = this.connections
+        .filter(connection => connection.source !== this.selectedNode && connection.target !== this.selectedNode)
+    },
+    removeSelectedConnection: function () {
+      this.connections = this.connections
+        .filter(connection => connection !== this.selectedConnection)
     },
     beginDrag: function (node, $event) {
       this.dragOffset.x = node.x - $event.offsetX
@@ -185,6 +279,8 @@ export default {
     HTTP.get('node/list').then(res => {
       this.nodeRepository = res.data
     })
+
+    this.getFlows()
   }
 }
 </script>
@@ -199,6 +295,12 @@ export default {
   }
   .temporary-connection{
     fill:none;stroke:white;stroke-width:3;
+  }
+  .selected-connection{
+    stroke-dasharray: 5;
+    stroke-dasharray:"5, 5";
+    animation: dash 2s linear;
+    animation-iteration-count: infinite;
   }
   .rolling-dashes{
     stroke-dasharray: 5;
@@ -223,5 +325,17 @@ export default {
   }
   svg text::selection {
     background: none;
+  }
+  .editor-container{
+    display: flex;
+  }
+  .toolbox-container{
+    width: 200px;
+  }
+  .flow-container{
+    width: calc(100% - 200px);
+  }
+  .component-container{
+    text-align: left;
   }
 </style>

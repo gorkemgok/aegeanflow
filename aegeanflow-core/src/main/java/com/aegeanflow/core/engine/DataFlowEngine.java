@@ -1,5 +1,6 @@
-package com.aegeanflow.core;
+package com.aegeanflow.core.engine;
 
+import com.aegeanflow.core.CompiledNodeInfo;
 import com.aegeanflow.core.exception.NoSuchNodeException;
 import com.aegeanflow.core.exception.NodeRuntimeException;
 import com.aegeanflow.core.flow.Flow;

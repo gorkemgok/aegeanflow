@@ -1,6 +1,7 @@
 package com.aegeanflow.core.flow;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by gorkem on 12.01.2018.
@@ -10,6 +11,16 @@ public class Flow {
     private List<FlowNode> nodeList;
 
     private List<FlowConnection> connectionList;
+
+    private UUID uuid;
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
 
     public List<FlowNode> getNodeList() {
         return nodeList;

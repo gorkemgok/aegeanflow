@@ -1,4 +1,4 @@
-package com.aegeanflow.core;
+package com.aegeanflow.core.engine;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -8,19 +8,12 @@ import java.util.concurrent.TimeoutException;
 /**
  * Created by gorkem on 12.01.2018.
  */
-public class InputFuture<T> implements Future<T> {
-
-    private final String inputName;
+public class FlowFuture<T> implements Future<T> {
 
     private final Future<T> future;
 
-    public InputFuture(String inputName, Future<T> future) {
-        this.inputName = inputName;
+    public FlowFuture(Future<T> future) {
         this.future = future;
-    }
-
-    public String getInputName() {
-        return inputName;
     }
 
     @Override

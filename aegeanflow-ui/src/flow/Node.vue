@@ -1,6 +1,10 @@
 <template>
   <g>
-    <rect class="main-rect" @mousedown="nodeMouseDown" @mouseup="nodeMouseUp"
+    <rect class="main-rect"
+          @contextmenu.prevent="nodeContextMenu"
+          @click="nodeClick"
+          @mousedown.left="nodeMouseDown"
+          @mouseup.left="nodeMouseUp"
           :x="node.x" :y="node.y" :width="node.w" :height="node.h"
           rx="4" ry="4" :style="{fill: node.color}"></rect>
     <text class="node-label" :x="node.x" :y="labelY" font-family="Verdana" font-size="11">
@@ -10,7 +14,8 @@
             r="6"
             :cx="outputPos.x"
             :cy="outputPos.y"
-            @mousedown="outputMouseDown">
+            @mousedown.left="outputMouseDown"
+            @contextmenu.prevent="outputContextMenu">
     </circle>
     <circle v-for="(input, idx) in node.definition.inputs" :key="input.name"
             :class="'check-type-' + typeMatches[input.name]"
@@ -18,7 +23,8 @@
             r="6"
             :cx="node.x"
             :cy="inputY[idx]"
-            @mouseup="inputMouseUp(input)"
+            @contextmenu.prevent="inputContextMenu(input)"
+            @mouseup.left="inputMouseUp(input)"
             @mouseover="inputMouseOver(input)"
             @mouseout="inputMouseOut(input)">
     </circle>
@@ -37,6 +43,18 @@ export default {
     connectingNode: null
   },
   methods: {
+    nodeContextMenu: function () {
+      this.$emit('nodeContextMenu', this.node)
+    },
+    outputContextMenu: function () {
+      this.$emit('outContextMenu', this.node)
+    },
+    inputContextMenu: function (input) {
+      this.$emit('inputContextMenu', input, this.node)
+    },
+    nodeClick: function () {
+      this.$emit('nodeClick', this.node)
+    },
     nodeMouseDown: function ($event) {
       this.$emit('nodeMouseDown', this.node, $event)
     },
@@ -97,10 +115,10 @@ export default {
 </script>
 <style scoped>
   .check-type-ok{
-    fill: green;
+    fill: #8ff762;
   }
   .check-type-not-ok{
-    fill: red;
+    fill: #fc3535;
   }
   .check-type-notr{
     fill: white;

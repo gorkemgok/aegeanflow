@@ -1,9 +1,9 @@
 package com.aegeanflow.core.example;
 
 import com.aegeanflow.core.CoreModule;
-import com.aegeanflow.core.DataFlowEngine;
-import com.aegeanflow.core.DataFlowEngineFactory;
-import com.aegeanflow.core.FlowFuture;
+import com.aegeanflow.core.engine.DataFlowEngine;
+import com.aegeanflow.core.engine.DataFlowEngineFactory;
+import com.aegeanflow.core.engine.FlowFuture;
 import com.aegeanflow.core.exception.NoSuchNodeException;
 import com.aegeanflow.core.exception.NodeRuntimeException;
 import com.aegeanflow.core.flow.Flow;

@@ -1,5 +1,6 @@
 package com.aegeanflow.core;
 
+import com.aegeanflow.core.engine.DataFlowEngineFactory;
 import com.aegeanflow.core.node.NodeModule;
 import com.aegeanflow.core.node.NodeRepository;
 import com.aegeanflow.core.spi.Node;

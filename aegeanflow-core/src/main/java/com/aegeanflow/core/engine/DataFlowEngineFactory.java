@@ -1,4 +1,4 @@
-package com.aegeanflow.core;
+package com.aegeanflow.core.engine;
 
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.flow.FlowNode;
