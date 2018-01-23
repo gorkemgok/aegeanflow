@@ -1,6 +1,6 @@
 package com.aegeanflow.core;
 
-import com.aegeanflow.core.engine.DataFlowEngineFactory;
+import com.aegeanflow.core.engine.DataFlowEngineManager;
 import com.aegeanflow.core.node.NodeModule;
 import com.aegeanflow.core.node.NodeRepository;
 import com.aegeanflow.core.spi.Node;
@@ -28,7 +28,7 @@ public class CoreModule extends AbstractModule {
     protected void configure() {
         install(new NodeModule());
         install(new InitSyncUtilModule());
-        bind(DataFlowEngineFactory.class).in(Singleton.class);
+        bind(DataFlowEngineManager.class).in(Singleton.class);
         bind(NodeRepository.class).in(Singleton.class);
         install(new ExampleModule());
         Reflections reflections = new Reflections("com.aegeanflow");

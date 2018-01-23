@@ -1,6 +1,7 @@
 package com.aegeanflow.core.engine;
 
 import com.aegeanflow.core.CompiledNodeInfo;
+import com.aegeanflow.core.NodeStatus;
 import com.aegeanflow.core.exception.NoSuchNodeException;
 import com.aegeanflow.core.exception.NodeRuntimeException;
 import com.aegeanflow.core.flow.Flow;
@@ -32,6 +33,8 @@ public class DataFlowEngine {
 
     private final Map<UUID, FlowFuture> runningTasks;
 
+    private Map<UUID, NodeStatus> statusMap;
+
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
 
     private final NodeRepository nodeRepository;
@@ -46,10 +49,28 @@ public class DataFlowEngine {
             this.outputState = new Hashtable<>();
         }
         this.runningTasks = new Hashtable<>();
+        this.statusMap = new Hashtable<>();
     }
 
-    public FlowFuture getResult() throws NoSuchNodeException, NodeRuntimeException {
-        return getResult(flow.getNodeList().get(flow.getNodeList().size() - 1).getUUID());
+    private void updateStatus(UUID uuid, NodeStatus status){
+        statusMap.put(uuid, status);
+        //TODO: remove and trigger node status listerner
+        StringJoiner sj = new StringJoiner("\n", "--------\n", "");
+        statusMap.forEach((k, v) -> sj.add(k.toString() + " - " + v));
+        System.out.println(sj.toString());
+    }
+
+    public List<FlowFuture> getResultList() throws NoSuchNodeException, NodeRuntimeException {
+        List<FlowNode> outputNodes = flow.getNodeList().stream()
+                .filter(node -> flow.getConnectionList().stream()
+                        .filter(conn -> conn.getFromUUID().equals(node.getUUID())).count() == 0)
+                .collect(Collectors.toList());
+        List<FlowFuture> flowFutureList = new ArrayList<>();
+        for (FlowNode node : outputNodes) {
+            updateStatus(node.getUUID(), NodeStatus.WAITING);
+            flowFutureList.add(getResult(node.getUUID()));
+        }
+        return flowFutureList;
     }
 
     public FlowFuture getResult(UUID nodeUUID) throws NoSuchNodeException, NodeRuntimeException {
@@ -62,32 +83,59 @@ public class DataFlowEngine {
 
     private <T> FlowFuture<T> runNode(Node<T> node, boolean useState) throws NodeRuntimeException {
         try {
+            //CONTROL STATE FROM PREVIOUS RUN
             if (useState && outputState.containsKey(node.getUUID())){
                 return outputState.get(node.getUUID());
             }
-            List<InputNodePair> inputNodePairList = getInputNodes(node.getUUID());
-            List<InputFuture> inputFutures = new ArrayList<>();
-            for (InputNodePair inputNodePair : inputNodePairList) {
-                Future future = runNode(inputNodePair.node, useState);
-                inputFutures.add(new InputFuture(inputNodePair.inputName, future));
+            //CONTROL IF ALREADY RUNNING
+            FlowFuture<T> flowFuture;
+            if ((flowFuture = runningTasks.get(node.getUUID())) != null) {
+                return flowFuture;
             }
-            List<FlowInput> inputList = new ArrayList<>();
-            for (InputFuture inputFuture : inputFutures){
-                try {
-                    Object input = inputFuture.get();
-                    inputList.add(new FlowInput(inputFuture.getInputName(), input));
-                }catch (ExecutionException e){
-                    throw new NodeRuntimeException(e.getCause());
+            //RUN NODE
+            FutureTask<T> futureTask = new FutureTask<>(() -> {
+                //RUN INPUT NODES
+                List<InputNodePair> inputNodePairList = getInputNodes(node.getUUID());
+                List<InputFuture> inputFutures = new ArrayList<>();
+                for (InputNodePair inputNodePair : inputNodePairList) {
+                    FlowFuture inputFuture = runNode(inputNodePair.node, useState);
+                    inputFutures.add(new InputFuture(inputNodePair.inputName, inputFuture));
                 }
-            }
-            setNodeInputs(node, inputList);
-            LOGGER.info("Running node {}", node.getUUID());
-            Future<T> future = executor.submit(node);
-            FlowFuture<T> flowFuture = new FlowFuture<>(future);
+
+                List <FlowInput> inputList = new ArrayList<>();
+                for (InputFuture inputFuture : inputFutures){
+                    try {
+                        Object input = inputFuture.get();
+                        updateStatus(inputFuture.getUUID(), NodeStatus.DONE);
+                        inputList.add(new FlowInput(inputFuture.getInputName(), input));
+                    }catch (ExecutionException e){
+                        updateStatus(inputFuture.getUUID(), NodeStatus.FAILED);
+                        throw new NodeRuntimeException(e.getCause(), node.getUUID());
+                    }
+                }
+                setNodeInputs(node, inputList);
+                updateStatus(node.getUUID(), NodeStatus.RUNNING);
+                LOGGER.info("Running node {}", node.getUUID());
+                return node.call();
+            });
+            flowFuture = new FlowFuture<>(node.getUUID(), futureTask);
+            runningTasks.put(node.getUUID(), flowFuture);
             outputState.put(node.getUUID(), flowFuture);
+            executor.submit(futureTask);
             return flowFuture;
         } catch (Exception e) {
-            throw new NodeRuntimeException(e);
+            //SET STATUS AS CANCELLED for WAITIN and RUNNING Nodes
+            statusMap = statusMap.entrySet().stream().map(entry -> {
+                if (entry.getValue().equals(NodeStatus.WAITING) || entry.getValue().equals(NodeStatus.RUNNING)) {
+                    return new AbstractMap.SimpleEntry<>(entry.getKey(), NodeStatus.CANCELED);
+                }
+                return entry;
+            }).collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
+            //TODO: remove and trigger node status listerner
+            StringJoiner sj = new StringJoiner("\n", "--------\n", "");
+            statusMap.forEach((k, v) -> sj.add(k.toString() + " - " + v));
+            System.out.println(sj.toString());
+            throw new NodeRuntimeException(e, node.getUUID());
         }
     }
 
@@ -153,7 +201,7 @@ public class DataFlowEngine {
     private List<InputNodePair> getInputNodes(UUID nodeUUID) throws NoSuchNodeException {
         List<InputUUIDPair> inputUUIDPairList = flow.getConnectionList().stream()
                 .filter(flowConnection -> flowConnection.getToUUID().equals(nodeUUID))
-                .map(flowConnection -> new InputUUIDPair(flowConnection.getToInput(), flowConnection.getFromUUID()))
+                .map(flowConnection -> new InputUUIDPair(flowConnection.getInputName(), flowConnection.getFromUUID()))
                 .collect(Collectors.toList());
         List<InputNodePair> inputNodePairList = new ArrayList<>();
         for (InputUUIDPair inputUUIDPair : inputUUIDPairList){

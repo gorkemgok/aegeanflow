@@ -8,26 +8,34 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by gorkem on 12.01.2018.
  */
-public class DataFlowEngineFactory {
+public class DataFlowEngineManager {
 
     private final Injector injector;
 
     private final NodeRepository nodeRepository;
 
+    private final Map<UUID, DataFlowEngine> engineMap;
+
     @Inject
-    public DataFlowEngineFactory(Injector injector, NodeRepository nodeRepository) {
+    public DataFlowEngineManager(Injector injector, NodeRepository nodeRepository) {
         this.injector = injector;
         this.nodeRepository = nodeRepository;
+        this.engineMap = new Hashtable<>();
     }
 
     public DataFlowEngine create(Flow flow) throws ClassNotFoundException {
-        return create(flow, null);
+        if (flow.getUuid() == null) {
+            flow.setUuid(UUID.randomUUID());
+        }
+        DataFlowEngine prevDFE = engineMap.get(flow.getUuid());
+        DataFlowEngine dataFlowEngine = create(flow, prevDFE);
+        engineMap.put(flow.getUuid(), dataFlowEngine);
+        return dataFlowEngine;
     }
 
     public DataFlowEngine create(Flow flow, @Nullable DataFlowEngine stateProvider) throws ClassNotFoundException {

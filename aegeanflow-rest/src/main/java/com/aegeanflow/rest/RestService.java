@@ -2,9 +2,14 @@ package com.aegeanflow.rest;
 
 import static spark.Spark.*;
 import com.aegeanflow.core.AegeanFlow;
+import com.aegeanflow.core.engine.DataFlowEngine;
+import com.aegeanflow.core.engine.DataFlowEngineManager;
+import com.aegeanflow.core.engine.FlowFuture;
+import com.aegeanflow.core.exception.NodeRuntimeException;
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.spi.AegeanFlowService;
 import com.aegeanflow.core.workspace.Workspace;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
@@ -27,12 +32,19 @@ public class RestService implements AegeanFlowService {
 
     private final Workspace workspace;
 
+    private final DataFlowEngineManager flowManager;
+
+    private final ObjectMapper objectMapper;
+
     @Inject
-    public RestService(RestConfig restConfig, AegeanFlow aegeanFlow, JsonTransformer jsonTransformer, Workspace workspace) {
+    public RestService(RestConfig restConfig, AegeanFlow aegeanFlow, JsonTransformer jsonTransformer,
+                       Workspace workspace, DataFlowEngineManager flowManager) {
         this.restConfig = restConfig;
         this.aegeanFlow = aegeanFlow;
         this.jsonTransformer = jsonTransformer;
         this.workspace = workspace;
+        this.flowManager = flowManager;
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -48,9 +60,19 @@ public class RestService implements AegeanFlowService {
             }, jsonTransformer);
 
             post("/flow",  (req, res) -> {
-                System.out.println(req.body());
-                Flow flow = new ObjectMapper().readValue(req.body(), Flow.class);
+                Flow flow = objectMapper.readValue(req.body(), Flow.class);
                 flow = workspace.save(flow);
+                return flow.getUuid();
+            });
+
+            post("/flow/run",  (req, res) -> {
+                Flow flow = new ObjectMapper().readValue(req.body(), Flow.class);
+                DataFlowEngine de = flowManager.create(flow);
+                List<FlowFuture> flowFutureList = de.getResultList();
+                for (FlowFuture flowFuture : flowFutureList){
+                    Object object = flowFuture.get();
+                    System.out.println(object);
+                }
                 return flow.getUuid();
             });
 
@@ -58,6 +80,17 @@ public class RestService implements AegeanFlowService {
                 List<Flow> flowList = workspace.getFlowList();
                 return flowList;
             }, jsonTransformer);
+        });
+
+        exception(NodeRuntimeException.class, (e, req, res) -> {
+            LOGGER.error(e.getMessage());
+            res.status(500);
+            res.type("application/json");
+            try {
+                res.body(objectMapper.writeValueAsString(new NodeErrorProxy(e.getNodeUUID(), e.getMessage())));
+            } catch (JsonProcessingException e1) {
+                e1.printStackTrace();
+            }
         });
 
         exception(Exception.class, (e, req, res) -> {

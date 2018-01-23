@@ -1,5 +1,6 @@
 package com.aegeanflow.core.node;
 
+import com.aegeanflow.core.Precondition;
 import com.aegeanflow.core.node.data.Convertor;
 import com.aegeanflow.core.spi.AbstractNode;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
@@ -30,6 +31,8 @@ public class DatabaseReaderNode extends AbstractNode<TabularData> {
 
     @Override
     public TabularData call() throws Exception {
+        Thread.sleep(5000);
+        Precondition.checkNotNullInput(connection, "Connection", this);
         ResultSet resultSet = connection.createStatement().executeQuery(query);
 
         while (resultSet.next()){

@@ -2,7 +2,7 @@ package com.aegeanflow.core.example;
 
 import com.aegeanflow.core.CoreModule;
 import com.aegeanflow.core.engine.DataFlowEngine;
-import com.aegeanflow.core.engine.DataFlowEngineFactory;
+import com.aegeanflow.core.engine.DataFlowEngineManager;
 import com.aegeanflow.core.engine.FlowFuture;
 import com.aegeanflow.core.exception.NoSuchNodeException;
 import com.aegeanflow.core.exception.NodeRuntimeException;
@@ -42,15 +42,15 @@ public class MainFlow2 {
         FlowConnection flowConnection = new FlowConnection();
         flowConnection.setFromUUID(stringSourceNode.getUUID());
         flowConnection.setToUUID(stringSuffixNode.getUUID());
-        flowConnection.setToInput("input");
+        flowConnection.setInputName("input");
 
         flow.setNodeList(Arrays.asList(stringSourceNode, stringSuffixNode));
         flow.setConnectionList(Arrays.asList(flowConnection));
 
         Injector injector = Guice.createInjector(new CoreModule());
-        DataFlowEngineFactory dataFlowEngineFactory = injector.getInstance(DataFlowEngineFactory.class);
+        DataFlowEngineManager dataFlowEngineManager = injector.getInstance(DataFlowEngineManager.class);
         try {
-            DataFlowEngine dataFlowEngine = dataFlowEngineFactory.create(flow);
+            DataFlowEngine dataFlowEngine = dataFlowEngineManager.create(flow);
             FlowFuture future = dataFlowEngine.getResult(stringSuffixNode.getUUID());
             System.out.println(future.get());
         } catch (ClassNotFoundException e) {

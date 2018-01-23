@@ -1,6 +1,7 @@
 package com.aegeanflow.application;
 
 import com.aegeanflow.core.AegeanFlow;
+import com.aegeanflow.core.CoreModule;
 import com.aegeanflow.core.spi.AegeanFlowService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
@@ -25,6 +26,7 @@ public class BootstrapModule extends AbstractModule {
     protected void configure() {
         Multibinder<AegeanFlowService> serviceMultibinder = Multibinder.newSetBinder(binder(), AegeanFlowService.class);
         install(new InitSyncUtilModule());
+        install(new CoreModule());
 
         ConfigOptions configOptions = null;
         AnnoConfModule annoConfModule = null;
@@ -32,7 +34,8 @@ public class BootstrapModule extends AbstractModule {
             configOptions = new ConfigOptions()
                     .addSource(
                             new PropertyFileSource(
-                                    this.getClass().getClassLoader().getResource("aegeanflow.properties").getFile()));
+                                    this.getClass().getClassLoader().getResource("aegeanflow.properties").getFile()))
+                    .addScanPackage("com.aegeanflow");
             annoConfModule = new AnnoConfModule(configOptions);
             install(annoConfModule);
         } catch (IOException e) {

@@ -15,7 +15,7 @@ public class FlowConnection {
 
     private UUID toUUID;
 
-    private String toInput;
+    private String inputName;
 
     public String getType() {
         return type;
@@ -49,11 +49,11 @@ public class FlowConnection {
         this.toUUID = toUUID;
     }
 
-    public String getToInput() {
-        return toInput;
+    public String getInputName() {
+        return inputName;
     }
 
-    public void setToInput(String toInput) {
-        this.toInput = toInput;
+    public void setInputName(String inputName) {
+        this.inputName = inputName;
     }
 }

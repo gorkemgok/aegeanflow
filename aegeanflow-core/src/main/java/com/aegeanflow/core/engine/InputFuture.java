@@ -1,5 +1,6 @@
 package com.aegeanflow.core.engine;
 
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -12,11 +13,15 @@ public class InputFuture<T> implements Future<T> {
 
     private final String inputName;
 
-    private final Future<T> future;
+    private final FlowFuture<T> future;
 
-    public InputFuture(String inputName, Future<T> future) {
+    public InputFuture(String inputName, FlowFuture<T> future) {
         this.inputName = inputName;
         this.future = future;
+    }
+
+    public UUID getUUID(){
+        return future.getUuid();
     }
 
     public String getInputName() {

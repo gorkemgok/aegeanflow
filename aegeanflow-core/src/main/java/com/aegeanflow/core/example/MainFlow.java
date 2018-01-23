@@ -31,7 +31,7 @@ public class MainFlow {
         FlowConnection connection1 = new FlowConnection();
         connection1.setFromUUID(node1.getUUID());
         connection1.setToUUID(node2.getUUID());
-        connection1.setToInput("inputTestFlow");
+        connection1.setInputName("inputTestFlow");
 
         Flow flow = new Flow();
         flow.setNodeList(Arrays.asList(node1, node2));

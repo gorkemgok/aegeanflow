@@ -30,7 +30,7 @@ public class FlowBuilder {
         FlowConnection flowConnection = new FlowConnection();
         flowConnection.setFromUUID(lastNode.getUUID());
         flowConnection.setToUUID(flowNode.getUUID());
-        flowConnection.setToInput(inputName);
+        flowConnection.setInputName(inputName);
         flowConnectionList.add(flowConnection);
         lastNode = flowNode;
         return this;

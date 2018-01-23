@@ -31,5 +31,23 @@ export const TYPES = {
     } else {
       return 'notr'
     }
+  },
+  createFlow: function (uuid, title, nodes, connections) {
+    const connectionList = connections.map(connection => {
+      return {
+        uuid: connection.uuid,
+        type: connection.type,
+        fromUUID: connection.source.uuid,
+        toUUID: connection.target.uuid,
+        inputName: connection.inputName
+      }
+    })
+    const flow = {
+      uuid: uuid,
+      title: title,
+      nodeList: nodes,
+      connectionList: connectionList
+    }
+    return flow
   }
 }

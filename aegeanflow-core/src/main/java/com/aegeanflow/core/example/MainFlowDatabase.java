@@ -2,7 +2,7 @@ package com.aegeanflow.core.example;
 
 import com.aegeanflow.core.*;
 import com.aegeanflow.core.engine.DataFlowEngine;
-import com.aegeanflow.core.engine.DataFlowEngineFactory;
+import com.aegeanflow.core.engine.DataFlowEngineManager;
 import com.aegeanflow.core.exception.NoSuchNodeException;
 import com.aegeanflow.core.exception.NodeRuntimeException;
 import com.aegeanflow.core.flow.*;
@@ -25,8 +25,8 @@ public class MainFlowDatabase {
                         .build()).build();
 
         AegeanFlow aegeanFlow = AegeanFlow.start();
-        DataFlowEngineFactory factory = aegeanFlow.createEngineFactory();
+        DataFlowEngineManager factory = aegeanFlow.createEngineFactory();
         DataFlowEngine engine = factory.create(flow);
-        engine.getResult();
+        engine.getResultList();
     }
 }
