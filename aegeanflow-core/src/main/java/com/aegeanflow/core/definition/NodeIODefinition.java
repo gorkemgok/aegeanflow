@@ -1,12 +1,22 @@
 package com.aegeanflow.core.definition;
 
-public class NodeInputDefinition {
+public class NodeIODefinition {
 
     private String name;
 
     private Class<?> type;
 
     private String label;
+
+    private int order;
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
     public String getName() {
         return name;

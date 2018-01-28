@@ -86,6 +86,7 @@ export default {
               newConn.uuid = connection.uuid
               newConn.type = connection.type
               newConn.inputName = connection.inputName
+              newConn.outputName = connection.outputName
               newConn.source = flow.nodes.filter(node => node.uuid === connection.fromUUID)[0]
               newConn.target = flow.nodes.filter(node => node.uuid === connection.toUUID)[0]
               return newConn

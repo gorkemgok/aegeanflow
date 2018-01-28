@@ -15,7 +15,17 @@ public class FlowConnection {
 
     private UUID toUUID;
 
+    private String outputName;
+
     private String inputName;
+
+    public String getOutputName() {
+        return outputName;
+    }
+
+    public void setOutputName(String outputName) {
+        this.outputName = outputName;
+    }
 
     public String getType() {
         return type;

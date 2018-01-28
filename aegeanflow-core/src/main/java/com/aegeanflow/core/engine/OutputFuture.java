@@ -9,13 +9,16 @@ import java.util.concurrent.TimeoutException;
 /**
  * Created by gorkem on 12.01.2018.
  */
-public class InputFuture<T> implements Future<T> {
+public class OutputFuture<T> implements Future<T> {
+
+    private final String outputName;
 
     private final String inputName;
 
     private final FlowFuture<T> future;
 
-    public InputFuture(String inputName, FlowFuture<T> future) {
+    public OutputFuture(String outputName, String inputName, FlowFuture<T> future) {
+        this.outputName = outputName;
         this.inputName = inputName;
         this.future = future;
     }
@@ -26,6 +29,10 @@ public class InputFuture<T> implements Future<T> {
 
     public String getInputName() {
         return inputName;
+    }
+
+    public String getOutputName() {
+        return outputName;
     }
 
     @Override

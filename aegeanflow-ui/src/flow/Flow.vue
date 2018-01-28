@@ -1,6 +1,12 @@
 <template>
   <div class="flow-container">
     <at-input v-model="title"/>
+    <at-modal v-for="node in nodes" :key="node.uuid" v-model="nodeModal[node.uuid]" :title="node.definition.label + ' Configuration'">
+      <p v-for="config in node.definition.configurations" :key="config.name">
+        <label :for="config.name">{{config.label}}</label>
+        <at-input :name="config.name" v-model="node.configuration[config.name]"></at-input>
+      </p>
+    </at-modal>
     <drop @drop="dropNode">
       <svg @mouseup="mouseUp" @mousemove="mouseMove" class="editor-canvas">
         <!--Temporary connection-->
@@ -24,6 +30,7 @@
           <node :key="node.uuid"
                 :node="node"
                 :connectingNode="connectingNode"
+                :connectingOutput="connectingOutput"
                 @nodeContextMenu="nodeContextMenu"
                 @nodeClick="nodeClick"
                 @nodeMouseDown="beginDrag"
@@ -36,8 +43,9 @@
         </template>
       </svg>
     </drop>
-    <context-menu ref="nodeCtxMenu">
+    <context-menu ref="nodeCtxMenu" style="margin-left:-200px">
       <at-menu mode="vertical" @on-select="nodeMenuClicked">
+        <at-menu-item name="configure"><i class="icon icon-settings"></i>Configure</at-menu-item>
         <at-menu-item name="remove"><i class="icon icon-x"></i>Remove</at-menu-item>
       </at-menu>
     </context-menu>
@@ -61,7 +69,10 @@ Vue.use(VueDragDrop)
 
 export default {
   name: 'Flow',
-  components: {Node, contextMenu},
+  components: {
+    Node,
+    contextMenu
+  },
   props: {
     flow: {
       type: Object,
@@ -83,6 +94,7 @@ export default {
         y: 0
       },
       connectingNode: null,
+      connectingOutput: null,
       connectingSourcePos: {
         x: 0,
         y: 0
@@ -90,7 +102,8 @@ export default {
       connectingTargetPos: {
         x: 0,
         y: 0
-      }
+      },
+      nodeModal: {}
     }
   },
   computed: {
@@ -117,6 +130,9 @@ export default {
       switch (name) {
         case 'remove':
           this.removeSelectedNode()
+          break
+        case 'configure':
+          this.$set(this.nodeModal, this.selectedNode.uuid, true)
           break
         default:
           break
@@ -158,22 +174,24 @@ export default {
       }
       this.nodes.push(node)
     },
-    connectNodes: function (sourceNode, targetNode, targetInput) {
+    connectNodes: function (sourceNode, targetNode, sourceOutput, targetInput) {
       if (sourceNode === targetNode) {
         return
       }
       for (let i = 0; i < this.connections.length; i++) {
-        if (this.connections[i].target === targetNode) {
+        if (this.connections[i].target === targetNode && this.connections[i].outputName === sourceOutput.name) {
           return
         }
       }
-      if (TYPES.checkType(sourceNode, targetInput) === 'ok') {
+      if (TYPES.checkType(sourceOutput, targetInput) === 'ok') {
         const connection = {
           uuid: uuid.v1(),
           type: 'line',
           source: sourceNode,
           target: targetNode,
-          inputName: targetInput.name
+          sourceOutput: sourceOutput.name,
+          inputName: targetInput.name,
+          outputName: sourceOutput.name
         }
         this.connections.push(connection)
       }
@@ -183,7 +201,6 @@ export default {
       this.$refs.connectionCtxMenu.open()
     },
     nodeContextMenu: function (node) {
-      console.log(node)
       this.selectedNode = node
       this.$refs.nodeCtxMenu.open()
     },
@@ -233,23 +250,25 @@ export default {
       this.endDrag()
       this.endConnection()
     },
-    beginConnection: function (sourceNode, sourcePos, $event) {
+    beginConnection: function (sourceNode, sourceOutput, sourcePos, $event) {
       this.connectingNode = sourceNode
+      this.connectingOutput = sourceOutput
       this.connectingSourcePos.x = sourcePos.x
       this.connectingSourcePos.y = sourcePos.y
       this.mouseMove($event)
     },
     endConnection: function (targetNode, input, $event) {
       if (targetNode && this.connectingNode) {
-        this.connectNodes(this.connectingNode, targetNode, input)
+        this.connectNodes(this.connectingNode, targetNode, this.connectingOutput, input)
       }
       this.connectingNode = null
+      this.connectingOutput = null
     },
     calculateConnectionPoints: function (connection, padding = 0, bezier = true) {
       let outputPos = connection.source
       let inputPos = connection.target
       if (connection.uuid) {
-        outputPos = POS_CALC.calculateOutputPos(connection.source)
+        outputPos = POS_CALC.calculateOutputPos(connection.source, connection.outputName)
         inputPos = POS_CALC.calculateInputPos(connection.target, connection.inputName)
       }
       if (bezier) {

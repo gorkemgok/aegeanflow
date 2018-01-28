@@ -10,19 +10,20 @@
     <text class="node-label" :x="node.x" :y="labelY" font-family="Verdana" font-size="11">
       {{node.definition.label}}
     </text>
-    <circle class="output-circle"
+    <circle v-for="(output, idx) in node.definition.outputs" :key="output.name"
+            class="output-circle"
             r="6"
-            :cx="outputPos.x"
-            :cy="outputPos.y"
-            @mousedown.left="outputMouseDown"
-            @contextmenu.prevent="outputContextMenu">
+            :cx="ioPos.outputs[idx].x"
+            :cy="ioPos.outputs[idx].y"
+            @mousedown.left="outputMouseDown(output, idx, $event)"
+            @contextmenu.prevent="outputContextMenu(output)">
     </circle>
     <circle v-for="(input, idx) in node.definition.inputs" :key="input.name"
             :class="'check-type-' + typeMatches[input.name]"
             class="input-circle"
             r="6"
-            :cx="node.x"
-            :cy="inputY[idx]"
+            :cx="ioPos.inputs[idx].x"
+            :cy="ioPos.inputs[idx].y"
             @contextmenu.prevent="inputContextMenu(input)"
             @mouseup.left="inputMouseUp(input)"
             @mouseover="inputMouseOver(input)"
@@ -40,7 +41,8 @@ export default {
       type: Object,
       required: true
     },
-    connectingNode: null
+    connectingNode: null,
+    connectingOutput: null
   },
   methods: {
     nodeContextMenu: function () {
@@ -61,8 +63,8 @@ export default {
     nodeMouseUp: function () {
       this.$emit('nodeMouseUp')
     },
-    outputMouseDown: function ($event) {
-      this.$emit('outputMouseDown', this.node, {x: this.outputPos.x, y: this.outputPos.y}, $event)
+    outputMouseDown: function (output, idx, $event) {
+      this.$emit('outputMouseDown', this.node, output, {x: this.ioPos.outputs[idx].x, y: this.ioPos.outputs[idx].y}, $event)
     },
     inputMouseUp: function (input) {
       this.$emit('inputMouseUp', this.node, input)
@@ -84,12 +86,15 @@ export default {
     }
   },
   computed: {
-    inputY: function () {
-      const inputYArr = []
+    ioPos: function () {
+      const pos = {inputs: [], outputs: []}
       for (let i = 0; i < this.node.definition.inputs.length; i++) {
-        inputYArr.push(this.node.y + (14 * i))
+        pos.inputs.push(POS_CALC.calculateIOPos(this.node, i, 'left'))
       }
-      return inputYArr
+      for (let i = 0; i < this.node.definition.outputs.length; i++) {
+        pos.outputs.push(POS_CALC.calculateIOPos(this.node, i, 'side'))
+      }
+      return pos
     },
     labelY: function () {
       return this.node.y + this.node.h + 10
@@ -100,13 +105,10 @@ export default {
         if (this.connectingNode === this.node) {
           matches[input.name] = 'notr'
         } else {
-          matches[input.name] = TYPES.checkType(this.connectingNode, input)
+          matches[input.name] = TYPES.checkType(this.connectingOutput, input)
         }
       })
       return matches
-    },
-    outputPos: function () {
-      return POS_CALC.calculateOutputPos(this.node)
     }
   },
   created: function () {

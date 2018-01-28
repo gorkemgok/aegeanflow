@@ -8,5 +8,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface NodeConfig {
+
     String label() default "";
+
+    int order() default 0;
 }

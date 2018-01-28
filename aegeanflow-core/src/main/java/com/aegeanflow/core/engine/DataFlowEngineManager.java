@@ -45,6 +45,6 @@ public class DataFlowEngineManager {
             node.setUUID(flowNode.getUUID());
             nodeList.add(node);
         }
-        return new DataFlowEngine(flow, nodeList, stateProvider, nodeRepository);
+        return new DataFlowEngine(flow, nodeList, nodeRepository, stateProvider);
     }
 }

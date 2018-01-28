@@ -1,6 +1,5 @@
 package com.aegeanflow.core.node;
 
-import com.aegeanflow.core.CompiledNodeInfo;
 import com.aegeanflow.core.CoreModule;
 import com.aegeanflow.core.definition.NodeDefinition;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
@@ -24,29 +23,29 @@ public class NodeRepository implements Initiable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeRepository.class);
 
-    private final List<CompiledNodeInfo> compiledNodeInfoList;
+    private final List<NodeInfo> nodeInfoList;
 
     private final Set<Class<? extends Node>> nodeClasses;
 
     @Inject
     public NodeRepository(@Named(CoreModule.NODE_CLASSES) Set<Class<? extends Node>> nodeClasses) {
         this.nodeClasses = nodeClasses;
-        compiledNodeInfoList = new ArrayList<>();
+        nodeInfoList = new ArrayList<>();
     }
 
     public void register(Class<? extends Node> nodeClass) throws IllegalNodeConfigurationException {
-        CompiledNodeInfo compiledNodeInfo = CompilerUtil.compile(nodeClass);
-        compiledNodeInfoList.add(compiledNodeInfo);
+        NodeInfo nodeInfo = CompilerUtil.compile(nodeClass);
+        nodeInfoList.add(nodeInfo);
     }
 
     public List<NodeDefinition> getNodeDefinitionList(){
-        return compiledNodeInfoList.stream()
-                .map(compiledNodeInfo -> compiledNodeInfo.getDefinition())
+        return nodeInfoList.stream()
+                .map(nodeInfo -> nodeInfo.getDefinition())
                 .collect(Collectors.toList());
     }
 
-    public List<CompiledNodeInfo> getCompiledNodeInfoList() {
-        return Collections.unmodifiableList(compiledNodeInfoList);
+    public List<NodeInfo> getNodeInfoList() {
+        return Collections.unmodifiableList(nodeInfoList);
     }
 
     @Override

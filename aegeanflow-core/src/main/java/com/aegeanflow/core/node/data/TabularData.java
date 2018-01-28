@@ -66,12 +66,20 @@ public class TabularData {
         }
     }
 
+    private final Schema schema;
+
+    private final List<List<Object>> data;
+
     public TabularData(Schema schema, List<List<Object>> data) {
         this.schema = schema;
         this.data = data;
     }
 
-    private final Schema schema;
+    public Schema getSchema() {
+        return schema;
+    }
 
-    private final List<List<Object>> data;
+    public List<List<Object>> getData() {
+        return data;
+    }
 }

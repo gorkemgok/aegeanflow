@@ -32,22 +32,22 @@ public class DatabaseConnectionNode extends AbstractNode<Connection> {
         return driver.connect(jdbcUrl, properties);
     }
 
-    @NodeConfig(label = "Driver Class")
+    @NodeConfig(label = "Driver Class", order = 1)
     public void setJdbcClass(String jdbcClass) {
         this.jdbcClass = jdbcClass;
     }
 
-    @NodeConfig(label = "Database Url")
+    @NodeConfig(label = "Database Url", order = 2)
     public void setJdbcUrl(String jdbcUrl) {
         this.jdbcUrl = jdbcUrl;
     }
 
-    @NodeConfig(label = "Database Username")
+    @NodeConfig(label = "Database Username", order = 3)
     public void setUser(String user) {
         this.user = user;
     }
 
-    @NodeConfig(label = "Database Password")
+    @NodeConfig(label = "Database Password", order = 4)
     public void setPassword(String password) {
         this.password = password;
     }

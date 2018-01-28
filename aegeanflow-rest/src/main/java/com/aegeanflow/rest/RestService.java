@@ -59,11 +59,11 @@ public class RestService implements AegeanFlowService {
                 return aegeanFlow.getNodeRepository().getNodeDefinitionList();
             }, jsonTransformer);
 
-            post("/flow",  (req, res) -> {
+            post("/flow",  "application/json", (req, res) -> {
                 Flow flow = objectMapper.readValue(req.body(), Flow.class);
                 flow = workspace.save(flow);
-                return flow.getUuid();
-            });
+                return new UUIDProxy(flow.getUuid());
+            }, jsonTransformer);
 
             post("/flow/run",  (req, res) -> {
                 Flow flow = new ObjectMapper().readValue(req.body(), Flow.class);
@@ -73,7 +73,7 @@ public class RestService implements AegeanFlowService {
                     Object object = flowFuture.get();
                     System.out.println(object);
                 }
-                return flow.getUuid();
+                return new UUIDProxy(flow.getUuid());
             });
 
             get("/flow/list",  (req, res) -> {

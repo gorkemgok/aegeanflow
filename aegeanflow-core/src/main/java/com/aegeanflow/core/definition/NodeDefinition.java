@@ -10,19 +10,11 @@ public class NodeDefinition {
 
     private String label;
 
-    private List<NodeInputDefinition> inputs;
+    private List<NodeIODefinition> inputs;
+
+    private List<NodeIODefinition> outputs;
 
     private List<NodeConfigurationDefinition> configurations;
-
-    private Class<?> returnType;
-
-    public Class<?> getReturnType() {
-        return returnType;
-    }
-
-    public void setReturnType(Class<?> returnType) {
-        this.returnType = returnType;
-    }
 
     public Class<? extends Node> getType() {
         return type;
@@ -40,12 +32,20 @@ public class NodeDefinition {
         this.label = label;
     }
 
-    public List<NodeInputDefinition> getInputs() {
+    public List<NodeIODefinition> getInputs() {
         return inputs;
     }
 
-    public void setInputs(List<NodeInputDefinition> inputs) {
+    public void setInputs(List<NodeIODefinition> inputs) {
         this.inputs = inputs;
+    }
+
+    public List<NodeIODefinition> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(List<NodeIODefinition> outputs) {
+        this.outputs = outputs;
     }
 
     public List<NodeConfigurationDefinition> getConfigurations() {
