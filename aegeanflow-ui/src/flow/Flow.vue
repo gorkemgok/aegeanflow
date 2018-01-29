@@ -179,7 +179,7 @@ export default {
         return
       }
       for (let i = 0; i < this.connections.length; i++) {
-        if (this.connections[i].target === targetNode && this.connections[i].outputName === sourceOutput.name) {
+        if (this.connections[i].target === targetNode && this.connections[i].inputName === targetInput.name) {
           return
         }
       }

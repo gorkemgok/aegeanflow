@@ -5,7 +5,7 @@ import java.util.UUID;
 /**
  * Created by gorkem on 12.01.2018.
  */
-public class NodeRuntimeException extends Exception {
+public class NodeRuntimeException extends RuntimeException {
 
     private final UUID nodeUUID;
 

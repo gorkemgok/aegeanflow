@@ -7,7 +7,7 @@ import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
 @NodeEntry
-public class DataSchemar extends AbstractNode<TabularData>{
+public class DataSchemarNode extends AbstractNode<TabularData>{
 
     private SchemalessData data;
 

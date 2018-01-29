@@ -101,9 +101,8 @@ export default {
   created: function () {
     HTTP.get('node/list').then(res => {
       this.nodeRepository = res.data
+      this.getFlows()
     })
-
-    this.getFlows()
   }
 }
 </script>

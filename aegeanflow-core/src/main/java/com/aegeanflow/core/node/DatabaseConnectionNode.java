@@ -19,9 +19,9 @@ public class DatabaseConnectionNode extends AbstractNode<Connection> {
 
     private String jdbcUrl;
 
-    private String user;
+    private String user = "";
 
-    private String password;
+    private String password = "";
 
     @Override
     public Connection call() throws Exception {

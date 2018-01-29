@@ -23,6 +23,18 @@ public class AegeanFlow {
     private static AegeanFlow aegeanFlow;
 
     private static final Object LOCK = new Object();
+
+    public static AegeanFlow start(Injector injector){
+        if (aegeanFlow == null){
+            synchronized (LOCK){
+                if (aegeanFlow == null){
+                    aegeanFlow = new AegeanFlow(injector);
+                }
+            }
+        }
+        return aegeanFlow;
+    }
+
     public static AegeanFlow start(){
         if (aegeanFlow == null){
             synchronized (LOCK){

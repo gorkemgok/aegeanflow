@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -59,9 +60,9 @@ public class DataFlowEngine {
     private void updateStatus(UUID uuid, NodeStatus status){
         statusMap.put(uuid, status);
         //TODO: remove and trigger node status listerner
-        StringJoiner sj = new StringJoiner("\n", "--------\n", "");
+        StringJoiner sj = new StringJoiner("\n", "\n--------\n", "\n--------\n");
         statusMap.forEach((k, v) -> sj.add(k.toString() + " - " + v));
-        System.out.println(sj.toString());
+        LOGGER.info(sj.toString());
     }
 
     public List<FlowFuture> getResultList() throws NoSuchNodeException, NodeRuntimeException {
@@ -89,7 +90,10 @@ public class DataFlowEngine {
         try {
             //CONTROL STATE FROM PREVIOUS RUN
             if (useState && outputState.containsKey(node.getUUID())){
-                return outputState.get(node.getUUID());
+                FlowFuture flowFuture = outputState.get(node.getUUID());
+                if (flowFuture.isDone() && !flowFuture.isCompletedExceptionally()){
+                    return flowFuture;
+                }
             }
             //CONTROL IF ALREADY RUNNING
             FlowFuture<T> flowFuture;
@@ -97,44 +101,55 @@ public class DataFlowEngine {
                 return flowFuture;
             }
             //RUN NODE
-            FutureTask<T> futureTask = new FutureTask<>(() -> {
+            Supplier<T> futureTask = () -> {
                 //RUN INPUT NODES
-                List<IOPair> IOPairList = getIOPairList(node.getUUID());
-                List<OutputFuture> outputFutures = new ArrayList<>();
-                for (IOPair ioPair : IOPairList) {
-                    FlowFuture outputFuture = runNode(ioPair.node, useState);
-                    outputFutures.add(new OutputFuture(ioPair.outputName, ioPair.inputName, outputFuture));
-                }
-
-                List <FlowInput> inputList = new ArrayList<>();
-                for (OutputFuture outputFuture : outputFutures){
-                    try {
-                        Object input = outputFuture.get();
-                        if (input.getClass().getAnnotation(NodeOutputBean.class) != null) {
-                            for (Method method : input.getClass().getMethods()) {
-                                NodeOutput nodeOutput = method.getAnnotation(NodeOutput.class);
-                                if (nodeOutput != null && CompilerUtil.getVarName(method).equals(outputFuture.getOutputName())) {
-                                    inputList.add(new FlowInput(outputFuture.getInputName(), method.invoke(input)));
-                                }
-                            }
-                        } else {
-                          inputList.add(new FlowInput(outputFuture.getInputName(), input));
-                        }
-                        updateStatus(outputFuture.getUUID(), NodeStatus.DONE);
-                    }catch (ExecutionException e){
-                        updateStatus(outputFuture.getUUID(), NodeStatus.FAILED);
-                        throw new NodeRuntimeException(e.getCause(), node.getUUID());
+                try {
+                    List<IOPair> IOPairList = getIOPairList(node.getUUID());
+                    List<OutputFuture> outputFutures = new ArrayList<>();
+                    for (IOPair ioPair : IOPairList) {
+                        FlowFuture outputFuture = runNode(ioPair.node, useState);
+                        outputFutures.add(new OutputFuture(ioPair.outputName, ioPair.inputName, outputFuture));
                     }
+
+                    List<FlowInput> inputList = new ArrayList<>();
+                    for (OutputFuture outputFuture : outputFutures) {
+                        try {
+                            Object input = outputFuture.get();
+                            if (input.getClass().getAnnotation(NodeOutputBean.class) != null) {
+                                for (Method method : input.getClass().getMethods()) {
+                                    NodeOutput nodeOutput = method.getAnnotation(NodeOutput.class);
+                                    if (nodeOutput != null && CompilerUtil.getVarName(method).equals(outputFuture.getOutputName())) {
+                                        inputList.add(new FlowInput(outputFuture.getInputName(), method.invoke(input)));
+                                    }
+                                }
+                            } else {
+                                inputList.add(new FlowInput(outputFuture.getInputName(), input));
+                            }
+                            updateStatus(outputFuture.getUUID(), NodeStatus.DONE);
+                        } catch (ExecutionException e) {
+                            updateStatus(outputFuture.getUUID(), NodeStatus.FAILED);
+                            if (e.getCause() instanceof NodeRuntimeException) {
+                                throw new NodeRuntimeException(e.getCause().getCause(), node.getUUID());
+                            }
+                            throw new NodeRuntimeException(e.getCause(), node.getUUID());
+                        }
+                    }
+                    setNodeInputs(node, inputList);
+                    updateStatus(node.getUUID(), NodeStatus.RUNNING);
+                    LOGGER.info("Running node {}", node.getUUID());
+                    return node.call();
+                }catch (NodeRuntimeException e) {
+                    updateStatus(node.getUUID(), NodeStatus.FAILED);
+                    throw e;
+                }catch (Exception e) {
+                    updateStatus(node.getUUID(), NodeStatus.FAILED);
+                    throw new NodeRuntimeException(e, node.getUUID());
                 }
-                setNodeInputs(node, inputList);
-                updateStatus(node.getUUID(), NodeStatus.RUNNING);
-                LOGGER.info("Running node {}", node.getUUID());
-                return node.call();
-            });
-            flowFuture = new FlowFuture<>(node.getUUID(), futureTask);
+            };
+            CompletableFuture<T> completableFuture = CompletableFuture.supplyAsync(futureTask, executor);
+            flowFuture = new FlowFuture<>(node.getUUID(), completableFuture);
             runningTasks.put(node.getUUID(), flowFuture);
             outputState.put(node.getUUID(), flowFuture);
-            executor.submit(futureTask);
             return flowFuture;
         } catch (Exception e) {
             //SET STATUS AS CANCELLED for WAITING and RUNNING Nodes

@@ -3,8 +3,7 @@ package com.aegeanflow.application;
 import com.aegeanflow.core.AegeanFlow;
 import com.aegeanflow.core.CoreModule;
 import com.aegeanflow.core.spi.AegeanFlowService;
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
+import com.google.inject.*;
 import com.google.inject.multibindings.Multibinder;
 import com.gorkemgok.annoconf.*;
 import com.gorkemgok.annoconf.guice.AnnoConfModule;
@@ -56,8 +55,11 @@ public class BootstrapModule extends AbstractModule {
         } catch (CrossDependencyException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
 
-        AegeanFlow aegeanFlow = AegeanFlow.start();
-        bind(AegeanFlow.class).toInstance(aegeanFlow);
+    @Provides
+    @Singleton
+    AegeanFlow provideAegeanFlow(Injector injector) {
+        return AegeanFlow.start(injector);
     }
 }

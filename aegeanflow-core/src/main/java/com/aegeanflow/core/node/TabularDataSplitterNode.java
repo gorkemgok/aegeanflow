@@ -7,7 +7,7 @@ import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
 @NodeEntry
-public class TabularDataSplitter extends AbstractNode<SplittedTabularData> {
+public class TabularDataSplitterNode extends AbstractNode<SplittedTabularData> {
 
     private TabularData input;
 

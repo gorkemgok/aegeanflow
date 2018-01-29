@@ -41,7 +41,7 @@ public class CompilerUtil {
                             nodeOutputDefinitionList.add(nodeIODefinition);
                         }
                     }
-                }else{
+                }else if (!callMethod.getReturnType().equals(Void.class)){
                     NodeIODefinition nodeIODefinition = new NodeIODefinition();
                     nodeIODefinition.setType(callMethod.getReturnType());
                     nodeIODefinition.setName("main");

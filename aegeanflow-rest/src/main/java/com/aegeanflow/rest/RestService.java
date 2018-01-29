@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by gorkem on 15.01.2018.
@@ -66,14 +67,18 @@ public class RestService implements AegeanFlowService {
             }, jsonTransformer);
 
             post("/flow/run",  (req, res) -> {
-                Flow flow = new ObjectMapper().readValue(req.body(), Flow.class);
-                DataFlowEngine de = flowManager.create(flow);
-                List<FlowFuture> flowFutureList = de.getResultList();
-                for (FlowFuture flowFuture : flowFutureList){
-                    Object object = flowFuture.get();
-                    System.out.println(object);
+                try {
+                    Flow flow = new ObjectMapper().readValue(req.body(), Flow.class);
+                    DataFlowEngine de = flowManager.create(flow);
+                    List<FlowFuture> flowFutureList = de.getResultList();
+                    for (FlowFuture flowFuture : flowFutureList) {
+                        Object object = flowFuture.get();
+                        System.out.println(object);
+                    }
+                    return new UUIDProxy(flow.getUuid());
+                } catch (ExecutionException e) {
+                    throw (NodeRuntimeException) e.getCause();
                 }
-                return new UUIDProxy(flow.getUuid());
             });
 
             get("/flow/list",  (req, res) -> {
@@ -83,7 +88,7 @@ public class RestService implements AegeanFlowService {
         });
 
         exception(NodeRuntimeException.class, (e, req, res) -> {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("UUID: {}. {}",e.getNodeUUID(), e.getMessage());
             res.status(500);
             res.type("application/json");
             try {
@@ -95,6 +100,7 @@ public class RestService implements AegeanFlowService {
 
         exception(Exception.class, (e, req, res) -> {
             LOGGER.error(e.getMessage());
+            LOGGER.error(e.getCause().getMessage());
             res.status(500);
             res.body(e.getMessage());
         });
