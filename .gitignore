@@ -39,4 +39,4 @@ buildNumber.properties
 node_modules/
 aegeanflow-ui/node/
 log/
-*.aflow
+/*.aflow
