@@ -22,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -126,7 +127,7 @@ public class DataFlowEngine {
                 return flowFuture;
             }
             //RUN NODE
-            Supplier<T> nodeRunTask = () -> {
+            Supplier<List<FlowInput>> supplyInputs = () -> {
                 //RUN INPUT NODES
                 try {
                     List<IOPair> IOPairList = getIOPairList(runnableNode.getUUID());
@@ -163,6 +164,19 @@ public class DataFlowEngine {
                             e.printStackTrace();
                         }
                     }
+                    return inputList;
+                }catch (NodeRuntimeException e) {
+                    updateStatus(runnableNode, NodeStatus.FAILED);
+                    throw e;
+                }catch (Exception e) {
+                    updateStatus(runnableNode, NodeStatus.FAILED);
+                    throw new NodeRuntimeException(e, runnableNode.getUUID());
+                }
+            };
+
+            Function<List<FlowInput>, T> nodeRunTask = (inputList) -> {
+                //RUN INPUT NODES
+                try {
                     setNodeInputs(runnableNode, inputList);
                     updateStatus(runnableNode, NodeStatus.RUNNING);
                     return runnableNode.call();
@@ -174,7 +188,9 @@ public class DataFlowEngine {
                     throw new NodeRuntimeException(e, runnableNode.getUUID());
                 }
             };
-            CompletableFuture<T> completableFuture = CompletableFuture.supplyAsync(nodeRunTask, executor);
+            CompletableFuture<T> completableFuture = CompletableFuture
+                    .supplyAsync(supplyInputs, executor)
+                    .thenApply(nodeRunTask);
             completableFuture
                     .thenAccept(result -> System.out.println("Result:" + result))
                     .exceptionally(e -> {
