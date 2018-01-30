@@ -4,7 +4,7 @@ import com.aegeanflow.core.definition.NodeConfigurationDefinition;
 import com.aegeanflow.core.definition.NodeDefinition;
 import com.aegeanflow.core.definition.NodeIODDefComparator;
 import com.aegeanflow.core.definition.NodeIODefinition;
-import com.aegeanflow.core.spi.Node;
+import com.aegeanflow.core.spi.RunnableNode;
 import com.aegeanflow.core.spi.annotation.*;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
 
@@ -14,7 +14,7 @@ import java.util.*;
 
 public class CompilerUtil {
 
-    public static NodeInfo compile(Class<? extends Node> nodeClass) throws IllegalNodeConfigurationException {
+    public static NodeInfo compile(Class<? extends RunnableNode> nodeClass) throws IllegalNodeConfigurationException {
         Map<String, Method> inputMethods = new HashMap<>();
         Map<String, Method> configMethods = new HashMap<>();
         NodeEntry nodeEntry = nodeClass.getAnnotation(NodeEntry.class);
@@ -51,7 +51,7 @@ public class CompilerUtil {
                 }
 
             } catch (NoSuchMethodException e) {
-                throw new IllegalNodeConfigurationException("Node class must have a call() method with no parameter");
+                throw new IllegalNodeConfigurationException("RunnableNode class must have a call() method with no parameter");
             }
             for (Method method : nodeClass.getMethods()) {
                 NodeInput nodeInput = method.getAnnotation(NodeInput.class);
@@ -94,7 +94,7 @@ public class CompilerUtil {
             nodeDefinition.setConfigurations(nodeConfigurationDefinitionList);
             return new NodeInfo(nodeClass, nodeDefinition, inputMethods, configMethods);
         }
-        throw new IllegalNodeConfigurationException("Node type must have @NodeEntry annotation");
+        throw new IllegalNodeConfigurationException("RunnableNode type must have @NodeEntry annotation");
     }
 
     public static String getVarName(Method method){

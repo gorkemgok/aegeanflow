@@ -3,7 +3,7 @@ package com.aegeanflow.core.node;
 import com.aegeanflow.core.Precondition;
 import com.aegeanflow.core.node.data.Convertor;
 import com.aegeanflow.core.node.data.DataUtil;
-import com.aegeanflow.core.spi.AbstractNode;
+import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
@@ -17,7 +17,7 @@ import java.sql.ResultSet;
  * Created by gorkem on 12.01.2018.
  */
 @NodeEntry(label = "Database Reader")
-public class DatabaseReaderNode extends AbstractNode<TabularData> {
+public class DatabaseReaderNode extends AbstractRunnableNode<TabularData> {
 
     private String query;
 

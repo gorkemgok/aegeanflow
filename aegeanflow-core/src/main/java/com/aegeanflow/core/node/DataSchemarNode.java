@@ -2,12 +2,12 @@ package com.aegeanflow.core.node;
 
 import com.aegeanflow.core.node.data.SchemalessData;
 import com.aegeanflow.core.node.data.TabularData;
-import com.aegeanflow.core.spi.AbstractNode;
+import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
 @NodeEntry
-public class DataSchemarNode extends AbstractNode<TabularData>{
+public class DataSchemarNode extends AbstractRunnableNode<TabularData> {
 
     private SchemalessData data;
 

@@ -1,5 +1,7 @@
 package com.aegeanflow.core.engine;
 
+import com.aegeanflow.core.spi.Node;
+
 import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.function.*;
@@ -9,17 +11,21 @@ import java.util.function.*;
  */
 public class FlowFuture<T> extends CompletableFuture<T> {
 
-    private final UUID uuid;
+    private final Node node;
 
     private final CompletableFuture<T> future;
 
-    public FlowFuture(UUID uuid, CompletableFuture<T> future) {
-        this.uuid = uuid;
+    public FlowFuture(Node node, CompletableFuture<T> future) {
+        this.node = node;
         this.future = future;
     }
 
     public UUID getUuid() {
-        return uuid;
+        return node.getUUID();
+    }
+
+    public Node getNode() {
+        return node;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.aegeanflow.core.node;
 
-import com.aegeanflow.core.spi.AbstractNode;
+import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
@@ -8,7 +8,7 @@ import com.aegeanflow.core.spi.annotation.NodeInput;
  * Created by gorkem on 29.01.2018.
  */
 @NodeEntry(label = "Convert to String")
-public class ConvertToStringNode extends AbstractNode<String>{
+public class ConvertToStringNode extends AbstractRunnableNode<String> {
 
     private Object input;
 

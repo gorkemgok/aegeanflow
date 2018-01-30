@@ -8,14 +8,14 @@
           :x="node.x" :y="node.y" :width="node.w" :height="node.h"
           rx="4" ry="4" :style="{fill: node.color}"></rect>
     <text class="node-label" :x="node.x" :y="labelY" font-family="Verdana" font-size="11">
-      {{node.definition.label}}
+      {{node.name}} - {{node.definition.label}}
     </text>
     <circle v-for="(output, idx) in node.definition.outputs" :key="output.name"
             class="output-circle"
             r="6"
             :cx="ioPos.outputs[idx].x"
             :cy="ioPos.outputs[idx].y"
-            @mousedown.left="outputMouseDown(output, idx, $event)"
+            @mousedown.left.prevent="outputMouseDown(output, idx, $event)"
             @contextmenu.prevent="outputContextMenu(output)">
     </circle>
     <circle v-for="(input, idx) in node.definition.inputs" :key="input.name"
@@ -29,6 +29,10 @@
             @mouseover="inputMouseOver(input)"
             @mouseout="inputMouseOut(input)">
     </circle>
+    <rect :x="waitPos.input.x" :y="node.y + node.h - 8" width="8" height="8"
+          @mouseup.prevent="waitMouseUp"/>
+    <rect :x="waitPos.output.x" :y="node.y + node.h - 8" width="8" height="8"
+          @mousedown.prevent="waitMouseDown"/>
   </g>
 </template>
 <script>
@@ -56,6 +60,12 @@ export default {
     },
     nodeClick: function () {
       this.$emit('nodeClick', this.node)
+    },
+    waitMouseDown: function ($event) {
+      this.$emit('waitMouseDown', this.node, $event)
+    },
+    waitMouseUp: function ($event) {
+      this.$emit('waitMouseUp', this.node, $event)
     },
     nodeMouseDown: function ($event) {
       this.$emit('nodeMouseDown', this.node, $event)
@@ -86,6 +96,9 @@ export default {
     }
   },
   computed: {
+    waitPos: function () {
+      return POS_CALC.calculateWaitPos(this.node)
+    },
     ioPos: function () {
       const pos = {inputs: [], outputs: []}
       for (let i = 0; i < this.node.definition.inputs.length; i++) {

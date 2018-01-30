@@ -1,6 +1,7 @@
 package com.aegeanflow.core.flow;
 
 import com.aegeanflow.core.spi.Node;
+import com.aegeanflow.core.spi.RunnableNode;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -13,16 +14,27 @@ import java.util.UUID;
  * Created by gorkem on 12.01.2018.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FlowNode {
+public class FlowNode implements Node{
+
+    private String name;
 
     private UUID uuid;
 
-    private Class<? extends Node> nodeClass;
+    private Class<? extends RunnableNode> nodeClass;
 
     private Map<String, Object> configuration;
 
     private Double x, y, w, h;
     private String color;
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Map<String, Object> getConfiguration() {
         return configuration;
@@ -43,11 +55,11 @@ public class FlowNode {
     @JsonSerialize(using = ClassSerializer.class)
     @JsonDeserialize(using = ClassDeserializer.class)
     @JsonProperty("type")
-    public Class<? extends Node> getNodeClass() {
+    public Class<? extends RunnableNode> getNodeClass() {
         return nodeClass;
     }
 
-    public void setNodeClass(Class<? extends Node> nodeClass) {
+    public void setNodeClass(Class<? extends RunnableNode> nodeClass) {
         this.nodeClass = nodeClass;
     }
 

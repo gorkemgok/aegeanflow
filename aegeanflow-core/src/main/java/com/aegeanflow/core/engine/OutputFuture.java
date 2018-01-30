@@ -11,28 +11,21 @@ import java.util.concurrent.TimeoutException;
  */
 public class OutputFuture<T> implements Future<T> {
 
-    private final String outputName;
-
-    private final String inputName;
+    private final DataFlowEngine.IOPair ioPair;
 
     private final FlowFuture<T> future;
 
-    public OutputFuture(String outputName, String inputName, FlowFuture<T> future) {
-        this.outputName = outputName;
-        this.inputName = inputName;
+    public OutputFuture(DataFlowEngine.IOPair ioPair, FlowFuture<T> future) {
+        this.ioPair = ioPair;
         this.future = future;
+    }
+
+    public DataFlowEngine.IOPair getIoPair() {
+        return ioPair;
     }
 
     public UUID getUUID(){
         return future.getUuid();
-    }
-
-    public String getInputName() {
-        return inputName;
-    }
-
-    public String getOutputName() {
-        return outputName;
     }
 
     @Override

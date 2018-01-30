@@ -7,9 +7,13 @@ import java.util.UUID;
  */
 public class FlowConnection {
 
+    public enum Type {
+        FLOW, WAIT
+    }
+
     private UUID uuid;
 
-    private String type;
+    private Type type;
 
     private UUID fromUUID;
 
@@ -27,11 +31,11 @@ public class FlowConnection {
         this.outputName = outputName;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 

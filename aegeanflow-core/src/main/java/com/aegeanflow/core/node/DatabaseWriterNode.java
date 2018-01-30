@@ -1,7 +1,7 @@
 package com.aegeanflow.core.node;
 
 import com.aegeanflow.core.node.data.TabularData;
-import com.aegeanflow.core.spi.AbstractNode;
+import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
@@ -18,7 +18,7 @@ import static java.lang.String.format;
  * Created by gorkem on 29.01.2018.
  */
 @NodeEntry(label = "Database Writer")
-public class DatabaseWriterNode extends AbstractNode<Void> {
+public class DatabaseWriterNode extends AbstractRunnableNode<Void> {
 
     private Connection connection;
 

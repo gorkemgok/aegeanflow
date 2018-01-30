@@ -1,12 +1,12 @@
 package com.aegeanflow.core.definition;
 
-import com.aegeanflow.core.spi.Node;
+import com.aegeanflow.core.spi.RunnableNode;
 
 import java.util.List;
 
 public class NodeDefinition {
 
-    private Class<? extends Node> type;
+    private Class<? extends RunnableNode> type;
 
     private String label;
 
@@ -16,11 +16,11 @@ public class NodeDefinition {
 
     private List<NodeConfigurationDefinition> configurations;
 
-    public Class<? extends Node> getType() {
+    public Class<? extends RunnableNode> getType() {
         return type;
     }
 
-    public void setType(Class<? extends Node> type) {
+    public void setType(Class<? extends RunnableNode> type) {
         this.type = type;
     }
 

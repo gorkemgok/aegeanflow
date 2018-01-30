@@ -50,7 +50,7 @@ public class MainFlow2 {
         Injector injector = Guice.createInjector(new CoreModule());
         DataFlowEngineManager dataFlowEngineManager = injector.getInstance(DataFlowEngineManager.class);
         try {
-            DataFlowEngine dataFlowEngine = dataFlowEngineManager.create(flow);
+            DataFlowEngine dataFlowEngine = dataFlowEngineManager.create(flow, true);
             FlowFuture future = dataFlowEngine.getResult(stringSuffixNode.getUUID());
             System.out.println(future.get());
         } catch (ClassNotFoundException e) {

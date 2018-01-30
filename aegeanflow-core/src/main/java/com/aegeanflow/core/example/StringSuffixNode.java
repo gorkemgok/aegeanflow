@@ -1,6 +1,6 @@
 package com.aegeanflow.core.example;
 
-import com.aegeanflow.core.spi.AbstractNode;
+import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
@@ -9,7 +9,7 @@ import com.aegeanflow.core.spi.annotation.NodeInput;
  * Created by gorkem on 12.01.2018.
  */
 @NodeEntry
-public class StringSuffixNode extends AbstractNode<String>{
+public class StringSuffixNode extends AbstractRunnableNode<String> {
 
     private String suffix;
 

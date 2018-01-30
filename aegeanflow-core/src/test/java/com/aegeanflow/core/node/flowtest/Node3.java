@@ -1,12 +1,12 @@
 package com.aegeanflow.core.node.flowtest;
 
-import com.aegeanflow.core.spi.AbstractNode;
+import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
 @NodeEntry
-public class Node3 extends AbstractNode<StringIntegerPairOutput>{
+public class Node3 extends AbstractRunnableNode<StringIntegerPairOutput> {
 
     private String repeatedText;
 

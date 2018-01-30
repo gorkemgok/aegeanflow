@@ -1,6 +1,6 @@
 package com.aegeanflow.core.node;
 
-import com.aegeanflow.core.spi.AbstractNode;
+import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 @NodeEntry
-public class TestNode2IN2OUT extends AbstractNode<TestNodeOutput> {
+public class TestNode2IN2OUT extends AbstractRunnableNode<TestNodeOutput> {
 
     public static final String NODE_CONG_NAME = "Config List";
 

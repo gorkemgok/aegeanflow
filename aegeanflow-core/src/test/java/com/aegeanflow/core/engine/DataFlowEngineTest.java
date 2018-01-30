@@ -7,7 +7,7 @@ import com.aegeanflow.core.node.NodeRepository;
 import com.aegeanflow.core.node.flowtest.Node1;
 import com.aegeanflow.core.node.flowtest.Node2;
 import com.aegeanflow.core.node.flowtest.Node3;
-import com.aegeanflow.core.spi.Node;
+import com.aegeanflow.core.spi.RunnableNode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.testng.annotations.BeforeTest;
@@ -24,13 +24,13 @@ public class DataFlowEngineTest {
 
     Flow flow;
     List<FlowNode> flowNodeList = new ArrayList<>();
-    List<Node<?>> nodeList = new ArrayList<>();
+    List<RunnableNode<?>> runnableNodeList = new ArrayList<>();
     List<FlowConnection> flowConnectionList = new ArrayList<>();
     NodeRepository nodeRepository;
 
     @BeforeTest
     public void setup(){
-        Set<Class<? extends Node>> nodeClasses = ImmutableSet.of(Node1.class, Node2.class, Node3.class);
+        Set<Class<? extends RunnableNode>> nodeClasses = ImmutableSet.of(Node1.class, Node2.class, Node3.class);
         nodeRepository = new NodeRepository(nodeClasses);
         nodeRepository.init();
 
@@ -42,14 +42,14 @@ public class DataFlowEngineTest {
         FlowNode flowNode1 = new FlowNode();
         flowNode1.setNodeClass(Node1.class);
         flowNode1.setUUID(UUID.randomUUID());
-        flowNode1.setConfiguration(ImmutableMap.of("seedText", "seed text node 1"));
+        flowNode1.setConfiguration(ImmutableMap.of("seedText", "seed text runnableNode 1"));
         Node1 node1 = new Node1();
         node1.setUUID(flowNode1.getUUID());
 
         FlowNode flowNode2 = new FlowNode();
         flowNode2.setNodeClass(Node2.class);
         flowNode2.setUUID(UUID.randomUUID());
-        flowNode2.setConfiguration(ImmutableMap.of("text", "text node 2", "length", 3));
+        flowNode2.setConfiguration(ImmutableMap.of("text", "text runnableNode 2", "length", 3));
         Node2 node2 = new Node2();
         node2.setUUID(flowNode2.getUUID());
 
@@ -62,7 +62,7 @@ public class DataFlowEngineTest {
 
         FlowConnection flowConnection1_3 = new FlowConnection();
         flowConnection1_3.setUuid(UUID.randomUUID());
-        flowConnection1_3.setType("line");
+        flowConnection1_3.setType(FlowConnection.Type.FLOW);
         flowConnection1_3.setFromUUID(flowNode1.getUUID());
         flowConnection1_3.setOutputName("seedText");
         flowConnection1_3.setToUUID(flowNode3.getUUID());
@@ -70,7 +70,7 @@ public class DataFlowEngineTest {
 
         FlowConnection flowConnection21_3 = new FlowConnection();
         flowConnection21_3.setUuid(UUID.randomUUID());
-        flowConnection21_3.setType("line");
+        flowConnection21_3.setType(FlowConnection.Type.FLOW);
         flowConnection21_3.setFromUUID(flowNode2.getUUID());
         flowConnection21_3.setOutputName("text");
         flowConnection21_3.setToUUID(flowNode3.getUUID());
@@ -78,7 +78,7 @@ public class DataFlowEngineTest {
 
         FlowConnection flowConnection22_3 = new FlowConnection();
         flowConnection22_3.setUuid(UUID.randomUUID());
-        flowConnection22_3.setType("line");
+        flowConnection22_3.setType(FlowConnection.Type.FLOW);
         flowConnection22_3.setFromUUID(flowNode2.getUUID());
         flowConnection22_3.setOutputName("count");
         flowConnection22_3.setToUUID(flowNode3.getUUID());
@@ -88,9 +88,9 @@ public class DataFlowEngineTest {
         flowNodeList.add(flowNode2);
         flowNodeList.add(flowNode3);
 
-        nodeList.add(node1);
-        nodeList.add(node2);
-        nodeList.add(node3);
+        runnableNodeList.add(node1);
+        runnableNodeList.add(node2);
+        runnableNodeList.add(node3);
 
         flowConnectionList.add(flowConnection1_3);
         flowConnectionList.add(flowConnection21_3);
@@ -99,11 +99,11 @@ public class DataFlowEngineTest {
 
     @Test
     public void testGetIOPairList() throws Exception {
-        DataFlowEngine dfe = new DataFlowEngine(flow, nodeList,  nodeRepository, null);
-        List<DataFlowEngine.IOPair> ioPairs = dfe.getIOPairList(nodeList.get(2).getUUID());
+        DataFlowEngine dfe = new DataFlowEngine(flow, runnableNodeList,  nodeRepository, null);
+        List<DataFlowEngine.IOPair> ioPairs = dfe.getIOPairList(runnableNodeList.get(2).getUUID());
         assertEquals(ioPairs.size(), 3);
 
-        FlowFuture future = dfe.getResult(nodeList.get(2).getUUID());
+        FlowFuture future = dfe.getResult(runnableNodeList.get(2).getUUID());
         Object object = future.get();
         object.toString();
     }

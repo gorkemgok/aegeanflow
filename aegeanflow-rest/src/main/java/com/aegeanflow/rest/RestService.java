@@ -67,18 +67,13 @@ public class RestService implements AegeanFlowService {
             }, jsonTransformer);
 
             post("/flow/run",  (req, res) -> {
-                try {
-                    Flow flow = new ObjectMapper().readValue(req.body(), Flow.class);
-                    DataFlowEngine de = flowManager.create(flow);
-                    List<FlowFuture> flowFutureList = de.getResultList();
-                    for (FlowFuture flowFuture : flowFutureList) {
-                        Object object = flowFuture.get();
-                        System.out.println(object);
-                    }
-                    return new UUIDProxy(flow.getUuid());
-                } catch (ExecutionException e) {
-                    throw (NodeRuntimeException) e.getCause();
+                Flow flow = new ObjectMapper().readValue(req.body(), Flow.class);
+                DataFlowEngine de = flowManager.create(flow, true);
+                List<Object> resultList = de.getResultList();
+                for (Object result : resultList) {
+                    System.out.println(result);
                 }
+                return new UUIDProxy(flow.getUuid());
             });
 
             get("/flow/list",  (req, res) -> {

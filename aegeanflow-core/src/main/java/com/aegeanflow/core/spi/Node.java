@@ -1,11 +1,15 @@
 package com.aegeanflow.core.spi;
 
 import java.util.UUID;
-import java.util.concurrent.Callable;
 
-public interface Node<T> extends Callable<T>{
-
-    void setUUID(UUID uuid);
+/**
+ * Created by gorkem on 30.01.2018.
+ */
+public interface Node {
 
     UUID getUUID();
+
+    Class<? extends RunnableNode> getNodeClass();
+
+    String getName();
 }

@@ -10,14 +10,26 @@
     <drop @drop="dropNode">
       <svg @mouseup="mouseUp" @mousemove="mouseMove" class="editor-canvas">
         <!--Temporary connection-->
-        <template v-if="connectingNode">
+        <template v-if="connectingNode && connectingOutput">
           <path class="temporary-connection rolling-dashes"
+                :d="calculateConnectionPoints({source: connectingSourcePos, target: connectingTargetPos}, 1)">
+          </path>
+        </template>
+        <template v-if="connectingNode && !connectingOutput">
+          <path class="temporary-wait-connection rolling-dashes"
                 :d="calculateConnectionPoints({source: connectingSourcePos, target: connectingTargetPos}, 1)">
           </path>
         </template>
         <!--Connections-->
         <template v-for="(connection, idx) in connections">
-          <path class="connection" v-if="connection.type == 'line'"
+          <path class="connection" v-if="connection.type == 'FLOW'"
+                :key="connection.uuid"
+                :class="isSelectedConnArr[idx] ? 'selected-connection' : ''"
+                :d="calculateConnectionPoints(connection)"
+                @click="selectConnection(connection)"
+                @contextmenu.prevent="connectionContextMenu(connection)">
+          </path>
+          <path class="wait-connection" v-else-if="connection.type == 'WAIT'"
                 :key="connection.uuid"
                 :class="isSelectedConnArr[idx] ? 'selected-connection' : ''"
                 :d="calculateConnectionPoints(connection)"
@@ -38,7 +50,9 @@
                 @outputMouseDown="beginConnection"
                 @inputMouseUp="endConnection"
                 @inputMouseOver="inputMouseOver"
-                @inputMouseOut="inputMouseOut">
+                @inputMouseOut="inputMouseOut"
+                @waitMouseDown="beginWaitConnection"
+                @waitMouseUp="endWaitConnection">
           </node>
         </template>
       </svg>
@@ -163,6 +177,7 @@ export default {
       const colors = ['#F9D194', '#FF6C57', '#977CD5', '#54B375']
       const node = {
         uuid: uuid.v1(),
+        name: 'Node #' + this.getMaxNodeNumber(),
         type: nodeDef.type,
         x: x,
         y: y,
@@ -173,6 +188,17 @@ export default {
         definition: nodeDef
       }
       this.nodes.push(node)
+    },
+    getMaxNodeNumber: function () {
+      let max = 0
+      this.nodes.forEach(node => {
+        try {
+          let no = node.name.split('#')[1]
+          console.log(no)
+          max = Math.max(max, no)
+        } catch (e) {}
+      })
+      return max + 1
     },
     connectNodes: function (sourceNode, targetNode, sourceOutput, targetInput) {
       if (sourceNode === targetNode) {
@@ -186,15 +212,26 @@ export default {
       if (TYPES.checkType(sourceOutput, targetInput) === 'ok') {
         const connection = {
           uuid: uuid.v1(),
-          type: 'line',
+          type: 'FLOW',
           source: sourceNode,
           target: targetNode,
-          sourceOutput: sourceOutput.name,
           inputName: targetInput.name,
           outputName: sourceOutput.name
         }
         this.connections.push(connection)
       }
+    },
+    connectWaitNodes: function (sourceNode, targetNode) {
+      if (sourceNode === targetNode) {
+        return
+      }
+      const connection = {
+        uuid: uuid.v1(),
+        type: 'WAIT',
+        source: sourceNode,
+        target: targetNode
+      }
+      this.connections.push(connection)
     },
     connectionContextMenu: function (connection) {
       this.selectedConnection = connection
@@ -251,11 +288,23 @@ export default {
       this.endConnection()
     },
     beginConnection: function (sourceNode, sourceOutput, sourcePos, $event) {
-      this.connectingNode = sourceNode
-      this.connectingOutput = sourceOutput
       this.connectingSourcePos.x = sourcePos.x
       this.connectingSourcePos.y = sourcePos.y
+      this.connectingNode = sourceNode
+      this.connectingOutput = sourceOutput
       this.mouseMove($event)
+    },
+    beginWaitConnection: function (sourceNode, $event) {
+      this.connectingSourcePos.x = sourceNode.x + sourceNode.w
+      this.connectingSourcePos.y = sourceNode.y + sourceNode.h - 8
+      this.connectingNode = sourceNode
+      this.mouseMove($event)
+    },
+    endWaitConnection: function (targetNode) {
+      if (targetNode && this.connectingNode) {
+        this.connectWaitNodes(this.connectingNode, targetNode)
+      }
+      this.connectingNode = null
     },
     endConnection: function (targetNode, input, $event) {
       if (targetNode && this.connectingNode) {
@@ -268,8 +317,13 @@ export default {
       let outputPos = connection.source
       let inputPos = connection.target
       if (connection.uuid) {
-        outputPos = POS_CALC.calculateOutputPos(connection.source, connection.outputName)
-        inputPos = POS_CALC.calculateInputPos(connection.target, connection.inputName)
+        if (connection.type === 'FLOW') {
+          outputPos = POS_CALC.calculateOutputPos(connection.source, connection.outputName)
+          inputPos = POS_CALC.calculateInputPos(connection.target, connection.inputName)
+        } else if (connection.type === 'WAIT') {
+          outputPos = POS_CALC.calculateOutputWaitPos(connection.source)
+          inputPos = POS_CALC.calculateInputWaitPos(connection.target)
+        }
       }
       if (bezier) {
         return this._calculateBezierPoints(outputPos.x, outputPos.y, inputPos.x + padding, inputPos.y + padding)
@@ -307,6 +361,9 @@ export default {
   .temporary-connection{
     fill:none;stroke:white;stroke-width:3;
   }
+  .temporary-wait-connection{
+    fill:none;stroke:black;stroke-width:2;
+  }
   .selected-connection{
     stroke-dasharray: 5;
     stroke-dasharray:"5, 5";
@@ -327,6 +384,9 @@ export default {
 
   .connection{
     fill:none;stroke:white;stroke-width:3
+  }
+  .wait-connection{
+    fill:none;stroke:black;stroke-width:2
   }
   svg text {
     -webkit-user-select: none;

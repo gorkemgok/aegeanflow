@@ -7,6 +7,24 @@ export const POS_CALC = {
       y: node.y + margin + (14 * ioIdx)
     }
   },
+  calculateWaitPos: function (node) {
+    const waitPos = {}
+    waitPos.input = this.calculateInputWaitPos(node)
+    waitPos.output = this.calculateOutputWaitPos(node)
+    return waitPos
+  },
+  calculateOutputWaitPos: function (node) {
+    const pos = {x: 0, y: 0}
+    pos.x = node.x + node.w
+    pos.y = node.y + node.h - 4
+    return pos
+  },
+  calculateInputWaitPos: function (node) {
+    const pos = {x: 0, y: 0}
+    pos.x = node.x - 8
+    pos.y = node.y + node.h - 4
+    return pos
+  },
   calculateOutputPos: function (node, outputName) {
     let idx
     for (let i = 0; i < node.definition.outputs.length; i++) {
@@ -32,7 +50,7 @@ export const POS_CALC = {
 export const TYPES = {
   checkType (output, input) {
     if (output && input) {
-      if (output.type === input.type) {
+      if (output.type === input.type || input.type === 'java.lang.Object') {
         return 'ok'
       } else {
         return 'not-ok'

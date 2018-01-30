@@ -3,7 +3,7 @@ package com.aegeanflow.core.engine;
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.flow.FlowNode;
 import com.aegeanflow.core.node.NodeRepository;
-import com.aegeanflow.core.spi.Node;
+import com.aegeanflow.core.spi.RunnableNode;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -28,23 +28,27 @@ public class DataFlowEngineManager {
         this.engineMap = new Hashtable<>();
     }
 
-    public DataFlowEngine create(Flow flow) throws ClassNotFoundException {
+    public DataFlowEngine create(Flow flow, boolean reset) throws ClassNotFoundException {
         if (flow.getUuid() == null) {
             flow.setUuid(UUID.randomUUID());
         }
-        DataFlowEngine prevDFE = engineMap.get(flow.getUuid());
+        DataFlowEngine prevDFE = null;
+        if (!reset) {
+            prevDFE = engineMap.get(flow.getUuid());
+        }
         DataFlowEngine dataFlowEngine = create(flow, prevDFE);
         engineMap.put(flow.getUuid(), dataFlowEngine);
         return dataFlowEngine;
     }
 
     public DataFlowEngine create(Flow flow, @Nullable DataFlowEngine stateProvider) throws ClassNotFoundException {
-        List<Node<?>> nodeList = new ArrayList<>();
+        List<RunnableNode<?>> runnableNodeList = new ArrayList<>();
         for (FlowNode flowNode : flow.getNodeList()){
-            Node node = injector.getInstance(flowNode.getNodeClass());
-            node.setUUID(flowNode.getUUID());
-            nodeList.add(node);
+            RunnableNode runnableNode = injector.getInstance(flowNode.getNodeClass());
+            runnableNode.setUUID(flowNode.getUUID());
+            runnableNode.setName(flowNode.getName());
+            runnableNodeList.add(runnableNode);
         }
-        return new DataFlowEngine(flow, nodeList, nodeRepository, stateProvider);
+        return new DataFlowEngine(flow, runnableNodeList, nodeRepository, stateProvider);
     }
 }

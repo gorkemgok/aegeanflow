@@ -1,12 +1,12 @@
 package com.aegeanflow.core.example;
 
-import com.aegeanflow.core.spi.AbstractNode;
+import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
 @NodeEntry
-public class TestNode extends AbstractNode<String> {
+public class TestNode extends AbstractRunnableNode<String> {
 
     private String input1;
 

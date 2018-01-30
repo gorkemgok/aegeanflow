@@ -26,7 +26,7 @@ public class MainFlowDatabase {
 
         AegeanFlow aegeanFlow = AegeanFlow.start();
         DataFlowEngineManager factory = aegeanFlow.createEngineFactory();
-        DataFlowEngine engine = factory.create(flow);
+        DataFlowEngine engine = factory.create(flow, true);
         engine.getResultList();
     }
 }

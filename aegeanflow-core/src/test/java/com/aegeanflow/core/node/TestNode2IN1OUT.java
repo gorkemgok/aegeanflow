@@ -1,15 +1,15 @@
 package com.aegeanflow.core.node;
 
-import com.aegeanflow.core.spi.AbstractNode;
+import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
 import java.util.StringJoiner;
 
 @NodeEntry(label = TestNode2IN1OUT.NODE_LABEL)
-public class TestNode2IN1OUT extends AbstractNode<String>{
+public class TestNode2IN1OUT extends AbstractRunnableNode<String> {
 
-    public static final String NODE_LABEL = "Test Node 2 IN 1 OUT";
+    public static final String NODE_LABEL = "Test RunnableNode 2 IN 1 OUT";
     public static final String COUNT_IN_LABEL = "Count";
 
     private Integer count;

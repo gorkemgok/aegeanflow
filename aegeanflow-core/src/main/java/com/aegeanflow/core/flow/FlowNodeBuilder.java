@@ -1,6 +1,6 @@
 package com.aegeanflow.core.flow;
 
-import com.aegeanflow.core.spi.Node;
+import com.aegeanflow.core.spi.RunnableNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +13,9 @@ public class FlowNodeBuilder {
 
     private Map<String, Object> configMap;
 
-    private Class<? extends Node> nodeClass;
+    private Class<? extends RunnableNode> nodeClass;
 
-    public FlowNodeBuilder(Class<? extends Node> nodeClass) {
+    public FlowNodeBuilder(Class<? extends RunnableNode> nodeClass) {
         this.nodeClass = nodeClass;
         configMap = new HashMap<>();
     }

@@ -3,7 +3,7 @@ package com.aegeanflow.core;
 import com.aegeanflow.core.engine.DataFlowEngineManager;
 import com.aegeanflow.core.node.NodeModule;
 import com.aegeanflow.core.node.NodeRepository;
-import com.aegeanflow.core.spi.Node;
+import com.aegeanflow.core.spi.RunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.example.ExampleModule;
 import com.google.inject.AbstractModule;
@@ -32,7 +32,7 @@ public class CoreModule extends AbstractModule {
         bind(NodeRepository.class).in(Singleton.class);
         install(new ExampleModule());
         Reflections reflections = new Reflections("com.aegeanflow");
-        Set<Class<? extends Node>> nodeClasses = reflections.getSubTypesOf(Node.class);
+        Set<Class<? extends RunnableNode>> nodeClasses = reflections.getSubTypesOf(RunnableNode.class);
         nodeClasses.stream()
                 .filter(nodeClass -> nodeClass.isAnnotationPresent(NodeEntry.class))
                 .forEach(nodeClass -> bind(nodeClass));
@@ -41,9 +41,9 @@ public class CoreModule extends AbstractModule {
     @Provides
     @Singleton
     @Named(NODE_CLASSES)
-    Set<Class<? extends Node>> provideNodeClasses(){
+    Set<Class<? extends RunnableNode>> provideNodeClasses(){
         Reflections reflections = new Reflections("com.aegeanflow");
-        Set<Class<? extends Node>> nodeClasses = reflections.getSubTypesOf(Node.class);
+        Set<Class<? extends RunnableNode>> nodeClasses = reflections.getSubTypesOf(RunnableNode.class);
         return nodeClasses;
     }
 }

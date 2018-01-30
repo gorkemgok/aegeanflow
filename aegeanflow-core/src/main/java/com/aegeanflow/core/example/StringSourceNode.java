@@ -1,6 +1,6 @@
 package com.aegeanflow.core.example;
 
-import com.aegeanflow.core.spi.AbstractNode;
+import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 
@@ -8,7 +8,7 @@ import com.aegeanflow.core.spi.annotation.NodeEntry;
  * Created by gorkem on 12.01.2018.
  */
 @NodeEntry
-public class StringSourceNode extends AbstractNode<String> {
+public class StringSourceNode extends AbstractRunnableNode<String> {
 
     private String prefix;
 

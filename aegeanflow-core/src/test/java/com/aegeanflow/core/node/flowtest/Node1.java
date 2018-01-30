@@ -1,11 +1,11 @@
 package com.aegeanflow.core.node.flowtest;
 
-import com.aegeanflow.core.spi.AbstractNode;
+import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 
 @NodeEntry
-public class Node1 extends AbstractNode<String>{
+public class Node1 extends AbstractRunnableNode<String> {
 
     private String seedText;
 
