@@ -65,7 +65,6 @@ public class CompilerUtil {
                         nodeIODefinition.setLabel(!nodeInput.label().isEmpty() ? nodeInput.label() : getVarName(method));
                         nodeIODefinition.setOrder(nodeInput.order());
                         nodeInputDefinitionList.add(nodeIODefinition);
-                        continue;
                     } else {
                         throw new IllegalNodeConfigurationException("Input setter method must have exactly one parameter");
                     }
@@ -80,7 +79,6 @@ public class CompilerUtil {
                         nodeConfigurationDefinition.setLabel(!nodeConfig.label().isEmpty() ? nodeConfig.label() : getVarName(method));
                         nodeConfigurationDefinition.setOrder(nodeConfig.order());
                         nodeConfigurationDefinitionList.add(nodeConfigurationDefinition);
-                        continue;
                     } else {
                         throw new IllegalNodeConfigurationException("Config setter method must have exactly one parameter");
                     }

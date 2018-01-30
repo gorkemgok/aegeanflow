@@ -1,5 +1,6 @@
 package com.aegeanflow.core.engine;
 
+import com.aegeanflow.core.definition.NodeConfigurationDefinition;
 import com.aegeanflow.core.node.NodeInfo;
 import com.aegeanflow.core.NodeStatus;
 import com.aegeanflow.core.exception.NoSuchNodeException;
@@ -62,6 +63,9 @@ public class DataFlowEngine {
 
     private void updateStatus(Node node, NodeStatus status){
         statusMap.put(node.getUUID(), status);
+        if (status != NodeStatus.RUNNING) {
+            runningTasks.remove(node.getUUID());
+        }
         LOGGER.info(format("%s, %s, %s : %s", node.getName(), node.getNodeClass().getSimpleName(), node.getUUID(), status));
     }
 
@@ -104,10 +108,10 @@ public class DataFlowEngine {
             setNodeConfig(getNode(flowNode.getUUID()), flowNode.getConfiguration());
         }
         RunnableNode<?> runnableNode = getNode(nodeUUID);
-        return runNode(runnableNode, true);
+        return startNode(runnableNode, true);
     }
 
-    private <T> FlowFuture<T> runNode(RunnableNode<T> runnableNode, boolean useState) throws NodeRuntimeException {
+    private <T> FlowFuture<T> startNode(RunnableNode<T> runnableNode, boolean useState) throws NodeRuntimeException {
         try {
             //CONTROL STATE FROM PREVIOUS RUN
             if (useState && outputState.containsKey(runnableNode.getUUID())){
@@ -122,13 +126,13 @@ public class DataFlowEngine {
                 return flowFuture;
             }
             //RUN NODE
-            Supplier<T> futureTask = () -> {
+            Supplier<T> nodeRunTask = () -> {
                 //RUN INPUT NODES
                 try {
                     List<IOPair> IOPairList = getIOPairList(runnableNode.getUUID());
                     List<OutputFuture> outputFutures = new ArrayList<>();
                     for (IOPair ioPair : IOPairList) {
-                        FlowFuture outputFuture = runNode(ioPair.runnableNode, useState);
+                        FlowFuture outputFuture = startNode(ioPair.runnableNode, useState);
                         outputFutures.add(new OutputFuture(ioPair, outputFuture));
                     }
 
@@ -155,6 +159,8 @@ public class DataFlowEngine {
                                 throw new NodeRuntimeException(e.getCause().getCause(), runnableNode.getUUID());
                             }
                             throw new NodeRuntimeException(e.getCause(), runnableNode.getUUID());
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                     setNodeInputs(runnableNode, inputList);
@@ -168,7 +174,13 @@ public class DataFlowEngine {
                     throw new NodeRuntimeException(e, runnableNode.getUUID());
                 }
             };
-            CompletableFuture<T> completableFuture = CompletableFuture.supplyAsync(futureTask, executor);
+            CompletableFuture<T> completableFuture = CompletableFuture.supplyAsync(nodeRunTask, executor);
+            completableFuture
+                    .thenAccept(result -> System.out.println("Result:" + result))
+                    .exceptionally(e -> {
+                        e.printStackTrace();
+                        return null;
+                    });
             flowFuture = new FlowFuture<>(runnableNode, completableFuture);
             runningTasks.put(runnableNode.getUUID(), flowFuture);
             outputState.put(runnableNode.getUUID(), flowFuture);
@@ -216,8 +228,18 @@ public class DataFlowEngine {
             if (compiledNodeInfoOptional.isPresent()) {
                 NodeInfo nodeInfo = compiledNodeInfoOptional.get();
                 for (Map.Entry<String, Object> config : configs.entrySet()) {
-                    Method method = nodeInfo.getConfigMethods().get(config.getKey());
-                    method.invoke(runnableNode, config.getValue());
+                    Optional<NodeConfigurationDefinition> configDefOptional =
+                            nodeInfo.getDefinition().getConfigurations().stream()
+                                    .filter(configDef -> configDef.getName().equals(config.getKey())).findFirst();
+                    if (configDefOptional.isPresent()) {
+                        Method method = nodeInfo.getConfigMethods().get(config.getKey());
+                        Class<?> type = configDefOptional.get().getType();
+                        Object value = config.getValue();
+                        if (type.equals(Integer.class)) {
+                            value = Integer.valueOf(value.toString());
+                        }
+                        method.invoke(runnableNode, value);
+                    }
                 }
             }
         } catch (IllegalAccessException e) {

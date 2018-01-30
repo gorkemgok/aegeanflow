@@ -17,24 +17,24 @@ public class TabularDataInfo {
         this.tabularData = tabularData;
     }
 
-    @NodeOutput
+    @NodeOutput(order = 1)
     public Integer getColumnCount() {
         return tabularData.getSchema().getFieldList().size();
     }
 
-    @NodeOutput
+    @NodeOutput(order = 2)
     public Integer getRowCount() {
         return tabularData.getData().size();
     }
 
-    @NodeOutput
+    @NodeOutput(order = 3)
     public TabularData.Schema getSchema() {
         return tabularData.getSchema();
     }
 
-    @NodeOutput
-    public List<List<Object>> getData() {
-        return tabularData.getData();
+    @NodeOutput(order = 4)
+    public SchemalessData getData() {
+        return new SchemalessData(tabularData.getData());
     }
 
 
