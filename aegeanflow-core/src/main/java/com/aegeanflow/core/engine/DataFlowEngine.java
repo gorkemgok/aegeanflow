@@ -189,14 +189,8 @@ public class DataFlowEngine {
                 }
             };
             CompletableFuture<T> completableFuture = CompletableFuture
-                    .supplyAsync(supplyInputs, executor)
+                    .supplyAsync(supplyInputs)
                     .thenApply(nodeRunTask);
-            completableFuture
-                    .thenAccept(result -> System.out.println("Result:" + result))
-                    .exceptionally(e -> {
-                        e.printStackTrace();
-                        return null;
-                    });
             flowFuture = new FlowFuture<>(runnableNode, completableFuture);
             runningTasks.put(runnableNode.getUUID(), flowFuture);
             outputState.put(runnableNode.getUUID(), flowFuture);

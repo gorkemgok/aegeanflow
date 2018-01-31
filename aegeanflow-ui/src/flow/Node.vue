@@ -3,11 +3,11 @@
     <rect class="main-rect"
           @contextmenu.prevent="nodeContextMenu"
           @click="nodeClick"
-          @mousedown.left="nodeMouseDown"
-          @mouseup.left="nodeMouseUp"
+          @mousedown.prevent.left="nodeMouseDown"
+          @mouseup.prevent.left="nodeMouseUp"
           :x="node.x" :y="node.y" :width="node.w" :height="node.h"
           rx="4" ry="4" :style="{fill: node.color}"></rect>
-    <text class="node-label" :x="node.x" :y="labelY" font-family="Verdana" font-size="11">
+    <text class="node-label" :x="node.x" :y="labelY" font-size="11">
       {{node.name}} - {{node.definition.label}}
     </text>
     <circle v-for="(output, idx) in node.definition.outputs" :key="output.name"
@@ -153,5 +153,6 @@ export default {
   }
   .node-label{
     fill: white;
+    font-family: 'Helvetica Neue', Helvetica, 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
   }
 </style>
