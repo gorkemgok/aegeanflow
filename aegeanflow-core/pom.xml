@@ -20,6 +20,14 @@
 
     <dependencies>
 
+<!--AZURE DATALAKE -->
+        <!-- https://mvnrepository.com/artifact/com.microsoft.azure/azure-data-lake-store-sdk -->
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-data-lake-store-sdk</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+
 <!-->MSSQL JDBC DRIVER-->
         <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
         <dependency>

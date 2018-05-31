@@ -1,5 +1,9 @@
 <template>
   <div class="editor-container">
+    <at-modal title="Select Workspace" v-model="showWorkspaceModel">
+      <label for="workspacePath">Path</label>
+      <at-input id = "workspacePath" name="workspacePath" v-model="workspacePath"></at-input>
+    </at-modal>
     <div class="toolbox-container">
       <at-collapse simple accordion :value="0">
         <at-collapse-item title="Base Components">
@@ -46,7 +50,9 @@ export default {
       nodeRepository: [],
       selectedFlow: null,
       selectedTab: null,
-      flowList: []
+      flowList: [],
+      workspacePath: null,
+      showWorkspaceModel: true
     }
   },
   computed: {
@@ -73,6 +79,7 @@ export default {
     getFlows: function () {
       HTTP.get('/flow/list')
         .then(res => {
+          const flowList = []
           res.data.forEach(rawFlow => {
             const flow = {}
             flow.uuid = rawFlow.uuid
@@ -91,8 +98,9 @@ export default {
               newConn.target = flow.nodes.filter(node => node.uuid === connection.toUUID)[0]
               return newConn
             })
-            this.flowList.push(flow)
+            flowList.push(flow)
           })
+          this.flowList = flowList
         })
     },
     click: function (object) {
@@ -103,6 +111,20 @@ export default {
       this.nodeRepository = res.data
       this.getFlows()
     })
+
+    if (!this.workspacePath) {
+      HTTP.get('workspace/path').then(res => {
+        this.workspacePath = res.data.path
+      })
+    }
+  },
+  watch: {
+    workspacePath: function (newVal, oldVal) {
+      this.workspacePath = newVal
+      HTTP.post('workspace/path', {path: this.workspacePath}).then(res => {
+        this.getFlows()
+      })
+    }
   }
 }
 </script>

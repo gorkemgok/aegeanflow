@@ -14,4 +14,7 @@ public interface Workspace {
 
     List<Flow> getFlowList() throws IOException;
 
+    void changePath(String path);
+
+    String getPath();
 }

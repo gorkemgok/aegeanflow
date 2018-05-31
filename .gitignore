@@ -40,3 +40,7 @@ node_modules/
 aegeanflow-ui/node/
 log/
 /*.aflow
+
+.DS_Store
+package-lock.json
+/workspace

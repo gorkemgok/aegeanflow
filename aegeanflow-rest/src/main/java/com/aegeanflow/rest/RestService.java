@@ -4,19 +4,22 @@ import static spark.Spark.*;
 import com.aegeanflow.core.AegeanFlow;
 import com.aegeanflow.core.engine.DataFlowEngine;
 import com.aegeanflow.core.engine.DataFlowEngineManager;
-import com.aegeanflow.core.engine.FlowFuture;
 import com.aegeanflow.core.exception.NodeRuntimeException;
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.spi.AegeanFlowService;
 import com.aegeanflow.core.workspace.Workspace;
+import com.aegeanflow.rest.proxy.NodeErrorProxy;
+import com.aegeanflow.rest.proxy.UUIDProxy;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.MediaType;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by gorkem on 15.01.2018.
@@ -55,12 +58,28 @@ public class RestService implements AegeanFlowService {
         staticFiles.location("ui");
 
         path("/rest-api/v1", () -> {
-            get("/node/list", "application/json", (req, res) -> {
+
+            //WORKSPACE
+            get("/workspace/path", MediaType.APPLICATION_JSON, (req, res) -> {
+                return objectMapper.createObjectNode().put("path", workspace.getPath());
+            }, jsonTransformer);
+
+            //WORKSPACE
+            post("/workspace/path", MediaType.APPLICATION_JSON, (req, res) -> {
+                JsonNode jsonNode = objectMapper.readTree(req.body());
+                String path = jsonNode.get("path").asText();
+                workspace.changePath(path);
+                return objectMapper.createObjectNode().put("path", workspace.getPath());
+            }, jsonTransformer);
+
+            //NODE
+            get("/node/list", MediaType.APPLICATION_JSON, (req, res) -> {
                 res.type("application/json");
                 return aegeanFlow.getNodeRepository().getNodeDefinitionList();
             }, jsonTransformer);
 
-            post("/flow",  "application/json", (req, res) -> {
+            //FLOW
+            post("/flow",  MediaType.APPLICATION_JSON, (req, res) -> {
                 Flow flow = objectMapper.readValue(req.body(), Flow.class);
                 flow = workspace.save(flow);
                 return new UUIDProxy(flow.getUuid());
