@@ -2,13 +2,13 @@ package com.aegeanflow.core;
 
 import java.util.Objects;
 
-public class ParameterImpl implements Parameter{
+public class ParameterImpl<T> implements Parameter<T>{
 
     private final String name;
 
-    private final Class<?> type;
+    private final Class<T> type;
 
-    protected ParameterImpl(String name, Class<?> type) {
+    protected ParameterImpl(String name, Class<T> type) {
         this.name = name;
         this.type = type;
     }
@@ -17,7 +17,7 @@ public class ParameterImpl implements Parameter{
         return name;
     }
 
-    public Class<?> type() {
+    public Class<T> type() {
         return type;
     }
 

@@ -6,11 +6,11 @@ import java.util.Set;
 
 public class SomeNode extends AbstractNode{
 
-    public static final Parameter<String> STRING_INPUT = Parameter.of("string_input", String.class);
+    public static final Input<String> STRING_INPUT = Parameter.input("string_input", String.class);
 
-    public static final Parameter<Integer> INTEGER_INPUT = Parameter.of("integer_input", Integer.class);
+    public static final Input<Integer> INTEGER_INPUT = Parameter.input("integer_input", Integer.class);
 
-    public static final Parameter<String> STRING_OUTPUT = Parameter.of("string_output", String.class);
+    public static final Output<String> STRING_OUTPUT = Parameter.output("string_output", String.class);
 
     private String stringInput;
 
@@ -18,12 +18,12 @@ public class SomeNode extends AbstractNode{
 
     @Override
     public void run() {
-        router.next(STRING_OUTPUT, stringInput + "_" + integerInput);
+        router.next(STRING_OUTPUT, new StringExchange(stringInput + "_" + integerInput));
         System.out.println(stringInput + "_" + integerInput);
     }
 
     @Override
-    public <T> void accept(Parameter<T> input, T value) {
+    public <T> void accept(Input<T> input, T value) {
         super.accept(input, value);
         if (input.equals(STRING_INPUT)) {
             stringInput = (String) value;
@@ -33,7 +33,7 @@ public class SomeNode extends AbstractNode{
     }
 
     @Override
-    public Set<Parameter> listParameters() {
+    public Set<Input<?>> listInputs() {
         return new HashSet<>(Arrays.asList(STRING_INPUT, INTEGER_INPUT));
     }
 

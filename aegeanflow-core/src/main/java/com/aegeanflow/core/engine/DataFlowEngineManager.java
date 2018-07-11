@@ -1,8 +1,8 @@
 package com.aegeanflow.core.engine;
 
+import com.aegeanflow.core.NodeRepository;
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.flow.FlowNode;
-import com.aegeanflow.core.node.NodeRepository;
 import com.aegeanflow.core.spi.RunnableNode;
 import com.google.inject.Inject;
 import com.google.inject.Injector;

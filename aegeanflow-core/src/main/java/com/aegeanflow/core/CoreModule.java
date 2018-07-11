@@ -1,11 +1,8 @@
 package com.aegeanflow.core;
 
 import com.aegeanflow.core.engine.DataFlowEngineManager;
-import com.aegeanflow.core.node.NodeModule;
-import com.aegeanflow.core.node.NodeRepository;
 import com.aegeanflow.core.spi.RunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
-import com.aegeanflow.core.example.ExampleModule;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -26,11 +23,9 @@ public class CoreModule extends AbstractModule {
     public static final String NODE_CLASSES = "nodeClasses";
     @Override
     protected void configure() {
-        install(new NodeModule());
         install(new InitSyncUtilModule());
         bind(DataFlowEngineManager.class).in(Singleton.class);
         bind(NodeRepository.class).in(Singleton.class);
-        install(new ExampleModule());
         Reflections reflections = new Reflections("com.aegeanflow");
         Set<Class<? extends RunnableNode>> nodeClasses = reflections.getSubTypesOf(RunnableNode.class);
         nodeClasses.stream()

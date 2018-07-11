@@ -7,7 +7,7 @@ public abstract class AbstractNode implements Node{
 
     protected NodeRouter router;
 
-    private Set<Parameter> completedParameterNames = new HashSet<>();
+    private Set<Input<?>> completedParameterNames = new HashSet<>();
 
     @Override
     public void initialize(Router router) {
@@ -15,12 +15,12 @@ public abstract class AbstractNode implements Node{
     }
 
     @Override
-    public <T> void accept(Parameter<T> input, T value) {
+    public <T> void accept(Input<T> input, T value) {
         completedParameterNames.add(input);
     }
 
     @Override
-    public Set<Parameter> listCompletedParameters() {
+    public Set<Input<?>> listCompletedParameters() {
         return completedParameterNames;
     }
 }

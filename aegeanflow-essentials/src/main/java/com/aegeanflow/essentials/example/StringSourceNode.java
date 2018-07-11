@@ -1,0 +1,24 @@
+package com.aegeanflow.essentials.example;
+
+import com.aegeanflow.core.spi.AbstractRunnableNode;
+import com.aegeanflow.core.spi.annotation.NodeConfig;
+import com.aegeanflow.core.spi.annotation.NodeEntry;
+
+/**
+ * Created by gorkem on 12.01.2018.
+ */
+@NodeEntry
+public class StringSourceNode extends AbstractRunnableNode<String> {
+
+    private String prefix;
+
+    @Override
+    public String call() throws Exception {
+        return prefix + "-string";
+    }
+
+    @NodeConfig
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+}

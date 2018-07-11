@@ -1,9 +1,9 @@
 package com.aegeanflow.core.engine;
 
+import com.aegeanflow.core.NodeRepository;
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.flow.FlowConnection;
 import com.aegeanflow.core.flow.FlowNode;
-import com.aegeanflow.core.node.NodeRepository;
 import com.aegeanflow.core.node.flowtest.Node1;
 import com.aegeanflow.core.node.flowtest.Node2;
 import com.aegeanflow.core.node.flowtest.Node3;

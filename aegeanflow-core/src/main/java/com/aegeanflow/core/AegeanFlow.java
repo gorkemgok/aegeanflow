@@ -1,7 +1,6 @@
 package com.aegeanflow.core;
 
 import com.aegeanflow.core.engine.DataFlowEngineManager;
-import com.aegeanflow.core.node.NodeRepository;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;

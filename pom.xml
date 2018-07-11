@@ -13,6 +13,7 @@
         <module>aegeanflow-ui</module>
         <module>aegeanflow-rest</module>
         <module>aegeanflow-application</module>
+        <module>aegeanflow-essentials</module>
     </modules>
 
     <properties>

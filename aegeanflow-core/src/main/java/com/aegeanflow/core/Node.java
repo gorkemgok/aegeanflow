@@ -8,17 +8,17 @@ public interface Node {
 
     void run();
 
-    <T> void accept(Parameter<T> input, T value);
+    <T> void accept(Input<T> input, T value);
 
-    default <T> void acceptAndRun(Parameter<T> input, T value) {
+    default <T> void acceptAndRun(Input<T> input, T value) {
         accept(input, value);
-        if (listCompletedParameters().containsAll(listParameters())) {
+        if (listCompletedParameters().containsAll(listInputs())) {
             run();
         }
     }
 
-    Set<Parameter> listParameters();
+    Set<Input<?>> listInputs();
 
-    Set<Parameter> listCompletedParameters();
+    Set<Input<?>> listCompletedParameters();
 
 }

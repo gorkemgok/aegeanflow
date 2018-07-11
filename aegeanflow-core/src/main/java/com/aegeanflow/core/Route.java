@@ -2,24 +2,24 @@ package com.aegeanflow.core;
 
 public class Route<T> {
 
-    private final RoutePoint<T> source;
+    private final OutputPoint<T> source;
 
-    private final RoutePoint<T> target;
+    private final InputPoint<T> target;
 
-    public Route(RoutePoint<T> source, RoutePoint<T> target) {
+    public Route(OutputPoint<T> source, InputPoint<T> target) {
         this.source = source;
         this.target = target;
     }
 
-    public RoutePoint<T> getSource() {
+    public OutputPoint<T> getSource() {
         return source;
     }
 
-    public RoutePoint<T> getTarget() {
+    public InputPoint<T> getTarget() {
         return target;
     }
 
-    public boolean isOutputOf(Node node, Parameter<?> parameter) {
-        return source.getNode().equals(node) && source.getParameter().equals(parameter);
+    public boolean isOutputOf(Node node, Output<?> parameter) {
+        return source.getNode().equals(node) && source.getOutput().equals(parameter);
     }
 }

@@ -11,7 +11,7 @@ public class NodeRouter {
         this.router = router;
     }
 
-    public <T> void next(Parameter<T> output, T value) {
+    public <T> void next(Output<T> output, Exchange<T> value) {
         router.next(node, output, value);
     }
 }

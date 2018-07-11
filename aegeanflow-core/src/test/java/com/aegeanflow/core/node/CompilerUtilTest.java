@@ -1,5 +1,7 @@
 package com.aegeanflow.core.node;
 
+import com.aegeanflow.core.CompilerUtil;
+import com.aegeanflow.core.NodeInfo;
 import com.aegeanflow.core.definition.NodeConfigurationDefinition;
 import com.aegeanflow.core.definition.NodeIODefinition;
 

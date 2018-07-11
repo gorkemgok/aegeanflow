@@ -1,15 +1,15 @@
 package com.aegeanflow.core.engine;
 
+import com.aegeanflow.core.CompilerUtil;
+import com.aegeanflow.core.NodeInfo;
+import com.aegeanflow.core.NodeRepository;
 import com.aegeanflow.core.definition.NodeConfigurationDefinition;
-import com.aegeanflow.core.node.NodeInfo;
 import com.aegeanflow.core.NodeStatus;
 import com.aegeanflow.core.exception.NoSuchNodeException;
 import com.aegeanflow.core.exception.NodeRuntimeException;
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.flow.FlowConnection;
 import com.aegeanflow.core.flow.FlowNode;
-import com.aegeanflow.core.node.CompilerUtil;
-import com.aegeanflow.core.node.NodeRepository;
 import com.aegeanflow.core.spi.Node;
 import com.aegeanflow.core.spi.RunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeOutput;
