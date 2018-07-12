@@ -1,6 +1,7 @@
 package com.aegeanflow.essentials.node;
 
-import com.aegeanflow.core.spi.AbstractRunnableNode;
+import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
@@ -8,12 +9,12 @@ import com.aegeanflow.core.spi.annotation.NodeInput;
  * Created by gorkem on 30.01.2018.
  */
 @NodeEntry
-public class StdOutNode extends AbstractRunnableNode<Void> {
+public class StdOutBox extends AbstractAnnotatedBox<Void> {
 
     private Object value;
 
     @Override
-    public Void call() throws Exception {
+    public Exchange<Void> call() throws Exception {
         System.out.println(value.toString());
         return null;
     }

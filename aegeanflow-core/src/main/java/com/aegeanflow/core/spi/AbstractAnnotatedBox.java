@@ -2,14 +2,14 @@ package com.aegeanflow.core.spi;
 
 import java.util.UUID;
 
-public abstract class AbstractRunnableNode<T> implements RunnableNode<T> {
+public abstract class AbstractAnnotatedBox<T> implements AnnotatedBox<T> {
 
     private UUID uuid;
 
     private String name;
 
     @Override
-    public Class<? extends RunnableNode> getNodeClass() {
+    public Class<? extends AnnotatedBox> getNodeClass() {
         return this.getClass();
     }
 

@@ -21,6 +21,13 @@ public class ParameterImpl<T> implements Parameter<T>{
         return type;
     }
 
+    public boolean isAssignable(Parameter parameter) {
+        if (this == parameter) return true;
+        if (parameter == null || getClass() != parameter.getClass()) return false;
+        return Objects.equals(name, parameter.name()) &&
+                type.isAssignableFrom(parameter.type());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,6 +1,8 @@
 package com.aegeanflow.essentials.example;
 
-import com.aegeanflow.core.spi.AbstractRunnableNode;
+import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.StringExchange;
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 
@@ -8,13 +10,13 @@ import com.aegeanflow.core.spi.annotation.NodeEntry;
  * Created by gorkem on 12.01.2018.
  */
 @NodeEntry
-public class StringSourceNode extends AbstractRunnableNode<String> {
+public class StringSourceBox extends AbstractAnnotatedBox<String> {
 
     private String prefix;
 
     @Override
-    public String call() throws Exception {
-        return prefix + "-string";
+    public Exchange<String> call() throws Exception {
+        return new StringExchange(prefix + "-string");
     }
 
     @NodeConfig

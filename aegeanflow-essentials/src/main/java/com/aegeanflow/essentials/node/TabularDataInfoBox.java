@@ -1,22 +1,23 @@
 package com.aegeanflow.essentials.node;
 
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.essentials.data.TabularData;
 import com.aegeanflow.essentials.data.TabularDataInfo;
-import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
+import com.aegeanflow.essentials.data.TabularDataInfoExchange;
 
 /**
  * Created by gorkem on 29.01.2018.
  */
 @NodeEntry(label = "Tabular Data Info")
-public class TabularDataInfoNode extends AbstractRunnableNode<TabularDataInfo> {
+public class TabularDataInfoBox extends AbstractAnnotatedBox<TabularDataInfo> {
 
     private TabularData tabularData;
 
     @Override
-    public TabularDataInfo call() throws Exception {
-        return new TabularDataInfo(tabularData);
+    public TabularDataInfoExchange call() throws Exception {
+        return new TabularDataInfoExchange(new TabularDataInfo(tabularData));
     }
 
     @NodeInput

@@ -1,7 +1,7 @@
 package com.aegeanflow.core;
 
 import com.aegeanflow.core.exception.NodePreconditionException;
-import com.aegeanflow.core.spi.RunnableNode;
+import com.aegeanflow.core.spi.AnnotatedBox;
 
 import static java.lang.String.format;
 
@@ -10,9 +10,9 @@ import static java.lang.String.format;
  */
 public class Precondition {
 
-    public static void checkNotNullInput(Object obj, String name, RunnableNode runnableNode) throws NodePreconditionException{
+    public static void checkNotNullInput(Object obj, String name, AnnotatedBox annotatedBox) throws NodePreconditionException{
         if (obj == null) {
-            throw new NodePreconditionException(format("%s must be set", name), runnableNode.getUUID());
+            throw new NodePreconditionException(format("%s must be set", name), annotatedBox.getUUID());
         }
     }
 }

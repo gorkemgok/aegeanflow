@@ -1,5 +1,7 @@
 package com.aegeanflow.core.definition;
 
+import java.lang.reflect.Method;
+
 public class NodeIODefinition {
 
     private String name;
@@ -9,6 +11,16 @@ public class NodeIODefinition {
     private String label;
 
     private int order;
+
+    private Method method;
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public void setMethod(Method method) {
+        this.method = method;
+    }
 
     public int getOrder() {
         return order;

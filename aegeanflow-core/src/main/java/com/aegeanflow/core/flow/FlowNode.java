@@ -1,7 +1,6 @@
 package com.aegeanflow.core.flow;
 
-import com.aegeanflow.core.spi.Node;
-import com.aegeanflow.core.spi.RunnableNode;
+import com.aegeanflow.core.spi.AnnotatedBox;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -14,20 +13,19 @@ import java.util.UUID;
  * Created by gorkem on 12.01.2018.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FlowNode implements Node{
+public class FlowNode {
 
     private String name;
 
     private UUID uuid;
 
-    private Class<? extends RunnableNode> nodeClass;
+    private Class<? extends AnnotatedBox> nodeClass;
 
     private Map<String, Object> configuration;
 
     private Double x, y, w, h;
     private String color;
 
-    @Override
     public String getName() {
         return name;
     }
@@ -55,11 +53,11 @@ public class FlowNode implements Node{
     @JsonSerialize(using = ClassSerializer.class)
     @JsonDeserialize(using = ClassDeserializer.class)
     @JsonProperty("type")
-    public Class<? extends RunnableNode> getNodeClass() {
+    public Class<? extends AnnotatedBox> getNodeClass() {
         return nodeClass;
     }
 
-    public void setNodeClass(Class<? extends RunnableNode> nodeClass) {
+    public void setNodeClass(Class<? extends AnnotatedBox> nodeClass) {
         this.nodeClass = nodeClass;
     }
 

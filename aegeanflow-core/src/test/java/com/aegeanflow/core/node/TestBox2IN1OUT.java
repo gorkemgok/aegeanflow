@@ -1,15 +1,17 @@
 package com.aegeanflow.core.node;
 
-import com.aegeanflow.core.spi.AbstractRunnableNode;
+import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.StringExchange;
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
 import java.util.StringJoiner;
 
-@NodeEntry(label = TestNode2IN1OUT.NODE_LABEL)
-public class TestNode2IN1OUT extends AbstractRunnableNode<String> {
+@NodeEntry(label = TestBox2IN1OUT.NODE_LABEL)
+public class TestBox2IN1OUT extends AbstractAnnotatedBox<String> {
 
-    public static final String NODE_LABEL = "Test RunnableNode 2 IN 1 OUT";
+    public static final String NODE_LABEL = "Test AnnotatedNode 2 IN 1 OUT";
     public static final String COUNT_IN_LABEL = "Count";
 
     private Integer count;
@@ -20,7 +22,7 @@ public class TestNode2IN1OUT extends AbstractRunnableNode<String> {
         return count;
     }
 
-    @NodeInput(label = TestNode2IN1OUT.COUNT_IN_LABEL)
+    @NodeInput(label = TestBox2IN1OUT.COUNT_IN_LABEL)
     public void setCount(Integer count) {
         this.count = count;
     }
@@ -35,11 +37,11 @@ public class TestNode2IN1OUT extends AbstractRunnableNode<String> {
     }
 
     @Override
-    public String call() throws Exception {
+    public Exchange<String> call() throws Exception {
         StringJoiner sj = new StringJoiner(",");
         for (int i = 0; i < count; i++) {
             sj.add(text);
         }
-        return sj.toString();
+        return new StringExchange(sj.toString());
     }
 }

@@ -1,22 +1,23 @@
 package com.aegeanflow.core.node.flowtest;
 
-import com.aegeanflow.core.spi.AbstractRunnableNode;
+import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 
 @NodeEntry
-public class Node2 extends AbstractRunnableNode<StringIntegerPairOutput> {
+public class Box2 extends AbstractAnnotatedBox<StringIntegerPairOutput> {
 
     private String text;
 
     private Integer length;
     @Override
-    public StringIntegerPairOutput call() throws Exception {
+    public Exchange<StringIntegerPairOutput> call() throws Exception {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < length; i++) {
             sb.append(text);
         }
-        return new StringIntegerPairOutput(sb.toString(), length);
+        return Exchange.create(new StringIntegerPairOutput(sb.toString(), length));
     }
 
     @NodeConfig

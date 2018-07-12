@@ -4,17 +4,18 @@ import com.aegeanflow.core.definition.NodeConfigurationDefinition;
 import com.aegeanflow.core.definition.NodeDefinition;
 import com.aegeanflow.core.definition.NodeIODDefComparator;
 import com.aegeanflow.core.definition.NodeIODefinition;
-import com.aegeanflow.core.spi.RunnableNode;
+import com.aegeanflow.core.spi.AnnotatedBox;
 import com.aegeanflow.core.spi.annotation.*;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
 
 import java.beans.Introspector;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 public class CompilerUtil {
 
-    public static NodeInfo compile(Class<? extends RunnableNode> nodeClass) throws IllegalNodeConfigurationException {
+    public static NodeInfo compile(Class<? extends AnnotatedBox> nodeClass) throws IllegalNodeConfigurationException {
         Map<String, Method> inputMethods = new HashMap<>();
         Map<String, Method> configMethods = new HashMap<>();
         NodeEntry nodeEntry = nodeClass.getAnnotation(NodeEntry.class);
@@ -33,8 +34,15 @@ public class CompilerUtil {
                         String outputName = getVarName(outputMethod);
                         NodeOutput nodeOutput = outputMethod.getAnnotation(NodeOutput.class);
                         if (nodeOutput != null) {
+                            if (!outputMethod.isAccessible()) {
+                                throw new IllegalNodeConfigurationException("NodeOutput method must be public");
+                            }
+                            if (!outputMethod.getReturnType().isAssignableFrom(Exchange.class)) {
+                                throw new IllegalNodeConfigurationException("NodeOutput method return type must be Exchange");
+                            }
                             NodeIODefinition nodeIODefinition = new NodeIODefinition();
-                            nodeIODefinition.setType(outputMethod.getReturnType());
+                            nodeIODefinition.setType((Class) ((ParameterizedType)outputMethod.getGenericReturnType()).getActualTypeArguments()[0]);
+                            nodeIODefinition.setMethod(outputMethod);
                             nodeIODefinition.setName(outputName);
                             nodeIODefinition.setLabel(!nodeOutput.label().isEmpty() ? nodeOutput.label() : outputName);
                             nodeIODefinition.setOrder(nodeOutput.order());
@@ -43,7 +51,7 @@ public class CompilerUtil {
                     }
                 }else if (!callMethod.getReturnType().equals(Void.class)){
                     NodeIODefinition nodeIODefinition = new NodeIODefinition();
-                    nodeIODefinition.setType(callMethod.getReturnType());
+                    nodeIODefinition.setType((Class) ((ParameterizedType) callMethod.getGenericReturnType()).getActualTypeArguments()[0]);
                     nodeIODefinition.setName("main");
                     nodeIODefinition.setLabel("main");
                     nodeIODefinition.setOrder(0);
@@ -51,7 +59,7 @@ public class CompilerUtil {
                 }
 
             } catch (NoSuchMethodException e) {
-                throw new IllegalNodeConfigurationException("RunnableNode class must have a call() method with no parameter");
+                throw new IllegalNodeConfigurationException("AnnotatedNode class must have a call() method with no parameter");
             }
             for (Method method : nodeClass.getMethods()) {
                 NodeInput nodeInput = method.getAnnotation(NodeInput.class);
@@ -92,7 +100,7 @@ public class CompilerUtil {
             nodeDefinition.setConfigurations(nodeConfigurationDefinitionList);
             return new NodeInfo(nodeClass, nodeDefinition, inputMethods, configMethods);
         }
-        throw new IllegalNodeConfigurationException("RunnableNode type must have @NodeEntry annotation");
+        throw new IllegalNodeConfigurationException("AnnotatedNode type must have @NodeEntry annotation");
     }
 
     public static String getVarName(Method method){

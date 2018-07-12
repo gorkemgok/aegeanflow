@@ -1,5 +1,6 @@
 package com.aegeanflow.essentials.data;
 
+import com.aegeanflow.core.Exchange;
 import com.aegeanflow.core.spi.annotation.NodeOutput;
 import com.aegeanflow.core.spi.annotation.NodeOutputBean;
 
@@ -19,17 +20,17 @@ public class SplittedTabularData {
     }
 
     @NodeOutput
-    public TabularData getTrain() {
-        return train;
+    public Exchange<TabularData> getTrain() {
+        return new TabularDataExchange(train);
     }
 
     @NodeOutput
-    public TabularData getCrossValidation() {
-        return crossValidation;
+    public Exchange<TabularData> getCrossValidation() {
+        return new TabularDataExchange(crossValidation);
     }
 
     @NodeOutput
-    public TabularData getTest() {
-        return test;
+    public Exchange<TabularData> getTest() {
+        return new TabularDataExchange(test);
     }
 }

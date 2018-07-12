@@ -1,6 +1,7 @@
 package com.aegeanflow.essentials.node;
 
-import com.aegeanflow.core.spi.AbstractRunnableNode;
+import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 
@@ -13,7 +14,7 @@ import java.util.Properties;
  * Created by gorkem on 12.01.2018.
  */
 @NodeEntry(label = "Database Connection")
-public class DatabaseConnectionNode extends AbstractRunnableNode<Connection> {
+public class DatabaseConnectionBox extends AbstractAnnotatedBox<Connection> {
 
     private String jdbcClass;
 
@@ -24,12 +25,12 @@ public class DatabaseConnectionNode extends AbstractRunnableNode<Connection> {
     private String password = "";
 
     @Override
-    public Connection call() throws Exception {
+    public Exchange<Connection> call() throws Exception {
         Driver driver = DriverManager.getDriver(jdbcUrl);
         Properties properties = new Properties();
         properties.setProperty("user", user);
         properties.setProperty("password", password);
-        return driver.connect(jdbcUrl, properties);
+        return Exchange.create(driver.connect(jdbcUrl, properties));
     }
 
     @NodeConfig(label = "Driver Class", order = 1)

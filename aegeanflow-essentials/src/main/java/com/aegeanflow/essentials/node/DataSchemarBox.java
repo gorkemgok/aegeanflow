@@ -1,21 +1,23 @@
 package com.aegeanflow.essentials.node;
 
+import com.aegeanflow.core.Exchange;
 import com.aegeanflow.essentials.data.SchemalessData;
 import com.aegeanflow.essentials.data.TabularData;
-import com.aegeanflow.core.spi.AbstractRunnableNode;
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
+import com.aegeanflow.essentials.data.TabularDataExchange;
 
 @NodeEntry
-public class DataSchemarNode extends AbstractRunnableNode<TabularData> {
+public class DataSchemarBox extends AbstractAnnotatedBox<TabularData> {
 
     private SchemalessData data;
 
     private TabularData.Schema schema;
 
     @Override
-    public TabularData call() throws Exception {
-        return new TabularData(schema, data.getData());
+    public Exchange<TabularData> call() throws Exception {
+        return new TabularDataExchange(new TabularData(schema, data.getData()));
     }
 
     @NodeInput

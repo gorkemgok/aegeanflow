@@ -1,7 +1,7 @@
 package com.aegeanflow.core;
 
 import com.aegeanflow.core.engine.DataFlowEngineManager;
-import com.aegeanflow.core.spi.RunnableNode;
+import com.aegeanflow.core.spi.AnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -27,7 +27,7 @@ public class CoreModule extends AbstractModule {
         bind(DataFlowEngineManager.class).in(Singleton.class);
         bind(NodeRepository.class).in(Singleton.class);
         Reflections reflections = new Reflections("com.aegeanflow");
-        Set<Class<? extends RunnableNode>> nodeClasses = reflections.getSubTypesOf(RunnableNode.class);
+        Set<Class<? extends AnnotatedBox>> nodeClasses = reflections.getSubTypesOf(AnnotatedBox.class);
         nodeClasses.stream()
                 .filter(nodeClass -> nodeClass.isAnnotationPresent(NodeEntry.class))
                 .forEach(nodeClass -> bind(nodeClass));
@@ -36,9 +36,9 @@ public class CoreModule extends AbstractModule {
     @Provides
     @Singleton
     @Named(NODE_CLASSES)
-    Set<Class<? extends RunnableNode>> provideNodeClasses(){
+    Set<Class<? extends AnnotatedBox>> provideNodeClasses(){
         Reflections reflections = new Reflections("com.aegeanflow");
-        Set<Class<? extends RunnableNode>> nodeClasses = reflections.getSubTypesOf(RunnableNode.class);
+        Set<Class<? extends AnnotatedBox>> nodeClasses = reflections.getSubTypesOf(AnnotatedBox.class);
         return nodeClasses;
     }
 }

@@ -5,7 +5,7 @@ import com.aegeanflow.core.CoreModule;
 import com.aegeanflow.core.NodeInfo;
 import com.aegeanflow.core.definition.NodeDefinition;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
-import com.aegeanflow.core.spi.RunnableNode;
+import com.aegeanflow.core.spi.AnnotatedBox;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.gorkemgok.annoconf.guice.Initiable;
@@ -27,15 +27,15 @@ public class NodeRepository implements Initiable {
 
     private final List<NodeInfo> nodeInfoList;
 
-    private final Set<Class<? extends RunnableNode>> nodeClasses;
+    private final Set<Class<? extends AnnotatedBox>> nodeClasses;
 
     @Inject
-    public NodeRepository(@Named(CoreModule.NODE_CLASSES) Set<Class<? extends RunnableNode>> nodeClasses) {
+    public NodeRepository(@Named(CoreModule.NODE_CLASSES) Set<Class<? extends AnnotatedBox>> nodeClasses) {
         this.nodeClasses = nodeClasses;
         nodeInfoList = new ArrayList<>();
     }
 
-    public void register(Class<? extends RunnableNode> nodeClass) throws IllegalNodeConfigurationException {
+    public void register(Class<? extends AnnotatedBox> nodeClass) throws IllegalNodeConfigurationException {
         NodeInfo nodeInfo = CompilerUtil.compile(nodeClass);
         nodeInfoList.add(nodeInfo);
     }
@@ -57,7 +57,7 @@ public class NodeRepository implements Initiable {
                 register(nodeClass);
                 LOGGER.info("Registered {}", nodeClass.getName());
             } catch (IllegalNodeConfigurationException e) {
-                LOGGER.error("Cant register runnableNode {}. {}", nodeClass.getName(), e.getMessage());
+                LOGGER.error("Cant register annotatedBox {}. {}", nodeClass.getName(), e.getMessage());
             }
         });
     }

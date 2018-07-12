@@ -1,6 +1,7 @@
 package com.aegeanflow.core.node;
 
-import com.aegeanflow.core.spi.AbstractRunnableNode;
+import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 @NodeEntry
-public class TestNode2IN2OUT extends AbstractRunnableNode<TestNodeOutput> {
+public class TestBox2IN2OUT extends AbstractAnnotatedBox<TestNodeOutput> {
 
     public static final String NODE_CONG_NAME = "Config List";
 
@@ -58,13 +59,13 @@ public class TestNode2IN2OUT extends AbstractRunnableNode<TestNodeOutput> {
     }
 
     @Override
-    public TestNodeOutput call() throws Exception {
+    public Exchange<TestNodeOutput> call() throws Exception {
         StringJoiner sj = new StringJoiner(",");
         for (int i = 0; i < count; i++) {
             sj.add(text);
         }
         TestNodeOutput tno = new TestNodeOutput(text, sj.toString());
-        return tno;
+        return Exchange.create(tno);
     }
 }
 

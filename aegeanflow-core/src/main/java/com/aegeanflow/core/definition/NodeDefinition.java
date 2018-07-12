@@ -1,12 +1,12 @@
 package com.aegeanflow.core.definition;
 
-import com.aegeanflow.core.spi.RunnableNode;
+import com.aegeanflow.core.spi.AnnotatedBox;
 
 import java.util.List;
 
 public class NodeDefinition {
 
-    private Class<? extends RunnableNode> type;
+    private Class<? extends AnnotatedBox> type;
 
     private String label;
 
@@ -16,11 +16,11 @@ public class NodeDefinition {
 
     private List<NodeConfigurationDefinition> configurations;
 
-    public Class<? extends RunnableNode> getType() {
+    public Class<? extends AnnotatedBox> getType() {
         return type;
     }
 
-    public void setType(Class<? extends RunnableNode> type) {
+    public void setType(Class<? extends AnnotatedBox> type) {
         this.type = type;
     }
 

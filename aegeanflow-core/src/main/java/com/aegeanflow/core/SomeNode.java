@@ -23,8 +23,7 @@ public class SomeNode extends AbstractNode{
     }
 
     @Override
-    public <T> void accept(Input<T> input, T value) {
-        super.accept(input, value);
+    protected <T> void setInput(Input<T> input, T value) {
         if (input.equals(STRING_INPUT)) {
             stringInput = (String) value;
         } else if (input.equals(INTEGER_INPUT)) {

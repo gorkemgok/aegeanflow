@@ -1,17 +1,13 @@
 package com.aegeanflow.core.engine;
 
-import com.aegeanflow.core.CompilerUtil;
-import com.aegeanflow.core.NodeInfo;
-import com.aegeanflow.core.NodeRepository;
+import com.aegeanflow.core.*;
 import com.aegeanflow.core.definition.NodeConfigurationDefinition;
-import com.aegeanflow.core.NodeStatus;
 import com.aegeanflow.core.exception.NoSuchNodeException;
 import com.aegeanflow.core.exception.NodeRuntimeException;
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.flow.FlowConnection;
 import com.aegeanflow.core.flow.FlowNode;
-import com.aegeanflow.core.spi.Node;
-import com.aegeanflow.core.spi.RunnableNode;
+import com.aegeanflow.core.spi.AnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeOutput;
 import com.aegeanflow.core.spi.annotation.NodeOutputBean;
 import org.slf4j.Logger;
@@ -37,7 +33,7 @@ public class DataFlowEngine {
 
     private final Flow flow;
 
-    private final List<RunnableNode<?>> runnableNodeList;
+    private final List<AnnotatedBox<?>> annotatedBoxList;
 
     private final Map<UUID, FlowFuture> outputState;
 
@@ -49,9 +45,9 @@ public class DataFlowEngine {
 
     private final NodeRepository nodeRepository;
 
-    public DataFlowEngine(Flow flow, List<RunnableNode<?>> runnableNodeList, NodeRepository nodeRepository, @Nullable DataFlowEngine stateProvider) {
+    public DataFlowEngine(Flow flow, List<AnnotatedBox<?>> annotatedBoxList, NodeRepository nodeRepository, @Nullable DataFlowEngine stateProvider) {
         this.flow = flow;
-        this.runnableNodeList = runnableNodeList;
+        this.annotatedBoxList = annotatedBoxList;
         this.nodeRepository = nodeRepository;
         if (stateProvider != null) {
             this.outputState = stateProvider.outputState;
@@ -67,7 +63,7 @@ public class DataFlowEngine {
         if (status != NodeStatus.RUNNING) {
             runningTasks.remove(node.getUUID());
         }
-        LOGGER.info(format("%s, %s, %s : %s", node.getName(), node.getNodeClass().getSimpleName(), node.getUUID(), status));
+        //LOGGER.info(format("%s, %s, %s : %s", node.getName(), node.getNodeClass().getSimpleName(), node.getUUID(), status));
     }
 
     public List<Object> getResultList()  throws NoSuchNodeException, NodeRuntimeException {
@@ -98,7 +94,7 @@ public class DataFlowEngine {
                 .collect(Collectors.toList());
         List<FlowFuture> flowFutureList = new ArrayList<>();
         for (FlowNode node : outputNodes) {
-            updateStatus(node, NodeStatus.WAITING);
+            //updateStatus(node, NodeStatus.WAITING);
             flowFutureList.add(getResult(node.getUUID()));
         }
         return flowFutureList;
@@ -108,32 +104,32 @@ public class DataFlowEngine {
         for (FlowNode flowNode : flow.getNodeList()){
             setNodeConfig(getNode(flowNode.getUUID()), flowNode.getConfiguration());
         }
-        RunnableNode<?> runnableNode = getNode(nodeUUID);
-        return startNode(runnableNode, true);
+        AnnotatedBox<?> annotatedBox = getNode(nodeUUID);
+        return startNode(annotatedBox, true);
     }
 
-    private <T> FlowFuture<T> startNode(RunnableNode<T> runnableNode, boolean useState) throws NodeRuntimeException {
+    private <T> FlowFuture<T> startNode(AnnotatedBox<T> annotatedBox, boolean useState) throws NodeRuntimeException {
         try {
             //CONTROL STATE FROM PREVIOUS RUN
-            if (useState && outputState.containsKey(runnableNode.getUUID())){
-                FlowFuture flowFuture = outputState.get(runnableNode.getUUID());
+            if (useState && outputState.containsKey(annotatedBox.getUUID())){
+                FlowFuture flowFuture = outputState.get(annotatedBox.getUUID());
                 if (flowFuture.isDone() && !flowFuture.isCompletedExceptionally()){
                     return flowFuture;
                 }
             }
             //CONTROL IF ALREADY RUNNING
             FlowFuture<T> flowFuture;
-            if ((flowFuture = runningTasks.get(runnableNode.getUUID())) != null) {
+            if ((flowFuture = runningTasks.get(annotatedBox.getUUID())) != null) {
                 return flowFuture;
             }
             //RUN NODE
             Supplier<List<FlowInput>> supplyInputs = () -> {
                 //RUN INPUT NODES
                 try {
-                    List<IOPair> IOPairList = getIOPairList(runnableNode.getUUID());
+                    List<IOPair> IOPairList = getIOPairList(annotatedBox.getUUID());
                     List<OutputFuture> outputFutures = new ArrayList<>();
                     for (IOPair ioPair : IOPairList) {
-                        FlowFuture outputFuture = startNode(ioPair.runnableNode, useState);
+                        FlowFuture outputFuture = startNode(ioPair.annotatedBox, useState);
                         outputFutures.add(new OutputFuture(ioPair, outputFuture));
                     }
 
@@ -153,47 +149,47 @@ public class DataFlowEngine {
                                     inputList.add(new FlowInput(outputFuture.getIoPair().inputName, input));
                                 }
                             }
-                            updateStatus(outputFuture.getIoPair().runnableNode, NodeStatus.DONE);
+                            //updateStatus(outputFuture.getIoPair().annotatedBox, NodeStatus.DONE);
                         } catch (ExecutionException e) {
-                            updateStatus(outputFuture.getIoPair().runnableNode, NodeStatus.FAILED);
+                            //updateStatus(outputFuture.getIoPair().annotatedBox, NodeStatus.FAILED);
                             if (e.getCause() instanceof NodeRuntimeException) {
-                                throw new NodeRuntimeException(e.getCause().getCause(), runnableNode.getUUID());
+                                throw new NodeRuntimeException(e.getCause().getCause(), annotatedBox.getUUID());
                             }
-                            throw new NodeRuntimeException(e.getCause(), runnableNode.getUUID());
+                            throw new NodeRuntimeException(e.getCause(), annotatedBox.getUUID());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                     return inputList;
                 }catch (NodeRuntimeException e) {
-                    updateStatus(runnableNode, NodeStatus.FAILED);
+                    //updateStatus(annotatedBox, NodeStatus.FAILED);
                     throw e;
                 }catch (Exception e) {
-                    updateStatus(runnableNode, NodeStatus.FAILED);
-                    throw new NodeRuntimeException(e, runnableNode.getUUID());
+                    //updateStatus(annotatedBox, NodeStatus.FAILED);
+                    throw new NodeRuntimeException(e, annotatedBox.getUUID());
                 }
             };
 
             Function<List<FlowInput>, T> nodeRunTask = (inputList) -> {
                 //RUN INPUT NODES
                 try {
-                    setNodeInputs(runnableNode, inputList);
-                    updateStatus(runnableNode, NodeStatus.RUNNING);
-                    return runnableNode.call();
+                    setNodeInputs(annotatedBox, inputList);
+                    //updateStatus(annotatedBox, NodeStatus.RUNNING);
+                    return null;//annotatedBox.call();
                 }catch (NodeRuntimeException e) {
-                    updateStatus(runnableNode, NodeStatus.FAILED);
+                    //updateStatus(annotatedBox, NodeStatus.FAILED);
                     throw e;
                 }catch (Exception e) {
-                    updateStatus(runnableNode, NodeStatus.FAILED);
-                    throw new NodeRuntimeException(e, runnableNode.getUUID());
+                    //updateStatus(annotatedBox, NodeStatus.FAILED);
+                    throw new NodeRuntimeException(e, annotatedBox.getUUID());
                 }
             };
             CompletableFuture<T> completableFuture = CompletableFuture
                     .supplyAsync(supplyInputs)
                     .thenApply(nodeRunTask);
-            flowFuture = new FlowFuture<>(runnableNode, completableFuture);
-            runningTasks.put(runnableNode.getUUID(), flowFuture);
-            outputState.put(runnableNode.getUUID(), flowFuture);
+            //flowFuture = new FlowFuture<>(annotatedBox, completableFuture);
+            runningTasks.put(annotatedBox.getUUID(), flowFuture);
+            outputState.put(annotatedBox.getUUID(), flowFuture);
             return flowFuture;
         } catch (Exception e) {
             //SET STATUS AS CANCELLED for WAITING and RUNNING Nodes
@@ -203,24 +199,24 @@ public class DataFlowEngine {
                 }
                 return entry;
             }).collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
-            //TODO: remove and trigger runnableNode status listerner
+            //TODO: remove and trigger annotatedBox status listerner
             StringJoiner sj = new StringJoiner("\n", "--------\n", "");
             statusMap.forEach((k, v) -> sj.add(k.toString() + " - " + v));
             System.out.println(sj.toString());
-            throw new NodeRuntimeException(e, runnableNode.getUUID());
+            throw new NodeRuntimeException(e, annotatedBox.getUUID());
         }
     }
 
-    private void setNodeInputs(RunnableNode runnableNode, List<FlowInput> inputs){
+    private void setNodeInputs(AnnotatedBox annotatedBox, List<FlowInput> inputs){
         try {
             Optional<NodeInfo> nodeInfoOptional = nodeRepository.getNodeInfoList().stream()
-                    .filter(nodeInfo -> nodeInfo.getNodeClass().equals(runnableNode.getClass()))
+                    .filter(nodeInfo -> nodeInfo.getNodeClass().equals(annotatedBox.getClass()))
                     .findFirst();
             if (nodeInfoOptional.isPresent()) {
                 NodeInfo nodeInfo = nodeInfoOptional.get();
                 for (FlowInput flowInput : inputs) {
                     Method method = nodeInfo.getInputMethods().get(flowInput.getName());
-                    method.invoke(runnableNode, flowInput.getValue());
+                    method.invoke(annotatedBox, flowInput.getValue());
                 }
             }
         } catch (IllegalAccessException e) {
@@ -230,10 +226,10 @@ public class DataFlowEngine {
         }
     }
 
-    private void setNodeConfig(RunnableNode runnableNode, Map<String, Object> configs){
+    private void setNodeConfig(AnnotatedBox annotatedBox, Map<String, Object> configs){
         try {
             Optional<NodeInfo> compiledNodeInfoOptional = nodeRepository.getNodeInfoList().stream()
-                    .filter(nodeInfo -> nodeInfo.getNodeClass().equals(runnableNode.getClass()))
+                    .filter(nodeInfo -> nodeInfo.getNodeClass().equals(annotatedBox.getClass()))
                     .findFirst();
             if (compiledNodeInfoOptional.isPresent()) {
                 NodeInfo nodeInfo = compiledNodeInfoOptional.get();
@@ -248,7 +244,7 @@ public class DataFlowEngine {
                         if (type.equals(Integer.class)) {
                             value = Integer.valueOf(value.toString());
                         }
-                        method.invoke(runnableNode, value);
+                        method.invoke(annotatedBox, value);
                     }
                 }
             }
@@ -264,14 +260,14 @@ public class DataFlowEngine {
 
         public final String inputName;
 
-        public final RunnableNode<?> runnableNode;
+        public final AnnotatedBox<?> annotatedBox;
 
         public final FlowConnection.Type type;
 
-        public IOPair(String outputName, String inputName, RunnableNode<?> runnableNode, FlowConnection.Type type) {
+        public IOPair(String outputName, String inputName, AnnotatedBox<?> annotatedBox, FlowConnection.Type type) {
             this.outputName = outputName;
             this.inputName = inputName;
-            this.runnableNode = runnableNode;
+            this.annotatedBox = annotatedBox;
             this.type = type;
         }
     }
@@ -290,8 +286,8 @@ public class DataFlowEngine {
         return IOPairList;
     }
 
-    private RunnableNode<?> getNode(UUID nodeUUID) throws NoSuchNodeException {
-        return runnableNodeList.stream().filter(node -> node.getUUID().equals(nodeUUID))
+    private AnnotatedBox<?> getNode(UUID nodeUUID) throws NoSuchNodeException {
+        return annotatedBoxList.stream().filter(node -> node.getUUID().equals(nodeUUID))
                 .findFirst()
                 .orElseThrow(() -> new NoSuchNodeException(nodeUUID));
     }

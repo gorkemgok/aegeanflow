@@ -1,9 +1,11 @@
 package com.aegeanflow.essentials.node;
 
+import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.essentials.data.TabularData;
-import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
+import com.aegeanflow.essentials.data.TabularDataExchange;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +14,14 @@ import java.util.List;
  * Created by gorkem on 30.01.2018.
  */
 @NodeEntry
-public class TabularDataMergeNode extends AbstractRunnableNode<TabularData> {
+public class TabularDataMergeBox extends AbstractAnnotatedBox<TabularData> {
 
     private TabularData data1;
 
     private TabularData data2;
 
     @Override
-    public TabularData call() throws Exception {
+    public Exchange<TabularData> call() throws Exception {
         List<TabularData.Field> fieldList = new ArrayList<>(data1.getSchema().getFieldList());
         fieldList.addAll(data2.getSchema().getFieldList());
 
@@ -38,7 +40,7 @@ public class TabularDataMergeNode extends AbstractRunnableNode<TabularData> {
             }
             data.add(row);
         }
-        return new TabularData(new TabularData.Schema(fieldList), data);
+        return new TabularDataExchange(new TabularData(new TabularData.Schema(fieldList), data));
     }
 
     @NodeInput

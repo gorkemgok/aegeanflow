@@ -1,12 +1,13 @@
 package com.aegeanflow.essentials.example;
 
-import com.aegeanflow.core.spi.AbstractRunnableNode;
+import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
 @NodeEntry
-public class TestNode extends AbstractRunnableNode<String> {
+public class TestBox extends AbstractAnnotatedBox<String> {
 
     private String input1;
 
@@ -18,7 +19,7 @@ public class TestNode extends AbstractRunnableNode<String> {
 
     private Double config2;
 
-    public String call() throws Exception {
+    public Exchange<String> call() throws Exception {
         return null;
     }
 

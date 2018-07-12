@@ -1,19 +1,20 @@
 package com.aegeanflow.essentials.node;
 
+import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.essentials.data.SplittedTabularData;
 import com.aegeanflow.essentials.data.TabularData;
-import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
 @NodeEntry(label = "Tabular Data Splitter")
-public class TabularDataSplitterNode extends AbstractRunnableNode<SplittedTabularData> {
+public class TabularDataSplitterBox extends AbstractAnnotatedBox<SplittedTabularData> {
 
     private TabularData input;
 
     @Override
-    public SplittedTabularData call() throws Exception {
-        return new SplittedTabularData(input, input, input);
+    public Exchange<SplittedTabularData> call() throws Exception {
+        return Exchange.create(new SplittedTabularData(input, input, input));
     }
 
     @NodeInput

@@ -1,10 +1,11 @@
 package com.aegeanflow.core;
 
 import java.util.Set;
+import java.util.UUID;
 
 public interface Node {
 
-    void initialize(Router router);
+    void initialize(UUID uuid, Router router);
 
     void run();
 
@@ -20,5 +21,7 @@ public interface Node {
     Set<Input<?>> listInputs();
 
     Set<Input<?>> listCompletedParameters();
+
+    UUID getUUID();
 
 }

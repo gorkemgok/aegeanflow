@@ -1,17 +1,18 @@
 package com.aegeanflow.core.node.flowtest;
 
-import com.aegeanflow.core.spi.AbstractRunnableNode;
+import com.aegeanflow.core.StringExchange;
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 
 @NodeEntry
-public class Node1 extends AbstractRunnableNode<String> {
+public class Box1 extends AbstractAnnotatedBox<String> {
 
     private String seedText;
 
     @Override
-    public String call() throws Exception {
-        return seedText;
+    public StringExchange call() throws Exception {
+        return new StringExchange(seedText);
     }
 
     @NodeConfig

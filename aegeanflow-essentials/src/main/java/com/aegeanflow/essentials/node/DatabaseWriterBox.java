@@ -1,7 +1,8 @@
 package com.aegeanflow.essentials.node;
 
+import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.essentials.data.TabularData;
-import com.aegeanflow.core.spi.AbstractRunnableNode;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
@@ -18,7 +19,7 @@ import static java.lang.String.format;
  * Created by gorkem on 29.01.2018.
  */
 @NodeEntry(label = "Database Writer")
-public class DatabaseWriterNode extends AbstractRunnableNode<Void> {
+public class DatabaseWriterBox extends AbstractAnnotatedBox<Void> {
 
     private Connection connection;
 
@@ -31,7 +32,7 @@ public class DatabaseWriterNode extends AbstractRunnableNode<Void> {
     private String tableName;
 
     @Override
-    public Void call() throws Exception {
+    public Exchange<Void> call() throws Exception {
         StringJoiner fieldsJoiner = new StringJoiner(",", "(", ")");
         data.getSchema().getFieldList().forEach(field -> {
             fieldsJoiner.add(field.getName());

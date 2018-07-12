@@ -3,7 +3,7 @@ package com.aegeanflow.core.engine;
 import com.aegeanflow.core.NodeRepository;
 import com.aegeanflow.core.flow.Flow;
 import com.aegeanflow.core.flow.FlowNode;
-import com.aegeanflow.core.spi.RunnableNode;
+import com.aegeanflow.core.spi.AnnotatedBox;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -42,13 +42,13 @@ public class DataFlowEngineManager {
     }
 
     public DataFlowEngine create(Flow flow, @Nullable DataFlowEngine stateProvider) throws ClassNotFoundException {
-        List<RunnableNode<?>> runnableNodeList = new ArrayList<>();
+        List<AnnotatedBox<?>> annotatedBoxList = new ArrayList<>();
         for (FlowNode flowNode : flow.getNodeList()){
-            RunnableNode runnableNode = injector.getInstance(flowNode.getNodeClass());
-            runnableNode.setUUID(flowNode.getUUID());
-            runnableNode.setName(flowNode.getName());
-            runnableNodeList.add(runnableNode);
+            AnnotatedBox annotatedBox = injector.getInstance(flowNode.getNodeClass());
+            annotatedBox.setUUID(flowNode.getUUID());
+            annotatedBox.setName(flowNode.getName());
+            annotatedBoxList.add(annotatedBox);
         }
-        return new DataFlowEngine(flow, runnableNodeList, nodeRepository, stateProvider);
+        return new DataFlowEngine(flow, annotatedBoxList, nodeRepository, stateProvider);
     }
 }
