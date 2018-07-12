@@ -1,5 +1,5 @@
 <template>
-  <div class="flow-container">
+  <div class="sessionProxy-container">
     <at-input v-model="title"/>
     <at-modal v-for="node in nodes" :key="node.uuid" v-model="nodeModal[node.uuid]" :title="node.definition.label + ' Configuration'">
       <p v-for="config in node.definition.configurations" :key="config.name">
@@ -71,7 +71,7 @@
   </div>
 </template>
 <script>
-import Node from '@/flow/Node'
+import Node from '@/sessionProxy/Node'
 import { uuid } from 'vue-uuid'
 import { POS_CALC, TYPES } from '@/helpers/node-helpers.js'
 import { HTTP } from '@/helpers/http-helpers.js'
@@ -88,7 +88,7 @@ export default {
     contextMenu
   },
   props: {
-    flow: {
+    sessionProxy: {
       type: Object,
       required: true
     }
@@ -162,14 +162,14 @@ export default {
       }
     },
     runFlow: function () {
-      const flow = TYPES.createFlow(this.uuid, this.title, this.nodes, this.connections)
-      HTTP.post('/flow/run', flow).then(res => {
+      const sessionProxy = TYPES.createFlow(this.uuid, this.title, this.nodes, this.connections)
+      HTTP.post('/sessionProxy/run', sessionProxy).then(res => {
         console.log(res)
       })
     },
     saveFlow: function () {
-      const flow = TYPES.createFlow(this.uuid, this.title, this.nodes, this.connections)
-      HTTP.post('/flow', flow).then(res => {
+      const sessionProxy = TYPES.createFlow(this.uuid, this.title, this.nodes, this.connections)
+      HTTP.post('/sessionProxy', sessionProxy).then(res => {
         console.log(res)
       })
     },
@@ -342,10 +342,10 @@ export default {
     }
   },
   created: function () {
-    this.uuid = this.flow.uuid
-    this.title = this.flow.title
-    this.nodes = this.flow.nodes
-    this.connections = this.flow.connections
+    this.uuid = this.sessionProxy.uuid
+    this.title = this.sessionProxy.title
+    this.nodes = this.sessionProxy.nodes
+    this.connections = this.sessionProxy.connections
   }
 }
 </script>
@@ -397,7 +397,7 @@ export default {
   svg text::selection {
     background: none;
   }
-  .flow-container{
+  .sessionProxy-container{
     width: 100%;
   }
 </style>

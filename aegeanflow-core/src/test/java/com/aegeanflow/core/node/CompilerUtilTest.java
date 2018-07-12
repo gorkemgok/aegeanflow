@@ -1,9 +1,9 @@
 package com.aegeanflow.core.node;
 
 import com.aegeanflow.core.CompilerUtil;
-import com.aegeanflow.core.NodeInfo;
-import com.aegeanflow.core.definition.NodeConfigurationDefinition;
-import com.aegeanflow.core.definition.NodeIODefinition;
+import com.aegeanflow.core.BoxInfo;
+import com.aegeanflow.core.definition.BoxConfigurationDefinition;
+import com.aegeanflow.core.definition.BoxIODefinition;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import static org.testng.Assert.*;
 public class CompilerUtilTest {
     @org.testng.annotations.Test
     public void testCompile() throws Exception {
-        NodeInfo nodeInfo1 = CompilerUtil.compile(TestBox2IN1OUT.class);
+        BoxInfo boxInfo1 = CompilerUtil.compile(TestBox2IN1OUT.class);
 
-        assertEquals(nodeInfo1.getNodeClass(), TestBox2IN1OUT.class);
-        assertEquals(nodeInfo1.getDefinition().getLabel(), TestBox2IN1OUT.NODE_LABEL);
-        List<NodeIODefinition> inputDefs1 = nodeInfo1.getDefinition().getInputs();
+        assertEquals(boxInfo1.getNodeClass(), TestBox2IN1OUT.class);
+        assertEquals(boxInfo1.getDefinition().getLabel(), TestBox2IN1OUT.NODE_LABEL);
+        List<BoxIODefinition> inputDefs1 = boxInfo1.getDefinition().getInputs();
         assertEquals(inputDefs1.size(), 2);
-        List<NodeIODefinition> outputDefs1 = nodeInfo1.getDefinition().getOutputs();
+        List<BoxIODefinition> outputDefs1 = boxInfo1.getDefinition().getOutputs();
         assertEquals(outputDefs1.size(), 1);
 
         assertEquals(inputDefs1.get(0).getLabel(), TestBox2IN1OUT.COUNT_IN_LABEL);
@@ -33,13 +33,13 @@ public class CompilerUtilTest {
         assertEquals(outputDefs1.get(0).getName(), "main");
         assertEquals(outputDefs1.get(0).getType(), String.class);
 
-        NodeInfo nodeInfo2 = CompilerUtil.compile(TestBox2IN2OUT.class);
+        BoxInfo boxInfo2 = CompilerUtil.compile(TestBox2IN2OUT.class);
 
-        assertEquals(nodeInfo2.getNodeClass(), TestBox2IN2OUT.class);
-        assertEquals(nodeInfo2.getDefinition().getLabel(), "TestBox2IN2OUT");
-        List<NodeIODefinition> inputDefs2 = nodeInfo2.getDefinition().getInputs();
+        assertEquals(boxInfo2.getNodeClass(), TestBox2IN2OUT.class);
+        assertEquals(boxInfo2.getDefinition().getLabel(), "TestBox2IN2OUT");
+        List<BoxIODefinition> inputDefs2 = boxInfo2.getDefinition().getInputs();
         assertEquals(inputDefs2.size(), 2);
-        List<NodeIODefinition> outputDefs2 = nodeInfo2.getDefinition().getOutputs();
+        List<BoxIODefinition> outputDefs2 = boxInfo2.getDefinition().getOutputs();
         assertEquals(outputDefs2.size(), 2);
 
 
@@ -59,7 +59,7 @@ public class CompilerUtilTest {
         assertEquals(outputDefs2.get(1).getName(), "first");
         assertEquals(outputDefs2.get(1).getType(), String.class);
 
-        List<NodeConfigurationDefinition> ncd = nodeInfo2.getDefinition().getConfigurations();
+        List<BoxIODefinition> ncd = boxInfo2.getDefinition().getConfigurations();
         assertEquals(ncd.size(), 2);
 
         assertEquals(ncd.get(0).getLabel(), TestBox2IN2OUT.NODE_CONG_NAME);

@@ -1,8 +1,7 @@
 package com.aegeanflow.core;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class AbstractNode implements Node{
 
@@ -29,10 +28,61 @@ public abstract class AbstractNode implements Node{
         completedParameterNames.add(input);
     }
 
-    protected abstract <T> void setInput(Input<T> input, T value);
+    public  <T> void acceptAndRun(Input<T> input, T value) {
+        accept(input, value);
+        if (getCompletedParameters().containsAll(getInputs())) {
+            run();
+        }
+    }
 
     @Override
-    public Set<Input<?>> listCompletedParameters() {
+    public Set<Input<?>> getCompletedParameters() {
         return completedParameterNames;
     }
+
+    @Override
+    public Collection<String> getInputNames() {
+        return getInputs().stream().map(Input::name).collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<String> getOutputNames() {
+        return getOutputs().stream().map(Output::name).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Class> getInputType(String name) {
+        Optional<Class> classOptional =  getInputs().stream()
+                .filter(input -> input.name().equals(name))
+                .map(input -> (Class)input.type())
+                .findAny();
+        return classOptional;
+    }
+
+    @Override
+    public Optional<Class> getOutputType(String name) {
+        Optional<Class> classOptional =  getOutputs().stream()
+                .filter(output -> output.name().equals(name))
+                .map(output -> (Class)output.type())
+                .findAny();
+        return classOptional;
+    }
+
+    @Override
+    public Optional<Output<?>> getOutput(String name) {
+        Optional<Output<?>> outputOptional =  getOutputs().stream()
+                .filter(output -> output.name().equals(name))
+                .findAny();
+        return outputOptional;
+    }
+
+    @Override
+    public Optional<Input<?>> getInput(String name) {
+        Optional<Input<?>> inputOptional =  getInputs().stream()
+                .filter(input -> input.name().equals(name))
+                .findAny();
+        return inputOptional;
+    }
+
+    protected abstract <T> void setInput(Input<T> input, T value);
 }

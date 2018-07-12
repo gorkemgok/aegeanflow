@@ -1,5 +1,6 @@
 package com.aegeanflow.core;
 
+import com.aegeanflow.core.definition.BoxIODefinition;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
 import com.aegeanflow.core.spi.AnnotatedBox;
 import org.slf4j.Logger;
@@ -7,10 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AnnotatedNode<T> extends AbstractNode{
@@ -19,13 +17,15 @@ public class AnnotatedNode<T> extends AbstractNode{
 
     private AnnotatedBox<T> annotatedBox;
 
-    private NodeInfo nodeInfo;
+    private BoxInfo boxInfo;
+
+    private NodeId id;
 
     @Override
     public void run() {
         try {
             Exchange<T> exchange = annotatedBox.call();
-            nodeInfo.getDefinition().getOutputs()
+            boxInfo.getDefinition().getOutputs()
                     .forEach(nodeIODefinition -> {
                         try {
                             Output output = Parameter.output(nodeIODefinition.getName(), nodeIODefinition.getType());
@@ -48,28 +48,41 @@ public class AnnotatedNode<T> extends AbstractNode{
         }
     }
 
+    @Override
+    public Collection<Output<?>> getOutputs() {
+        List<BoxIODefinition> inputMethods = new ArrayList<>(boxInfo.getDefinition().getOutputs());
+        return inputMethods.stream()
+                .map(def -> Parameter.output(def.getName(), def.getType()))
+                .collect(Collectors.toList());
+    }
 
 
     @Override
-    public Set<Input<?>> listInputs() {
-        Map<String, Method> inputMethods = new HashMap<>(nodeInfo.getInputMethods());
-        inputMethods.putAll(nodeInfo.getConfigMethods());
+    public Set<Input<?>> getInputs() {
+        Map<String, Method> inputMethods = new HashMap<>(boxInfo.getInputMethods());
+        inputMethods.putAll(boxInfo.getConfigMethods());
         return inputMethods.entrySet()
                 .stream()
                 .map(entry -> Parameter.input(entry.getKey(), entry.getValue().getParameterTypes()[0]))
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    public NodeId getId() {
+        return null;
+    }
+
     public void initialize(AnnotatedBox<T> annotatedBox, Router router) throws IllegalNodeConfigurationException {
         super.initialize(annotatedBox.getUUID(), router);
+        this.id = NodeId.of(annotatedBox.getNodeClass());
         this.annotatedBox = annotatedBox;
-        NodeInfo nodeInfo = CompilerUtil.compile(annotatedBox.getNodeClass());
-        this.nodeInfo = nodeInfo;
+        BoxInfo boxInfo = CompilerUtil.compile(annotatedBox.getNodeClass());
+        this.boxInfo = boxInfo;
     }
 
     @Override
     protected <T> void setInput(Input<T> input, T value) {
-        Method inputMethod = nodeInfo.getInputMethods().get(input.name());
+        Method inputMethod = boxInfo.getInputMethods().get(input.name());
         if (inputMethod != null) {
             try {
                 inputMethod.invoke(annotatedBox, value);

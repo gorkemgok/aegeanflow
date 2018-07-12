@@ -1,8 +1,8 @@
 package com.aegeanflow.core.engine;
 
-import com.aegeanflow.core.NodeRepository;
-import com.aegeanflow.core.flow.Flow;
-import com.aegeanflow.core.flow.FlowNode;
+import com.aegeanflow.core.BoxRepository;
+import com.aegeanflow.core.proxy.SessionProxy;
+import com.aegeanflow.core.proxy.NodeProxy;
 import com.aegeanflow.core.spi.AnnotatedBox;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -17,38 +17,38 @@ public class DataFlowEngineManager {
 
     private final Injector injector;
 
-    private final NodeRepository nodeRepository;
+    private final BoxRepository boxRepository;
 
     private final Map<UUID, DataFlowEngine> engineMap;
 
     @Inject
-    public DataFlowEngineManager(Injector injector, NodeRepository nodeRepository) {
+    public DataFlowEngineManager(Injector injector, BoxRepository boxRepository) {
         this.injector = injector;
-        this.nodeRepository = nodeRepository;
+        this.boxRepository = boxRepository;
         this.engineMap = new Hashtable<>();
     }
 
-    public DataFlowEngine create(Flow flow, boolean reset) throws ClassNotFoundException {
-        if (flow.getUuid() == null) {
-            flow.setUuid(UUID.randomUUID());
+    public DataFlowEngine create(SessionProxy sessionProxy, boolean reset) throws ClassNotFoundException {
+        if (sessionProxy.getUuid() == null) {
+            //sessionProxy.setUuid(UUID.randomUUID());
         }
         DataFlowEngine prevDFE = null;
         if (!reset) {
-            prevDFE = engineMap.get(flow.getUuid());
+            prevDFE = engineMap.get(sessionProxy.getUuid());
         }
-        DataFlowEngine dataFlowEngine = create(flow, prevDFE);
-        engineMap.put(flow.getUuid(), dataFlowEngine);
+        DataFlowEngine dataFlowEngine = create(sessionProxy, prevDFE);
+        engineMap.put(sessionProxy.getUuid(), dataFlowEngine);
         return dataFlowEngine;
     }
 
-    public DataFlowEngine create(Flow flow, @Nullable DataFlowEngine stateProvider) throws ClassNotFoundException {
+    public DataFlowEngine create(SessionProxy sessionProxy, @Nullable DataFlowEngine stateProvider) throws ClassNotFoundException {
         List<AnnotatedBox<?>> annotatedBoxList = new ArrayList<>();
-        for (FlowNode flowNode : flow.getNodeList()){
-            AnnotatedBox annotatedBox = injector.getInstance(flowNode.getNodeClass());
-            annotatedBox.setUUID(flowNode.getUUID());
-            annotatedBox.setName(flowNode.getName());
+        for (NodeProxy nodeProxy : sessionProxy.getNodeList()){
+            AnnotatedBox annotatedBox = injector.getInstance(nodeProxy.getType());
+            annotatedBox.setUUID(nodeProxy.getUUID());
+            annotatedBox.setName(nodeProxy.getName());
             annotatedBoxList.add(annotatedBox);
         }
-        return new DataFlowEngine(flow, annotatedBoxList, nodeRepository, stateProvider);
+        return new DataFlowEngine(sessionProxy, annotatedBoxList, boxRepository, stateProvider);
     }
 }

@@ -5,7 +5,7 @@ import com.aegeanflow.core.AegeanFlow;
 import com.aegeanflow.core.engine.DataFlowEngine;
 import com.aegeanflow.core.engine.DataFlowEngineManager;
 import com.aegeanflow.core.exception.NodeRuntimeException;
-import com.aegeanflow.core.flow.Flow;
+import com.aegeanflow.core.proxy.SessionProxy;
 import com.aegeanflow.core.spi.AegeanFlowService;
 import com.aegeanflow.core.workspace.Workspace;
 import com.aegeanflow.rest.proxy.NodeErrorProxy;
@@ -13,7 +13,6 @@ import com.aegeanflow.rest.proxy.UUIDProxy;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,31 +72,31 @@ public class RestService implements AegeanFlowService {
             }, jsonTransformer);
 
             //NODE
-            get("/node/list", MediaType.APPLICATION_JSON, (req, res) -> {
+            get("/box/list", MediaType.APPLICATION_JSON, (req, res) -> {
                 res.type("application/json");
-                return aegeanFlow.getNodeRepository().getNodeDefinitionList();
+                return aegeanFlow.getNodeRepository().getBoxDefinitionList();
             }, jsonTransformer);
 
             //FLOW
-            post("/flow",  MediaType.APPLICATION_JSON, (req, res) -> {
-                Flow flow = objectMapper.readValue(req.body(), Flow.class);
-                flow = workspace.save(flow);
-                return new UUIDProxy(flow.getUuid());
+            post("/proxy",  MediaType.APPLICATION_JSON, (req, res) -> {
+                SessionProxy sessionProxy = objectMapper.readValue(req.body(), SessionProxy.class);
+                sessionProxy = workspace.save(sessionProxy);
+                return new UUIDProxy(sessionProxy.getUuid());
             }, jsonTransformer);
 
-            post("/flow/run",  (req, res) -> {
-                Flow flow = new ObjectMapper().readValue(req.body(), Flow.class);
-                DataFlowEngine de = flowManager.create(flow, true);
+            post("/proxy/run",  (req, res) -> {
+                SessionProxy sessionProxy = new ObjectMapper().readValue(req.body(), SessionProxy.class);
+                DataFlowEngine de = flowManager.create(sessionProxy, true);
                 List<Object> resultList = de.getResultList();
                 for (Object result : resultList) {
                     System.out.println(result);
                 }
-                return new UUIDProxy(flow.getUuid());
+                return new UUIDProxy(sessionProxy.getUuid());
             });
 
-            get("/flow/list",  (req, res) -> {
-                List<Flow> flowList = workspace.getFlowList();
-                return flowList;
+            get("/proxy/list",  (req, res) -> {
+                List<SessionProxy> sessionProxyList = workspace.getFlowList();
+                return sessionProxyList;
             }, jsonTransformer);
         });
 

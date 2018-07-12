@@ -11,11 +11,11 @@ import com.google.inject.Injector;
 public class AegeanFlow {
 
     private static class AegeanFlowSingletons{
-        public final NodeRepository nodeRepository;
+        public final BoxRepository boxRepository;
 
         @Inject
-        private AegeanFlowSingletons(NodeRepository nodeRepository) {
-            this.nodeRepository = nodeRepository;
+        private AegeanFlowSingletons(BoxRepository boxRepository) {
+            this.boxRepository = boxRepository;
         }
     }
 
@@ -59,8 +59,8 @@ public class AegeanFlow {
         return injector.getInstance(DataFlowEngineManager.class);
     }
 
-    public NodeRepository getNodeRepository(){
-        return singletons.nodeRepository;
+    public BoxRepository getNodeRepository(){
+        return singletons.boxRepository;
     }
 
     public Injector getInjector() {

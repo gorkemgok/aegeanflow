@@ -25,12 +25,13 @@ public class CoreModule extends AbstractModule {
     protected void configure() {
         install(new InitSyncUtilModule());
         bind(DataFlowEngineManager.class).in(Singleton.class);
-        bind(NodeRepository.class).in(Singleton.class);
+        bind(BoxRepository.class).in(Singleton.class);
         Reflections reflections = new Reflections("com.aegeanflow");
         Set<Class<? extends AnnotatedBox>> nodeClasses = reflections.getSubTypesOf(AnnotatedBox.class);
         nodeClasses.stream()
                 .filter(nodeClass -> nodeClass.isAnnotationPresent(NodeEntry.class))
                 .forEach(nodeClass -> bind(nodeClass));
+
     }
 
     @Provides

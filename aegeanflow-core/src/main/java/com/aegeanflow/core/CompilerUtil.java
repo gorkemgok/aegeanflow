@@ -1,9 +1,9 @@
 package com.aegeanflow.core;
 
-import com.aegeanflow.core.definition.NodeConfigurationDefinition;
-import com.aegeanflow.core.definition.NodeDefinition;
-import com.aegeanflow.core.definition.NodeIODDefComparator;
-import com.aegeanflow.core.definition.NodeIODefinition;
+import com.aegeanflow.core.definition.BoxConfigurationDefinition;
+import com.aegeanflow.core.definition.BoxDefinition;
+import com.aegeanflow.core.definition.BoxIODDefComparator;
+import com.aegeanflow.core.definition.BoxIODefinition;
 import com.aegeanflow.core.spi.AnnotatedBox;
 import com.aegeanflow.core.spi.annotation.*;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
@@ -15,17 +15,17 @@ import java.util.*;
 
 public class CompilerUtil {
 
-    public static NodeInfo compile(Class<? extends AnnotatedBox> nodeClass) throws IllegalNodeConfigurationException {
+    public static BoxInfo compile(Class<? extends AnnotatedBox> nodeClass) throws IllegalNodeConfigurationException {
         Map<String, Method> inputMethods = new HashMap<>();
         Map<String, Method> configMethods = new HashMap<>();
         NodeEntry nodeEntry = nodeClass.getAnnotation(NodeEntry.class);
         if (nodeEntry != null) {
-            NodeDefinition nodeDefinition = new NodeDefinition();
-            nodeDefinition.setType(nodeClass);
-            nodeDefinition.setLabel(!nodeEntry.label().isEmpty() ? nodeEntry.label() : nodeClass.getSimpleName());
-            List<NodeIODefinition> nodeInputDefinitionList = new ArrayList<>();
-            List<NodeIODefinition> nodeOutputDefinitionList = new ArrayList<>();
-            List<NodeConfigurationDefinition> nodeConfigurationDefinitionList = new ArrayList<>();
+            BoxDefinition boxDefinition = new BoxDefinition();
+            boxDefinition.setType(nodeClass);
+            boxDefinition.setLabel(!nodeEntry.label().isEmpty() ? nodeEntry.label() : nodeClass.getSimpleName());
+            List<BoxIODefinition> nodeInputDefinitionList = new ArrayList<>();
+            List<BoxIODefinition> nodeOutputDefinitionList = new ArrayList<>();
+            List<BoxIODefinition> nodeConfigurationDefinitionList = new ArrayList<>();
             try {
                 Method callMethod = nodeClass.getMethod("call");
                 NodeOutputBean nodeOutputBean = callMethod.getReturnType().getAnnotation(NodeOutputBean.class);
@@ -40,22 +40,22 @@ public class CompilerUtil {
                             if (!outputMethod.getReturnType().isAssignableFrom(Exchange.class)) {
                                 throw new IllegalNodeConfigurationException("NodeOutput method return type must be Exchange");
                             }
-                            NodeIODefinition nodeIODefinition = new NodeIODefinition();
-                            nodeIODefinition.setType((Class) ((ParameterizedType)outputMethod.getGenericReturnType()).getActualTypeArguments()[0]);
-                            nodeIODefinition.setMethod(outputMethod);
-                            nodeIODefinition.setName(outputName);
-                            nodeIODefinition.setLabel(!nodeOutput.label().isEmpty() ? nodeOutput.label() : outputName);
-                            nodeIODefinition.setOrder(nodeOutput.order());
-                            nodeOutputDefinitionList.add(nodeIODefinition);
+                            BoxIODefinition boxIODefinition = new BoxIODefinition();
+                            boxIODefinition.setType((Class) ((ParameterizedType)outputMethod.getGenericReturnType()).getActualTypeArguments()[0]);
+                            boxIODefinition.setMethod(outputMethod);
+                            boxIODefinition.setName(outputName);
+                            boxIODefinition.setLabel(!nodeOutput.label().isEmpty() ? nodeOutput.label() : outputName);
+                            boxIODefinition.setOrder(nodeOutput.order());
+                            nodeOutputDefinitionList.add(boxIODefinition);
                         }
                     }
                 }else if (!callMethod.getReturnType().equals(Void.class)){
-                    NodeIODefinition nodeIODefinition = new NodeIODefinition();
-                    nodeIODefinition.setType((Class) ((ParameterizedType) callMethod.getGenericReturnType()).getActualTypeArguments()[0]);
-                    nodeIODefinition.setName("main");
-                    nodeIODefinition.setLabel("main");
-                    nodeIODefinition.setOrder(0);
-                    nodeOutputDefinitionList.add(nodeIODefinition);
+                    BoxIODefinition boxIODefinition = new BoxIODefinition();
+                    boxIODefinition.setType((Class) ((ParameterizedType) callMethod.getGenericReturnType()).getActualTypeArguments()[0]);
+                    boxIODefinition.setName("main");
+                    boxIODefinition.setLabel("main");
+                    boxIODefinition.setOrder(0);
+                    nodeOutputDefinitionList.add(boxIODefinition);
                 }
 
             } catch (NoSuchMethodException e) {
@@ -67,12 +67,12 @@ public class CompilerUtil {
                 if (nodeInput != null) {
                     if (method.getParameterCount() == 1) {
                         inputMethods.put(varName, method);
-                        NodeIODefinition nodeIODefinition = new NodeIODefinition();
-                        nodeIODefinition.setType(method.getParameters()[0].getType());
-                        nodeIODefinition.setName(varName);
-                        nodeIODefinition.setLabel(!nodeInput.label().isEmpty() ? nodeInput.label() : getVarName(method));
-                        nodeIODefinition.setOrder(nodeInput.order());
-                        nodeInputDefinitionList.add(nodeIODefinition);
+                        BoxIODefinition boxIODefinition = new BoxIODefinition();
+                        boxIODefinition.setType(method.getParameters()[0].getType());
+                        boxIODefinition.setName(varName);
+                        boxIODefinition.setLabel(!nodeInput.label().isEmpty() ? nodeInput.label() : getVarName(method));
+                        boxIODefinition.setOrder(nodeInput.order());
+                        nodeInputDefinitionList.add(boxIODefinition);
                     } else {
                         throw new IllegalNodeConfigurationException("Input setter method must have exactly one parameter");
                     }
@@ -81,7 +81,7 @@ public class CompilerUtil {
                 if (nodeConfig != null) {
                     if (method.getParameterCount() == 1) {
                         configMethods.put(varName, method);
-                        NodeConfigurationDefinition nodeConfigurationDefinition = new NodeConfigurationDefinition();
+                        BoxIODefinition nodeConfigurationDefinition = new BoxConfigurationDefinition();
                         nodeConfigurationDefinition.setType(method.getParameters()[0].getType());
                         nodeConfigurationDefinition.setName(varName);
                         nodeConfigurationDefinition.setLabel(!nodeConfig.label().isEmpty() ? nodeConfig.label() : getVarName(method));
@@ -92,13 +92,13 @@ public class CompilerUtil {
                     }
                 }
             }
-            Collections.sort(nodeInputDefinitionList, NodeIODDefComparator.INSTANCE);
-            Collections.sort(nodeOutputDefinitionList, NodeIODDefComparator.INSTANCE);
-            Collections.sort(nodeConfigurationDefinitionList, NodeIODDefComparator.INSTANCE);
-            nodeDefinition.setInputs(nodeInputDefinitionList);
-            nodeDefinition.setOutputs(nodeOutputDefinitionList);
-            nodeDefinition.setConfigurations(nodeConfigurationDefinitionList);
-            return new NodeInfo(nodeClass, nodeDefinition, inputMethods, configMethods);
+            Collections.sort(nodeInputDefinitionList, BoxIODDefComparator.INSTANCE);
+            Collections.sort(nodeOutputDefinitionList, BoxIODDefComparator.INSTANCE);
+            Collections.sort(nodeConfigurationDefinitionList, BoxIODDefComparator.INSTANCE);
+            boxDefinition.setInputs(nodeInputDefinitionList);
+            boxDefinition.setOutputs(nodeOutputDefinitionList);
+            boxDefinition.setConfigurations(nodeConfigurationDefinitionList);
+            return new BoxInfo(nodeClass, boxDefinition, inputMethods, configMethods);
         }
         throw new IllegalNodeConfigurationException("AnnotatedNode type must have @NodeEntry annotation");
     }

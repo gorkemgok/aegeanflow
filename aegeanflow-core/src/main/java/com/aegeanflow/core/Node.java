@@ -1,6 +1,7 @@
 package com.aegeanflow.core;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface Node {
@@ -11,17 +12,28 @@ public interface Node {
 
     <T> void accept(Input<T> input, T value);
 
-    default <T> void acceptAndRun(Input<T> input, T value) {
-        accept(input, value);
-        if (listCompletedParameters().containsAll(listInputs())) {
-            run();
-        }
-    }
+    <T> void acceptAndRun(Input<T> input, T value);
 
-    Set<Input<?>> listInputs();
+    Collection<String> getInputNames();
 
-    Set<Input<?>> listCompletedParameters();
+    Optional<Class> getInputType(String name);
+
+    Collection<String> getOutputNames();
+
+    Optional<Class> getOutputType(String name);
+
+    Collection<Output<?>> getOutputs();
+
+    Collection<Input<?>> getInputs();
+
+    Optional<Output<?>> getOutput(String name);
+
+    Optional<Input<?>> getInput(String name);
+
+    Collection<Input<?>> getCompletedParameters();
 
     UUID getUUID();
+
+    NodeId getId();
 
 }

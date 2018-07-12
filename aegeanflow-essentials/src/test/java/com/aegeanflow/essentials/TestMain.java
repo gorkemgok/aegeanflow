@@ -1,42 +1,43 @@
 package com.aegeanflow.essentials;
 
-import com.aegeanflow.core.AnnotatedNode;
-import com.aegeanflow.core.Parameter;
-import com.aegeanflow.core.Router;
-import com.aegeanflow.core.SomeNode;
+import com.aegeanflow.core.*;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
-import com.aegeanflow.essentials.node.ConvertToStringBox;
-import com.aegeanflow.essentials.node.UUIDGeneratorBox;
+import com.aegeanflow.essentials.box.ConvertToStringBox;
+import com.aegeanflow.essentials.box.UUIDGeneratorBox;
+import com.aegeanflow.essentials.node.SomeNode;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class TestMain {
 
-    public static void main(String[] args) throws IllegalNodeConfigurationException {
-        Router router = new Router(new ArrayList<>());
+    public static void main(String[] args) throws IllegalNodeConfigurationException, ClassNotFoundException {
+        Injector injector = Guice.createInjector(new CoreModule(), new EssentialsModule());
 
-        SomeNode someNode = new SomeNode();
-        someNode.initialize(UUID.randomUUID(),router);
+        Session session = injector.getInstance(Session.class);
 
-        SomeNode someNode2 = new SomeNode();
-        someNode2.initialize(UUID.randomUUID(), router);
+        String someClassName = "com.aegeanflow.essentials.node.SomeNode";
+        Class someClazz = Class.forName(someClassName);
 
-        UUIDGeneratorBox uuidGeneratorBox = new UUIDGeneratorBox();
-        uuidGeneratorBox.setUUID(UUID.randomUUID());
-        AnnotatedNode<UUID> uuidGeneratorNode = new AnnotatedNode<>();
-        uuidGeneratorNode.initialize(uuidGeneratorBox, router);
+        String uuidClassName = "com.aegeanflow.essentials.box.UUIDGeneratorBox";
+        Class uuidClass = Class.forName(uuidClassName);
 
-        ConvertToStringBox convertToStringBox = new ConvertToStringBox();
-        convertToStringBox.setUUID(UUID.randomUUID());
-        AnnotatedNode<String> toStringNode = new AnnotatedNode<>();
-        toStringNode.initialize(convertToStringBox, router);
+        Node someNode = session.newNode(UUID.randomUUID(), someClazz);
 
+        SomeNode someNode2 = session.newNode(UUID.randomUUID(), SomeNode.class);
 
-        router.connect(uuidGeneratorNode, Parameter.output("main", UUID.class),
-                toStringNode, Parameter.input("input", Object.class));
+        AnnotatedNode uuidGeneratorNode = session.newBox(UUID.randomUUID(), uuidClass);
 
-        router.connect(toStringNode, Parameter.output("main", String.class), someNode2, SomeNode.STRING_INPUT);
+        AnnotatedNode<String> toStringNode = session.newBox(UUID.randomUUID(), ConvertToStringBox.class);
+
+        Output uuidMainOut = uuidGeneratorNode.getOutput("main").get();
+
+        Input toStringInput = toStringNode.getInput("input").get();
+
+        session.getRouter().connect(uuidGeneratorNode, uuidMainOut, toStringNode, toStringInput);
+
+        session.getRouter().connect(toStringNode, Parameter.output("main", String.class), someNode2, SomeNode.STRING_INPUT);
 
         uuidGeneratorNode.run();
 

@@ -1,6 +1,6 @@
 package com.aegeanflow.core.workspace.azure;
 
-import com.aegeanflow.core.flow.Flow;
+import com.aegeanflow.core.proxy.SessionProxy;
 import com.aegeanflow.core.workspace.Workspace;
 
 import java.io.IOException;
@@ -9,17 +9,17 @@ import java.util.UUID;
 
 public class AzureWorkspace implements Workspace{
     @Override
-    public Flow save(Flow flow) throws IOException {
+    public SessionProxy save(SessionProxy sessionProxy) throws IOException {
         return null;
     }
 
     @Override
-    public Flow getFlow(UUID uuid) throws IOException {
+    public SessionProxy getFlow(UUID uuid) throws IOException {
         return null;
     }
 
     @Override
-    public List<Flow> getFlowList() throws IOException {
+    public List<SessionProxy> getFlowList() throws IOException {
         return null;
     }
 

@@ -1,5 +1,8 @@
 package com.aegeanflow.core;
 
+import com.google.inject.Inject;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,8 +10,9 @@ public class Router {
 
     private final List<Route<?, ?>> routeList;
 
-    public Router(List<Route<?, ?>> routeList) {
-        this.routeList = routeList;
+    @Inject
+    public Router() {
+        this.routeList = new ArrayList<>();
     }
 
     public <T> void next(Node node, Output<T> output, Exchange<T> value) {

@@ -1,6 +1,6 @@
 package com.aegeanflow.core.workspace.file;
 
-import com.aegeanflow.core.flow.Flow;
+import com.aegeanflow.core.proxy.SessionProxy;
 import com.aegeanflow.core.workspace.Workspace;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
@@ -31,37 +31,34 @@ public class FileWorkspace implements Workspace {
     }
 
     @Override
-    public Flow save(Flow flow) throws IOException {
-        if (flow.getUuid() == null) {
-            flow.setUuid(UUID.randomUUID());
-        }
+    public SessionProxy save(SessionProxy sessionProxy) throws IOException {
         try {
-            objectMapper.writeValue(new File(format("%s%s%s.aflow", path, File.separator, flow.getUuid().toString())), flow);
-            return flow;
+            objectMapper.writeValue(new File(format("%s%s%s.aflow", path, File.separator, sessionProxy.getUuid().toString())), sessionProxy);
+            return sessionProxy;
         } catch (IOException e) {
             throw e;
         }
     }
 
     @Override
-    public Flow getFlow(UUID uuid) throws IOException{
-        Flow flow = objectMapper.readValue(new File(format("%s.aflow", uuid.toString())), Flow.class);
-        return flow;
+    public SessionProxy getFlow(UUID uuid) throws IOException{
+        SessionProxy sessionProxy = objectMapper.readValue(new File(format("%s.aflow", uuid.toString())), SessionProxy.class);
+        return sessionProxy;
     }
 
     @Override
-    public List<Flow> getFlowList() throws IOException {
+    public List<SessionProxy> getFlowList() throws IOException {
         File dir = new File(path);
         if (!dir.exists()) {
             dir.mkdirs();
         }
         File[] files = dir.listFiles(pathname -> pathname.getName().endsWith(".aflow"));
-        List<Flow> flowList = new ArrayList<>();
+        List<SessionProxy> sessionProxyList = new ArrayList<>();
         for (File file : files) {
-            Flow flow = objectMapper.readValue(file, Flow.class);
-            flowList.add(flow);
+            SessionProxy sessionProxy = objectMapper.readValue(file, SessionProxy.class);
+            sessionProxyList.add(sessionProxy);
         }
-        return flowList;
+        return sessionProxyList;
     }
 
     @Override
