@@ -30,9 +30,19 @@ public abstract class AbstractNode implements Node{
 
     public  <T> void acceptAndRun(Input<T> input, T value) {
         accept(input, value);
-        if (getCompletedParameters().containsAll(getInputs())) {
-            run();
+        executeIfSatisfied();
+    }
+
+    @Override
+    public void executeIfSatisfied() {
+        if (isSatisfied()) {
+            execute();
         }
+    }
+
+    @Override
+    public boolean isSatisfied() {
+        return getCompletedParameters().containsAll(getInputs());
     }
 
     @Override

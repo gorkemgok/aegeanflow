@@ -2,33 +2,41 @@ package com.aegeanflow.core.proxy.builder;
 
 import com.aegeanflow.core.proxy.NodeUIProxy;
 
-public class NodeUIProxyBuilder {
-
-    private Double x, y, w, h;
-
+public final class NodeUIProxyBuilder {
+    private Double x;
+    private Double y;
+    private Double w;
+    private Double h;
     private String color;
 
-    public NodeUIProxyBuilder x(Double x) {
+    private NodeUIProxyBuilder() {
+    }
+
+    public static NodeUIProxyBuilder aNodeUIProxy() {
+        return new NodeUIProxyBuilder();
+    }
+
+    public NodeUIProxyBuilder withX(Double x) {
         this.x = x;
         return this;
     }
 
-    public NodeUIProxyBuilder y(Double y) {
+    public NodeUIProxyBuilder withY(Double y) {
         this.y = y;
         return this;
     }
 
-    public NodeUIProxyBuilder h(Double h) {
-        this.h = h;
-        return this;
-    }
-
-    public NodeUIProxyBuilder w(Double w) {
+    public NodeUIProxyBuilder withW(Double w) {
         this.w = w;
         return this;
     }
 
-    public NodeUIProxyBuilder color(String color) {
+    public NodeUIProxyBuilder withH(Double h) {
+        this.h = h;
+        return this;
+    }
+
+    public NodeUIProxyBuilder withColor(String color) {
         this.color = color;
         return this;
     }

@@ -3,7 +3,7 @@ package com.aegeanflow.core.proxy;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -11,23 +11,19 @@ import java.util.UUID;
  */
 public class SessionProxy {
 
-    private final List<NodeProxy> nodeList;
+    private final Collection<NodeProxy> nodes;
 
-    private final List<RouteProxy> connectionList;
-
-    private final UUID uuid;
+    private final Collection<RouteProxy> routes;
 
     private final String title;
 
     @JsonCreator
     public SessionProxy(
-            @JsonProperty UUID uuid,
-            @JsonProperty String title,
-            @JsonProperty List<NodeProxy> nodeList,
-            @JsonProperty List<RouteProxy> connectionList) {
-        this.nodeList = nodeList;
-        this.connectionList = connectionList;
-        this.uuid = uuid;
+            @JsonProperty("title") String title,
+            @JsonProperty("nodes") Collection<NodeProxy> nodes,
+            @JsonProperty("routes") Collection<RouteProxy> routes) {
+        this.nodes = nodes;
+        this.routes = routes;
         this.title = title;
     }
 
@@ -35,15 +31,11 @@ public class SessionProxy {
         return title;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public Collection<NodeProxy> getNodes() {
+        return nodes;
     }
 
-    public List<NodeProxy> getNodeList() {
-        return nodeList;
-    }
-
-    public List<RouteProxy> getConnectionList() {
-        return connectionList;
+    public Collection<RouteProxy> getRoutes() {
+        return routes;
     }
 }

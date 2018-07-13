@@ -1,6 +1,6 @@
 package com.aegeanflow.essentials.box;
 
-import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.essentials.data.TabularData;
 import com.aegeanflow.essentials.data.TabularDataInfo;
@@ -11,7 +11,7 @@ import com.aegeanflow.essentials.data.TabularDataInfoExchange;
 /**
  * Created by gorkem on 29.01.2018.
  */
-@NodeEntry(label = "Tabular Data Info")
+@NodeEntry(name = "Tabular Data Info")
 public class TabularDataInfoBox extends AbstractAnnotatedBox<TabularDataInfo> {
 
     private TabularData tabularData;

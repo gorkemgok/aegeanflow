@@ -1,6 +1,6 @@
 package com.aegeanflow.essentials.box;
 
-import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.Precondition;
 import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.essentials.data.Convertor;
@@ -18,7 +18,7 @@ import java.sql.ResultSet;
 /**
  * Created by gorkem on 12.01.2018.
  */
-@NodeEntry(label = "Database Reader")
+@NodeEntry(name = "Database Reader")
 public class DatabaseReaderBox extends AbstractAnnotatedBox<TabularData> {
 
     private String query;

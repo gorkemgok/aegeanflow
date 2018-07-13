@@ -2,9 +2,9 @@
   <div class="sessionProxy-container">
     <at-input v-model="title"/>
     <at-modal v-for="node in nodes" :key="node.uuid" v-model="nodeModal[node.uuid]" :title="node.definition.label + ' Configuration'">
-      <p v-for="config in node.definition.configurations" :key="config.name">
-        <label :for="config.name">{{config.label}}</label>
-        <at-input :name="config.name" v-model="node.configuration[config.name]"></at-input>
+      <p v-for="config in node.definition.configurations" :key="config.label">
+        <label :for="config.label">{{config.label}}</label>
+        <at-input :label="config.label" v-model="node.configuration[config.label]"></at-input>
       </p>
     </at-modal>
     <drop @drop="dropNode">
@@ -59,13 +59,13 @@
     </drop>
     <context-menu ref="nodeCtxMenu" style="margin-left:-200px">
       <at-menu mode="vertical" @on-select="nodeMenuClicked">
-        <at-menu-item name="configure"><i class="icon icon-settings"></i>Configure</at-menu-item>
-        <at-menu-item name="remove"><i class="icon icon-x"></i>Remove</at-menu-item>
+        <at-menu-item label="configure"><i class="icon icon-settings"></i>Configure</at-menu-item>
+        <at-menu-item label="remove"><i class="icon icon-x"></i>Remove</at-menu-item>
       </at-menu>
     </context-menu>
     <context-menu ref="connectionCtxMenu">
       <at-menu mode="vertical" @on-select="connectionMenuClicked">
-        <at-menu-item name="remove"><i class="icon icon-x"></i>Remove</at-menu-item>
+        <at-menu-item label="remove"><i class="icon icon-x"></i>Remove</at-menu-item>
       </at-menu>
     </context-menu>
   </div>
@@ -82,7 +82,7 @@ import VueDragDrop from 'vue-drag-drop'
 Vue.use(VueDragDrop)
 
 export default {
-  name: 'Flow',
+  label: 'Flow',
   components: {
     Node,
     contextMenu
@@ -140,8 +140,8 @@ export default {
       const y = $event.offsetY
       this.addNode(nodeDef, x, y)
     },
-    nodeMenuClicked: function (name) {
-      switch (name) {
+    nodeMenuClicked: function (label) {
+      switch (label) {
         case 'remove':
           this.removeSelectedNode()
           break
@@ -152,8 +152,8 @@ export default {
           break
       }
     },
-    connectionMenuClicked: function (name) {
-      switch (name) {
+    connectionMenuClicked: function (label) {
+      switch (label) {
         case 'remove':
           this.removeSelectedConnection()
           break
@@ -177,7 +177,7 @@ export default {
       const colors = ['#F9D194', '#FF6C57', '#977CD5', '#54B375']
       const node = {
         uuid: uuid.v1(),
-        name: 'Node #' + this.getMaxNodeNumber(),
+        label: 'Node #' + this.getMaxNodeNumber(),
         type: nodeDef.type,
         x: x,
         y: y,
@@ -193,7 +193,7 @@ export default {
       let max = 0
       this.nodes.forEach(node => {
         try {
-          let no = node.name.split('#')[1]
+          let no = node.label.split('#')[1]
           console.log(no)
           max = Math.max(max, no)
         } catch (e) {}
@@ -205,7 +205,7 @@ export default {
         return
       }
       for (let i = 0; i < this.connections.length; i++) {
-        if (this.connections[i].target === targetNode && this.connections[i].inputName === targetInput.name) {
+        if (this.connections[i].target === targetNode && this.connections[i].inputName === targetInput.label) {
           return
         }
       }
@@ -215,8 +215,8 @@ export default {
           type: 'FLOW',
           source: sourceNode,
           target: targetNode,
-          inputName: targetInput.name,
-          outputName: sourceOutput.name
+          inputName: targetInput.label,
+          output: sourceOutput.label
         }
         this.connections.push(connection)
       }
@@ -318,7 +318,7 @@ export default {
       let inputPos = connection.target
       if (connection.uuid) {
         if (connection.type === 'FLOW') {
-          outputPos = POS_CALC.calculateOutputPos(connection.source, connection.outputName)
+          outputPos = POS_CALC.calculateOutputPos(connection.source, connection.output)
           inputPos = POS_CALC.calculateInputPos(connection.target, connection.inputName)
         } else if (connection.type === 'WAIT') {
           outputPos = POS_CALC.calculateOutputWaitPos(connection.source)

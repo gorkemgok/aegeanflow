@@ -8,7 +8,7 @@ public class BoxDefinition {
 
     private Class<? extends AnnotatedBox> type;
 
-    private String label;
+    private String name;
 
     private List<BoxIODefinition> inputs;
 
@@ -24,12 +24,12 @@ public class BoxDefinition {
         this.type = type;
     }
 
-    public String getLabel() {
-        return label;
+    public String getName() {
+        return name;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<BoxIODefinition> getInputs() {

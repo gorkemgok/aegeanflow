@@ -1,5 +1,6 @@
 package com.aegeanflow.core.proxy;
 
+import com.aegeanflow.core.Node;
 import com.aegeanflow.core.json.ClassDeserializer;
 import com.aegeanflow.core.json.ClassSerializer;
 import com.aegeanflow.core.spi.AnnotatedBox;
@@ -18,11 +19,13 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NodeProxy {
 
-    private final String name;
+    private final String label;
 
     private final UUID uuid;
 
-    private final Class<? extends AnnotatedBox> type;
+    private final Class<? extends Node> type;
+
+    private final Class<? extends AnnotatedBox> boxType;
 
     private final Map<String, Object> configuration;
 
@@ -30,20 +33,22 @@ public class NodeProxy {
 
     @JsonCreator
     public NodeProxy(
-            @JsonProperty String name,
-            @JsonProperty UUID uuid,
-            @JsonProperty Class<? extends AnnotatedBox> type,
-            @JsonProperty Map<String, Object> configuration,
-            @JsonProperty NodeUIProxy ui) {
-        this.name = name;
+            @JsonProperty("label") String label,
+            @JsonProperty("uuid") UUID uuid,
+            @JsonProperty("type") Class<? extends Node> type,
+            @JsonProperty("boxType") Class<? extends AnnotatedBox> boxType,
+            @JsonProperty("configuration") Map<String, Object> configuration,
+            @JsonProperty("ui") NodeUIProxy ui) {
+        this.label = label;
         this.uuid = uuid;
         this.type = type;
+        this.boxType = boxType;
         this.configuration = configuration;
         this.ui = ui;
     }
 
-    public String getName() {
-        return name;
+    public String getLabel() {
+        return label;
     }
 
     public Map<String, Object> getConfiguration() {
@@ -56,8 +61,17 @@ public class NodeProxy {
 
     @JsonSerialize(using = ClassSerializer.class)
     @JsonDeserialize(using = ClassDeserializer.class)
-    public Class<? extends AnnotatedBox> getType() {
+    public Class<? extends Node> getType() {
         return type;
     }
 
+    @JsonSerialize(using = ClassSerializer.class)
+    @JsonDeserialize(using = ClassDeserializer.class)
+    public Class<? extends AnnotatedBox> getBoxType() {
+        return boxType;
+    }
+
+    public NodeUIProxy getUi() {
+        return ui;
+    }
 }

@@ -1,6 +1,6 @@
 package com.aegeanflow.essentials.box;
 
-import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
@@ -13,7 +13,7 @@ import java.util.Properties;
 /**
  * Created by gorkem on 12.01.2018.
  */
-@NodeEntry(label = "Database Connection")
+@NodeEntry(name = "Database Connection")
 public class DatabaseConnectionBox extends AbstractAnnotatedBox<Connection> {
 
     private String jdbcClass;
@@ -30,7 +30,7 @@ public class DatabaseConnectionBox extends AbstractAnnotatedBox<Connection> {
         Properties properties = new Properties();
         properties.setProperty("user", user);
         properties.setProperty("password", password);
-        return Exchange.create(driver.connect(jdbcUrl, properties));
+        return Exchange.createUnpersistent(driver.connect(jdbcUrl, properties));
     }
 
     @NodeConfig(label = "Driver Class", order = 1)

@@ -1,6 +1,6 @@
 package com.aegeanflow.essentials.box;
 
-import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.essentials.data.TabularData;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
@@ -18,7 +18,7 @@ import static java.lang.String.format;
 /**
  * Created by gorkem on 29.01.2018.
  */
-@NodeEntry(label = "Database Writer")
+@NodeEntry(name = "Database Writer")
 public class DatabaseWriterBox extends AbstractAnnotatedBox<Void> {
 
     private Connection connection;

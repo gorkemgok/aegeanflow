@@ -2,7 +2,6 @@ package com.aegeanflow.core.node;
 
 import com.aegeanflow.core.CompilerUtil;
 import com.aegeanflow.core.BoxInfo;
-import com.aegeanflow.core.definition.BoxConfigurationDefinition;
 import com.aegeanflow.core.definition.BoxIODefinition;
 
 import java.util.List;
@@ -15,7 +14,7 @@ public class CompilerUtilTest {
         BoxInfo boxInfo1 = CompilerUtil.compile(TestBox2IN1OUT.class);
 
         assertEquals(boxInfo1.getNodeClass(), TestBox2IN1OUT.class);
-        assertEquals(boxInfo1.getDefinition().getLabel(), TestBox2IN1OUT.NODE_LABEL);
+        assertEquals(boxInfo1.getDefinition().getName(), TestBox2IN1OUT.NODE_LABEL);
         List<BoxIODefinition> inputDefs1 = boxInfo1.getDefinition().getInputs();
         assertEquals(inputDefs1.size(), 2);
         List<BoxIODefinition> outputDefs1 = boxInfo1.getDefinition().getOutputs();
@@ -36,7 +35,7 @@ public class CompilerUtilTest {
         BoxInfo boxInfo2 = CompilerUtil.compile(TestBox2IN2OUT.class);
 
         assertEquals(boxInfo2.getNodeClass(), TestBox2IN2OUT.class);
-        assertEquals(boxInfo2.getDefinition().getLabel(), "TestBox2IN2OUT");
+        assertEquals(boxInfo2.getDefinition().getName(), "TestBox2IN2OUT");
         List<BoxIODefinition> inputDefs2 = boxInfo2.getDefinition().getInputs();
         assertEquals(inputDefs2.size(), 2);
         List<BoxIODefinition> outputDefs2 = boxInfo2.getDefinition().getOutputs();

@@ -43,10 +43,10 @@ public class DataFlowEngineManager {
 
     public DataFlowEngine create(SessionProxy sessionProxy, @Nullable DataFlowEngine stateProvider) throws ClassNotFoundException {
         List<AnnotatedBox<?>> annotatedBoxList = new ArrayList<>();
-        for (NodeProxy nodeProxy : sessionProxy.getNodeList()){
-            AnnotatedBox annotatedBox = injector.getInstance(nodeProxy.getType());
+        for (NodeProxy nodeProxy : sessionProxy.getNodes()){
+            AnnotatedBox annotatedBox = injector.getInstance(nodeProxy.getBoxType());
             annotatedBox.setUUID(nodeProxy.getUUID());
-            annotatedBox.setName(nodeProxy.getName());
+            annotatedBox.setName(nodeProxy.getLabel());
             annotatedBoxList.add(annotatedBox);
         }
         return new DataFlowEngine(sessionProxy, annotatedBoxList, boxRepository, stateProvider);

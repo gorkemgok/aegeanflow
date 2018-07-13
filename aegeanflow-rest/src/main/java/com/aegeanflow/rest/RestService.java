@@ -84,7 +84,7 @@ public class RestService implements AegeanFlowService {
                 return new UUIDProxy(sessionProxy.getUuid());
             }, jsonTransformer);
 
-            post("/proxy/run",  (req, res) -> {
+            post("/proxy/execute",  (req, res) -> {
                 SessionProxy sessionProxy = new ObjectMapper().readValue(req.body(), SessionProxy.class);
                 DataFlowEngine de = flowManager.create(sessionProxy, true);
                 List<Object> resultList = de.getResultList();

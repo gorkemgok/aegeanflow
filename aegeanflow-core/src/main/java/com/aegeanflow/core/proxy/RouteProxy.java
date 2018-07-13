@@ -1,5 +1,8 @@
 package com.aegeanflow.core.proxy;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.UUID;
 
 /**
@@ -11,63 +14,47 @@ public class RouteProxy {
         FLOW, WAIT
     }
 
-    private UUID uuid;
+    private final String label;
 
-    private Type type;
+    private final UUID uuid;
 
-    private UUID fromUUID;
+    private final Type type;
 
-    private UUID toUUID;
+    private final RoutePointProxy source;
 
-    private String outputName;
+    private final RoutePointProxy target;
 
-    private String inputName;
-
-    public String getOutputName() {
-        return outputName;
-    }
-
-    public void setOutputName(String outputName) {
-        this.outputName = outputName;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
+    @JsonCreator
+    public RouteProxy(
+        @JsonProperty("label") String label,
+        @JsonProperty("uuid") UUID uuid,
+        @JsonProperty("type") Type type,
+        @JsonProperty("source") RoutePointProxy source,
+        @JsonProperty("target") RoutePointProxy target) {
+        this.label = label;
+        this.uuid = uuid;
         this.type = type;
+        this.source = source;
+        this.target = target;
     }
 
     public UUID getUuid() {
         return uuid;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public Type getType() {
+        return type;
     }
 
-    public UUID getFromUUID() {
-        return fromUUID;
+    public RoutePointProxy getSource() {
+        return source;
     }
 
-    public void setFromUUID(UUID fromUUID) {
-        this.fromUUID = fromUUID;
+    public RoutePointProxy getTarget() {
+        return target;
     }
 
-    public UUID getToUUID() {
-        return toUUID;
-    }
-
-    public void setToUUID(UUID toUUID) {
-        this.toUUID = toUUID;
-    }
-
-    public String getInputName() {
-        return inputName;
-    }
-
-    public void setInputName(String inputName) {
-        this.inputName = inputName;
+    public String getLabel() {
+        return label;
     }
 }

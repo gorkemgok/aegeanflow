@@ -5,56 +5,41 @@ import com.aegeanflow.core.proxy.RouteProxy;
 import com.aegeanflow.core.proxy.SessionProxy;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Created by gorkem on 12.01.2018.
- */
-public class SessionProxyBuilder {
-
-    private final List<NodeProxy> nodeProxyList;
-
-    private final List<RouteProxy> routeProxyList;
-
+public final class SessionProxyBuilder {
+    private Collection<NodeProxy> nodes;
+    private Collection<RouteProxy> routes;
+    private UUID uuid;
     private String title;
 
-    private UUID uuid;
-
-    private NodeProxy lastNode;
-
-    public SessionProxyBuilder() {
-        nodeProxyList = new ArrayList<>();
-        routeProxyList = new ArrayList<>();
+    private SessionProxyBuilder() {
+        nodes = new ArrayList<>();
+        routes = new ArrayList<>();
     }
 
-    public SessionProxyBuilder addNode(NodeProxy nodeProxy) {
-        nodeProxyList.add(nodeProxy);
+    public static SessionProxyBuilder aSessionProxy() {
+        return new SessionProxyBuilder();
+    }
+
+    public SessionProxyBuilder addNode(NodeProxy node) {
+        this.nodes.add(node);
         return this;
     }
 
-    public SessionProxyBuilder addRoute(RouteProxy routeProxy) {
-        routeProxyList.add(routeProxy);
+    public SessionProxyBuilder addRoute(RouteProxy route) {
+        this.routes.add(route);
         return this;
     }
 
-    public SessionProxyBuilder title(String title) {
+    public SessionProxyBuilder withTitle(String title) {
         this.title = title;
         return this;
     }
 
-    public SessionProxyBuilder uuid(UUID uuid){
-        this.uuid = uuid;
-        return this;
-    }
-
-    public SessionProxyBuilder randomUUID(){
-        this.uuid = UUID.randomUUID();
-        return this;
-    }
-
     public SessionProxy build() {
-        SessionProxy sessionProxy = new SessionProxy(uuid, title, nodeProxyList, routeProxyList);
-        return sessionProxy;
+        return new SessionProxy(title, nodes, routes);
     }
 }

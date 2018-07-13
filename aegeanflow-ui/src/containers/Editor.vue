@@ -2,7 +2,7 @@
   <div class="editor-container">
     <at-modal title="Select Workspace" v-model="showWorkspaceModel">
       <label for="workspacePath">Path</label>
-      <at-input id = "workspacePath" name="workspacePath" v-model="workspacePath"></at-input>
+      <at-input id = "workspacePath" label="workspacePath" v-model="workspacePath"></at-input>
     </at-modal>
     <div class="toolbox-container">
       <at-collapse simple accordion :value="0">
@@ -18,7 +18,7 @@
     <div class="sessionProxy-tabs">
       <at-tabs type="card" size="small" @on-change="tabChange">
         <at-tab-pane v-for="sessionProxy in sessionProxyList" :key="sessionProxy.uuid"
-                     :label="sessionProxy.title" :name="sessionProxy.uuid">
+                     :label="sessionProxy.title" :label="sessionProxy.uuid">
           <sessionProxy v-if="sessionProxy" :sessionProxy="sessionProxy" ref="flows"></sessionProxy>
         </at-tab-pane>
         <div slot="extra">
@@ -40,7 +40,7 @@ import Flow from '@/sessionProxy/Flow'
 Vue.use(VueDragDrop)
 
 export default {
-  name: 'Editor',
+  label: 'Editor',
   components: {
     Flow,
     Node
@@ -66,7 +66,7 @@ export default {
     },
     tabChange: function (tab) {
       this.selectedTab = tab
-      this.selectedFlow = this.sessionProxyList.filter(sessionProxy => sessionProxy.uuid === tab.name)[0]
+      this.selectedFlow = this.sessionProxyList.filter(sessionProxy => sessionProxy.uuid === tab.label)[0]
     },
     addFlow: function () {
       const sessionProxy = {}
@@ -84,18 +84,18 @@ export default {
             const sessionProxy = {}
             sessionProxy.uuid = rawFlow.uuid
             sessionProxy.title = rawFlow.title
-            sessionProxy.nodes = rawFlow.nodeList.map(node => {
+            sessionProxy.nodes = rawFlow.nodes.map(node => {
               node.definition = this.boxRepository.filter(nodeDef => nodeDef.type === node.type)[0]
               return node
             })
-            sessionProxy.connections = rawFlow.connectionList.map(connection => {
+            sessionProxy.connections = rawFlow.routes.map(connection => {
               const newConn = {}
               newConn.uuid = connection.uuid
               newConn.type = connection.type
               newConn.inputName = connection.inputName
-              newConn.outputName = connection.outputName
-              newConn.source = sessionProxy.nodes.filter(node => node.uuid === connection.fromUUID)[0]
-              newConn.target = sessionProxy.nodes.filter(node => node.uuid === connection.toUUID)[0]
+              newConn.output = connection.output
+              newConn.source = sessionProxy.nodes.filter(node => node.uuid === connection.source)[0]
+              newConn.target = sessionProxy.nodes.filter(node => node.uuid === connection.target)[0]
               return newConn
             })
             sessionProxyList.push(sessionProxy)

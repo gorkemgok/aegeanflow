@@ -4,6 +4,7 @@ import com.aegeanflow.core.definition.BoxConfigurationDefinition;
 import com.aegeanflow.core.definition.BoxDefinition;
 import com.aegeanflow.core.definition.BoxIODDefComparator;
 import com.aegeanflow.core.definition.BoxIODefinition;
+import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.spi.AnnotatedBox;
 import com.aegeanflow.core.spi.annotation.*;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
@@ -22,7 +23,7 @@ public class CompilerUtil {
         if (nodeEntry != null) {
             BoxDefinition boxDefinition = new BoxDefinition();
             boxDefinition.setType(nodeClass);
-            boxDefinition.setLabel(!nodeEntry.label().isEmpty() ? nodeEntry.label() : nodeClass.getSimpleName());
+            boxDefinition.setName(!nodeEntry.name().isEmpty() ? nodeEntry.name() : nodeClass.getSimpleName());
             List<BoxIODefinition> nodeInputDefinitionList = new ArrayList<>();
             List<BoxIODefinition> nodeOutputDefinitionList = new ArrayList<>();
             List<BoxIODefinition> nodeConfigurationDefinitionList = new ArrayList<>();

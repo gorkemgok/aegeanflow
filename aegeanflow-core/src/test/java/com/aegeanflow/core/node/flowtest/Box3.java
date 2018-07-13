@@ -1,6 +1,6 @@
 package com.aegeanflow.core.node.flowtest;
 
-import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
@@ -20,7 +20,7 @@ public class Box3 extends AbstractAnnotatedBox<StringIntegerPairOutput> {
     @Override
     public Exchange<StringIntegerPairOutput> call() throws Exception {
         String text = repeatedText.substring(0, repeatedText.length() / repeatCount);
-        return Exchange.create(new StringIntegerPairOutput(seedText + "," + text, length));
+        return Exchange.createUnpersistent(new StringIntegerPairOutput(seedText + "," + text, length));
     }
 
     @NodeConfig

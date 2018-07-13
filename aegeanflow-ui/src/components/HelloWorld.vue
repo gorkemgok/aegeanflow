@@ -9,7 +9,7 @@
 import Vue from 'vue'
 
 export default {
-  name: 'HelloWorld',
+  label: 'HelloWorld',
   data () {
     return {
       dynamicComponent: 'component-1'

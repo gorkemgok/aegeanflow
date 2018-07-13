@@ -1,6 +1,6 @@
 package com.aegeanflow.essentials.data;
 
-import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.exchange.Exchange;
 
 public class TabularDataExchange implements Exchange<TabularData> {
 

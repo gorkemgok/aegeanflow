@@ -13,11 +13,6 @@ public abstract class AbstractAnnotatedBox<T> implements AnnotatedBox<T> {
         return this.getClass();
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
     public void setName(String name) {
         this.name = name;
     }

@@ -1,6 +1,7 @@
 package com.aegeanflow.core.node.flowtest;
 
-import com.aegeanflow.core.StringExchange;
+import com.aegeanflow.core.exchange.Exchange;
+import com.aegeanflow.core.exchange.StringExchange;
 import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
@@ -11,8 +12,8 @@ public class Box1 extends AbstractAnnotatedBox<String> {
     private String seedText;
 
     @Override
-    public StringExchange call() throws Exception {
-        return new StringExchange(seedText);
+    public Exchange<String> call() throws Exception {
+        return Exchange.of(seedText);
     }
 
     @NodeConfig

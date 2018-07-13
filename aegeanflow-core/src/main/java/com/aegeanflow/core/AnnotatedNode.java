@@ -2,6 +2,7 @@ package com.aegeanflow.core;
 
 import com.aegeanflow.core.definition.BoxIODefinition;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
+import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.spi.AnnotatedBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class AnnotatedNode<T> extends AbstractNode{
     private NodeId id;
 
     @Override
-    public void run() {
+    public void execute() {
         try {
             Exchange<T> exchange = annotatedBox.call();
             boxInfo.getDefinition().getOutputs()
@@ -65,6 +66,11 @@ public class AnnotatedNode<T> extends AbstractNode{
                 .stream()
                 .map(entry -> Parameter.input(entry.getKey(), entry.getValue().getParameterTypes()[0]))
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public String getName() {
+        return boxInfo.getDefinition().getName();
     }
 
     @Override

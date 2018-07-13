@@ -60,25 +60,25 @@ public class DataFlowEngineTest {
 //        RouteProxy routeProxy1_3 = new RouteProxy();
 //        routeProxy1_3.setUuid(UUID.randomUUID());
 //        routeProxy1_3.setType(RouteProxy.Type.FLOW);
-//        routeProxy1_3.setFromUUID(nodeProxy1.getUUID());
-//        routeProxy1_3.setOutputName("seedText");
-//        routeProxy1_3.setToUUID(nodeProxy3.getUUID());
+//        routeProxy1_3.setSource(nodeProxy1.getUUID());
+//        routeProxy1_3.setOutput("seedText");
+//        routeProxy1_3.setTarget(nodeProxy3.getUUID());
 //        routeProxy1_3.setInputName("seedText");
 //
 //        RouteProxy routeProxy21_3 = new RouteProxy();
 //        routeProxy21_3.setUuid(UUID.randomUUID());
 //        routeProxy21_3.setType(RouteProxy.Type.FLOW);
-//        routeProxy21_3.setFromUUID(nodeProxy2.getUUID());
-//        routeProxy21_3.setOutputName("text");
-//        routeProxy21_3.setToUUID(nodeProxy3.getUUID());
+//        routeProxy21_3.setSource(nodeProxy2.getUUID());
+//        routeProxy21_3.setOutput("text");
+//        routeProxy21_3.setTarget(nodeProxy3.getUUID());
 //        routeProxy21_3.setInputName("repeatedText");
 //
 //        RouteProxy routeProxy22_3 = new RouteProxy();
 //        routeProxy22_3.setUuid(UUID.randomUUID());
 //        routeProxy22_3.setType(RouteProxy.Type.FLOW);
-//        routeProxy22_3.setFromUUID(nodeProxy2.getUUID());
-//        routeProxy22_3.setOutputName("count");
-//        routeProxy22_3.setToUUID(nodeProxy3.getUUID());
+//        routeProxy22_3.setSource(nodeProxy2.getUUID());
+//        routeProxy22_3.setOutput("count");
+//        routeProxy22_3.setTarget(nodeProxy3.getUUID());
 //        routeProxy22_3.setInputName("repeatCount");
 //
 //        nodeProxyList.add(nodeProxy1);

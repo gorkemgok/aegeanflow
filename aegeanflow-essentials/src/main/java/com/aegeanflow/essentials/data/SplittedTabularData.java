@@ -1,6 +1,6 @@
 package com.aegeanflow.essentials.data;
 
-import com.aegeanflow.core.Exchange;
+import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.spi.annotation.NodeOutput;
 import com.aegeanflow.core.spi.annotation.NodeOutputBean;
 

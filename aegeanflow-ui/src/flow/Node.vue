@@ -8,9 +8,9 @@
           :x="node.x" :y="node.y" :width="node.w" :height="node.h"
           rx="4" ry="4" :style="{fill: node.color}"></rect>
     <text class="node-label" :x="node.x" :y="labelY" font-size="11">
-      {{node.name}} - {{node.definition.label}}
+      {{node.label}} - {{node.definition.label}}
     </text>
-    <circle v-for="(output, idx) in node.definition.outputs" :key="output.name"
+    <circle v-for="(output, idx) in node.definition.outputs" :key="output.label"
             class="output-circle"
             r="6"
             :cx="ioPos.outputs[idx].x"
@@ -18,8 +18,8 @@
             @mousedown.left.prevent="outputMouseDown(output, idx, $event)"
             @contextmenu.prevent="outputContextMenu(output)">
     </circle>
-    <circle v-for="(input, idx) in node.definition.inputs" :key="input.name"
-            :class="'check-type-' + typeMatches[input.name]"
+    <circle v-for="(input, idx) in node.definition.inputs" :key="input.label"
+            :class="'check-type-' + typeMatches[input.label]"
             class="input-circle"
             r="6"
             :cx="ioPos.inputs[idx].x"
@@ -39,7 +39,7 @@
 import {POS_CALC, TYPES} from '@/helpers/node-helpers.js'
 
 export default {
-  name: 'node',
+  label: 'node',
   props: {
     node: {
       type: Object,
@@ -116,9 +116,9 @@ export default {
       const matches = {}
       this.node.definition.inputs.forEach(input => {
         if (this.connectingNode === this.node) {
-          matches[input.name] = 'notr'
+          matches[input.label] = 'notr'
         } else {
-          matches[input.name] = TYPES.checkType(this.connectingOutput, input)
+          matches[input.label] = TYPES.checkType(this.connectingOutput, input)
         }
       })
       return matches

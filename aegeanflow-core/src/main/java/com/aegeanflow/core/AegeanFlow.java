@@ -1,6 +1,5 @@
 package com.aegeanflow.core;
 
-import com.aegeanflow.core.engine.DataFlowEngineManager;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -53,10 +52,6 @@ public class AegeanFlow {
     private AegeanFlow(Injector injector) {
         this.injector = injector;
         this.singletons = injector.getInstance(AegeanFlowSingletons.class);
-    }
-
-    public DataFlowEngineManager createEngineFactory(){
-        return injector.getInstance(DataFlowEngineManager.class);
     }
 
     public BoxRepository getNodeRepository(){

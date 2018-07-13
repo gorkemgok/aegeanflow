@@ -1,55 +1,65 @@
 package com.aegeanflow.core.proxy.builder;
 
+import com.aegeanflow.core.AnnotatedNode;
+import com.aegeanflow.core.Node;
 import com.aegeanflow.core.proxy.NodeProxy;
 import com.aegeanflow.core.proxy.NodeUIProxy;
 import com.aegeanflow.core.spi.AnnotatedBox;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Created by gorkem on 12.01.2018.
- */
-public class NodeProxyBuilder {
-
-    private Map<String, Object> configMap;
-
-    private Class<? extends AnnotatedBox> nodeClass;
-
+public final class NodeProxyBuilder {
+    private String label;
     private UUID uuid;
-
-    private String name;
-
+    private Class<? extends Node> type;
+    private Class<? extends AnnotatedBox> boxType;
+    private Map<String, Object> configuration;
     private NodeUIProxy ui;
 
-    public NodeProxyBuilder(Class<? extends AnnotatedBox> nodeClass) {
-        this.nodeClass = nodeClass;
-        configMap = new HashMap<>();
+    private NodeProxyBuilder() {
     }
 
-    public NodeProxyBuilder addConfig(String key, Object value){
-        configMap.put(key, value);
+    public static NodeProxyBuilder aNodeProxy() {
+        return new NodeProxyBuilder();
+    }
+
+    public NodeProxyBuilder withLabel(String label) {
+        this.label = label;
         return this;
     }
 
-    public NodeProxyBuilder uuid(UUID uuid) {
+    public NodeProxyBuilder withUUID(UUID uuid) {
         this.uuid = uuid;
         return this;
     }
 
-    public NodeProxyBuilder name(String name) {
-        this.name = name;
+    public NodeProxyBuilder withRandomUUID() {
+        this.uuid = UUID.randomUUID();
         return this;
     }
 
-    public NodeProxyBuilder ui(NodeUIProxy ui) {
+    public NodeProxyBuilder withType(Class<? extends Node> type) {
+        this.type = type;
+        return this;
+    }
+
+    public NodeProxyBuilder withBoxType(Class<? extends AnnotatedBox> boxType) {
+        this.boxType = boxType;
+        return withType(AnnotatedNode.class);
+    }
+
+    public NodeProxyBuilder withConfiguration(Map<String, Object> configuration) {
+        this.configuration = configuration;
+        return this;
+    }
+
+    public NodeProxyBuilder withUi(NodeUIProxy ui) {
         this.ui = ui;
         return this;
     }
 
-    public NodeProxy build(){
-        NodeProxy nodeProxy = new NodeProxy(name, uuid, nodeClass, configMap, ui);
-        return nodeProxy;
+    public NodeProxy build() {
+        return new NodeProxy(label, uuid, type, boxType, configuration, ui);
     }
 }

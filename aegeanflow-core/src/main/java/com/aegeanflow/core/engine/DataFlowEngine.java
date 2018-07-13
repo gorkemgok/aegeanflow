@@ -1,7 +1,6 @@
 package com.aegeanflow.core.engine;
 
 import com.aegeanflow.core.*;
-import com.aegeanflow.core.definition.BoxConfigurationDefinition;
 import com.aegeanflow.core.definition.BoxIODefinition;
 import com.aegeanflow.core.exception.NoSuchNodeException;
 import com.aegeanflow.core.exception.NodeRuntimeException;
@@ -64,7 +63,7 @@ public class DataFlowEngine {
         if (status != NodeStatus.RUNNING) {
             runningTasks.remove(node.getUUID());
         }
-        //LOGGER.info(format("%s, %s, %s : %s", box.getName(), box.getType().getSimpleName(), box.getUUID(), status));
+        //LOGGER.info(format("%s, %s, %s : %s", box.getLabel(), box.getType().getSimpleName(), box.getUUID(), status));
     }
 
     public List<Object> getResultList()  throws NoSuchNodeException, NodeRuntimeException {
@@ -89,9 +88,9 @@ public class DataFlowEngine {
     }
 
     public List<FlowFuture> getResultFutureList() throws NoSuchNodeException, NodeRuntimeException {
-        List<NodeProxy> outputNodes = sessionProxy.getNodeList().stream()
-                .filter(node -> sessionProxy.getConnectionList().stream()
-                        .filter(conn -> conn.getType() == RouteProxy.Type.FLOW && conn.getFromUUID().equals(node.getUUID())).count() == 0)
+        List<NodeProxy> outputNodes = sessionProxy.getNodes().stream()
+                .filter(node -> sessionProxy.getRoutes().stream()
+                        .filter(conn -> conn.getType() == RouteProxy.Type.FLOW && conn.getSource().equals(node.getUUID())).count() == 0)
                 .collect(Collectors.toList());
         List<FlowFuture> flowFutureList = new ArrayList<>();
         for (NodeProxy node : outputNodes) {
@@ -102,7 +101,7 @@ public class DataFlowEngine {
     }
 
     public FlowFuture getResult(UUID nodeUUID) throws NoSuchNodeException, NodeRuntimeException {
-        for (NodeProxy nodeProxy : sessionProxy.getNodeList()){
+        for (NodeProxy nodeProxy : sessionProxy.getNodes()){
             setNodeConfig(getNode(nodeProxy.getUUID()), nodeProxy.getConfiguration());
         }
         AnnotatedBox<?> annotatedBox = getNode(nodeUUID);
@@ -274,14 +273,14 @@ public class DataFlowEngine {
     }
 
     public List<IOPair> getIOPairList(UUID nodeUUID) throws NoSuchNodeException {
-        List<RouteProxy> inputConnections = sessionProxy.getConnectionList().stream()
-                .filter(flowConnection -> flowConnection.getToUUID().equals(nodeUUID))
+        List<RouteProxy> inputConnections = sessionProxy.getRoutes().stream()
+                .filter(flowConnection -> flowConnection.getTarget().equals(nodeUUID))
                 .collect(Collectors.toList());
         List<IOPair> IOPairList = new ArrayList<>();
         for (RouteProxy inputConnection: inputConnections) {
-            IOPair ioPair =
-                    new IOPair(inputConnection.getOutputName(), inputConnection.getInputName(),
-                            getNode(inputConnection.getFromUUID()), inputConnection.getType());
+            IOPair ioPair = null;
+//                    new IOPair(inputConnection.getOutput(), inputConnection.getInputName(),
+//                            getNode(inputConnection.getSource()), inputConnection.getType());
             IOPairList.add(ioPair);
         }
         return IOPairList;
@@ -294,7 +293,7 @@ public class DataFlowEngine {
     }
 
     private NodeProxy getFlowNode(UUID nodeUUID) throws NoSuchNodeException {
-        return sessionProxy.getNodeList().stream().filter(node -> node.getUUID().equals(nodeUUID))
+        return sessionProxy.getNodes().stream().filter(node -> node.getUUID().equals(nodeUUID))
                 .findFirst()
                 .orElseThrow(() -> new NoSuchNodeException(nodeUUID));
     }

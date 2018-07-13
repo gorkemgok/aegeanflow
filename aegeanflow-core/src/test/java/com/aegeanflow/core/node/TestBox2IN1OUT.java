@@ -1,14 +1,13 @@
 package com.aegeanflow.core.node;
 
-import com.aegeanflow.core.Exchange;
-import com.aegeanflow.core.StringExchange;
+import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.spi.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
 import java.util.StringJoiner;
 
-@NodeEntry(label = TestBox2IN1OUT.NODE_LABEL)
+@NodeEntry(name = TestBox2IN1OUT.NODE_LABEL)
 public class TestBox2IN1OUT extends AbstractAnnotatedBox<String> {
 
     public static final String NODE_LABEL = "Test AnnotatedNode 2 IN 1 OUT";
@@ -42,6 +41,6 @@ public class TestBox2IN1OUT extends AbstractAnnotatedBox<String> {
         for (int i = 0; i < count; i++) {
             sj.add(text);
         }
-        return new StringExchange(sj.toString());
+        return Exchange.of(sj.toString());
     }
 }

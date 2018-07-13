@@ -33,7 +33,8 @@ public class FileWorkspace implements Workspace {
     @Override
     public SessionProxy save(SessionProxy sessionProxy) throws IOException {
         try {
-            objectMapper.writeValue(new File(format("%s%s%s.aflow", path, File.separator, sessionProxy.getUuid().toString())), sessionProxy);
+            //TODO: fix null
+            objectMapper.writeValue(new File(format("%s%s%s.aflow", path, File.separator, null)), sessionProxy);
             return sessionProxy;
         } catch (IOException e) {
             throw e;

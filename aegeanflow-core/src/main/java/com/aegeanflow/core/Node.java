@@ -6,9 +6,23 @@ import java.util.UUID;
 
 public interface Node {
 
+    default boolean is(UUID uuid) {
+        return getUUID().equals(uuid);
+    }
+
+    UUID getUUID();
+
+    String getName();
+
+    NodeId getId();
+
     void initialize(UUID uuid, Router router);
 
-    void run();
+    void execute();
+
+    void executeIfSatisfied();
+
+    boolean isSatisfied();
 
     <T> void accept(Input<T> input, T value);
 
@@ -31,9 +45,5 @@ public interface Node {
     Optional<Input<?>> getInput(String name);
 
     Collection<Input<?>> getCompletedParameters();
-
-    UUID getUUID();
-
-    NodeId getId();
 
 }

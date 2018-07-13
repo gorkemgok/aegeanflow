@@ -3,7 +3,6 @@ package com.aegeanflow.essentials;
 import com.aegeanflow.core.*;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
 import com.aegeanflow.essentials.box.ConvertToStringBox;
-import com.aegeanflow.essentials.box.UUIDGeneratorBox;
 import com.aegeanflow.essentials.node.SomeNode;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -39,7 +38,7 @@ public class TestMain {
 
         session.getRouter().connect(toStringNode, Parameter.output("main", String.class), someNode2, SomeNode.STRING_INPUT);
 
-        uuidGeneratorNode.run();
+        uuidGeneratorNode.execute();
 
         someNode2.acceptAndRun(SomeNode.INTEGER_INPUT, 2);
 

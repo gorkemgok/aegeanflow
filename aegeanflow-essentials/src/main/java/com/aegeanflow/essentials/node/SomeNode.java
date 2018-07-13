@@ -1,6 +1,7 @@
 package com.aegeanflow.essentials.node;
 
 import com.aegeanflow.core.*;
+import com.aegeanflow.core.exchange.StringExchange;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,7 +23,7 @@ public class SomeNode extends AbstractNode {
     private Integer integerInput;
 
     @Override
-    public void run() {
+    public void execute() {
         router.next(STRING_OUTPUT, new StringExchange(stringInput + "_" + integerInput));
         System.out.println(stringInput + "_" + integerInput);
     }
