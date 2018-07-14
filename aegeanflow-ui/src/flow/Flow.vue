@@ -71,7 +71,7 @@
   </div>
 </template>
 <script>
-import Node from '@/sessionProxy/Node'
+import Node from '@/flow/Node'
 import { uuid } from 'vue-uuid'
 import { POS_CALC, TYPES } from '@/helpers/node-helpers.js'
 import { HTTP } from '@/helpers/http-helpers.js'
@@ -88,7 +88,7 @@ export default {
     contextMenu
   },
   props: {
-    sessionProxy: {
+    flow: {
       type: Object,
       required: true
     }

@@ -1,7 +1,13 @@
 package com.aegeanflow.essentials;
 
-import com.aegeanflow.core.*;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
+import com.aegeanflow.core.ioc.CoreModule;
+import com.aegeanflow.core.node.AnnotatedNode;
+import com.aegeanflow.core.session.Session;
+import com.aegeanflow.core.spi.node.Node;
+import com.aegeanflow.core.spi.parameter.Parameter;
+import com.aegeanflow.core.spi.parameter.Input;
+import com.aegeanflow.core.spi.parameter.Output;
 import com.aegeanflow.essentials.box.ConvertToStringBox;
 import com.aegeanflow.essentials.node.SomeNode;
 import com.google.inject.Guice;
@@ -40,7 +46,7 @@ public class TestMain {
 
         uuidGeneratorNode.execute();
 
-        someNode2.acceptAndExecute(SomeNode.INTEGER_INPUT, 2);
+        someNode2.accept(SomeNode.INTEGER_INPUT, 2);
 
 
 

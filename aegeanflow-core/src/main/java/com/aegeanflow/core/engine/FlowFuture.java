@@ -1,6 +1,6 @@
 package com.aegeanflow.core.engine;
 
-import com.aegeanflow.core.Node;
+import com.aegeanflow.core.spi.node.Node;
 
 import java.util.UUID;
 import java.util.concurrent.*;

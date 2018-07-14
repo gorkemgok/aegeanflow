@@ -3,7 +3,7 @@ package com.aegeanflow.essentials.box;
 import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.essentials.data.SchemalessData;
 import com.aegeanflow.essentials.data.TabularData;
-import com.aegeanflow.core.spi.AbstractAnnotatedBox;
+import com.aegeanflow.core.spi.box.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 import com.aegeanflow.essentials.data.TabularDataExchange;

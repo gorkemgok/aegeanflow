@@ -1,7 +1,7 @@
 package com.aegeanflow.essentials.example;
 
 import com.aegeanflow.core.exchange.Exchange;
-import com.aegeanflow.core.spi.AbstractAnnotatedBox;
+import com.aegeanflow.core.spi.box.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
@@ -28,12 +28,12 @@ public class TestBox extends AbstractAnnotatedBox<String> {
         this.inputTestFlow = inputTestFlow;
     }
 
-    @NodeConfig(label = "testC")
+    @NodeInput(label = "testC")
     public void setConfig1(String config1) {
         this.config1 = config1;
     }
 
-    @NodeConfig
+    @NodeInput
     public void setConfig2(Double config2) {
         this.config2 = config2;
     }

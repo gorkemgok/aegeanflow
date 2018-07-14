@@ -28,7 +28,9 @@ export default {
     Vue.component('component-1', {
       template: '<p>Wheee</p>',
       data () {
-        msg: ''
+        return {
+          msg: ''
+        }
       }
     })
     Vue.component('component-2', {

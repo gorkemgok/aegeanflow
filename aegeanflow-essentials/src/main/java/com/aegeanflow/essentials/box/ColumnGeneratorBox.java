@@ -1,7 +1,7 @@
 package com.aegeanflow.essentials.box;
 
 import com.aegeanflow.core.exchange.Exchange;
-import com.aegeanflow.core.spi.AbstractAnnotatedBox;
+import com.aegeanflow.core.spi.box.AbstractAnnotatedBox;
 import com.aegeanflow.essentials.data.TabularData;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
@@ -40,12 +40,11 @@ public class ColumnGeneratorBox extends AbstractAnnotatedBox<TabularData> {
     }
 
     @NodeInput
-    @NodeConfig
     public void setRowCount(Integer rowCount) {
         this.rowCount = rowCount;
     }
 
-    @NodeConfig
+    @NodeInput
     public void setColumnName(String columnName) {
         this.columnName = columnName;
     }

@@ -29,4 +29,9 @@ public class TabularDataInfoExchange implements Exchange<TabularDataInfo>{
     public byte[] serialize() {
         return new byte[0];
     }
+
+    @Override
+    public TabularDataInfo deserialize(byte[] value) {
+        return null;
+    }
 }

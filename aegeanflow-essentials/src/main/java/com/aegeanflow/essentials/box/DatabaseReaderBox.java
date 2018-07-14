@@ -1,8 +1,8 @@
 package com.aegeanflow.essentials.box;
 
 import com.aegeanflow.core.exchange.Exchange;
-import com.aegeanflow.core.Precondition;
-import com.aegeanflow.core.spi.AbstractAnnotatedBox;
+import com.aegeanflow.core.util.Precondition;
+import com.aegeanflow.core.spi.box.AbstractAnnotatedBox;
 import com.aegeanflow.essentials.data.Convertor;
 import com.aegeanflow.essentials.data.DataUtil;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
@@ -39,7 +39,7 @@ public class DatabaseReaderBox extends AbstractAnnotatedBox<TabularData> {
         return new TabularDataExchange(DataUtil.convert(resultSet));
     }
 
-    @NodeConfig(label = "Query")
+    @NodeInput(label = "Query")
     public void setQuery(String query) {
         this.query = query;
     }

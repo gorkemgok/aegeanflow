@@ -1,13 +1,17 @@
 package com.aegeanflow.core.engine;
 
-import com.aegeanflow.core.*;
-import com.aegeanflow.core.definition.BoxIODefinition;
+import com.aegeanflow.core.box.processor.BoxAnnotationProcessor;
+import com.aegeanflow.core.box.BoxInfo;
+import com.aegeanflow.core.box.BoxRepository;
+import com.aegeanflow.core.box.definition.BoxIODefinition;
 import com.aegeanflow.core.exception.NoSuchNodeException;
 import com.aegeanflow.core.exception.NodeRuntimeException;
-import com.aegeanflow.core.proxy.SessionProxy;
-import com.aegeanflow.core.proxy.RouteProxy;
-import com.aegeanflow.core.proxy.NodeProxy;
-import com.aegeanflow.core.spi.AnnotatedBox;
+import com.aegeanflow.core.node.NodeStatus;
+import com.aegeanflow.core.model.SessionModel;
+import com.aegeanflow.core.model.RouteModel;
+import com.aegeanflow.core.model.NodeModel;
+import com.aegeanflow.core.spi.box.AnnotatedBox;
+import com.aegeanflow.core.spi.node.Node;
 import com.aegeanflow.core.spi.annotation.NodeOutput;
 import com.aegeanflow.core.spi.annotation.NodeOutputBean;
 import org.slf4j.Logger;
@@ -31,7 +35,7 @@ public class DataFlowEngine {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataFlowEngine.class);
 
-    private final SessionProxy sessionProxy;
+    private final SessionModel sessionModel;
 
     private final List<AnnotatedBox<?>> annotatedBoxList;
 
@@ -45,8 +49,8 @@ public class DataFlowEngine {
 
     private final BoxRepository boxRepository;
 
-    public DataFlowEngine(SessionProxy sessionProxy, List<AnnotatedBox<?>> annotatedBoxList, BoxRepository boxRepository, @Nullable DataFlowEngine stateProvider) {
-        this.sessionProxy = sessionProxy;
+    public DataFlowEngine(SessionModel sessionModel, List<AnnotatedBox<?>> annotatedBoxList, BoxRepository boxRepository, @Nullable DataFlowEngine stateProvider) {
+        this.sessionModel = sessionModel;
         this.annotatedBoxList = annotatedBoxList;
         this.boxRepository = boxRepository;
         if (stateProvider != null) {
@@ -88,12 +92,12 @@ public class DataFlowEngine {
     }
 
     public List<FlowFuture> getResultFutureList() throws NoSuchNodeException, NodeRuntimeException {
-        List<NodeProxy> outputNodes = sessionProxy.getNodes().stream()
-                .filter(node -> sessionProxy.getRoutes().stream()
-                        .filter(conn -> conn.getType() == RouteProxy.Type.FLOW && conn.getSource().equals(node.getUUID())).count() == 0)
+        List<NodeModel> outputNodes = sessionModel.getNodes().stream()
+                .filter(node -> sessionModel.getRoutes().stream()
+                        .filter(conn -> conn.getType() == RouteModel.Type.FLOW && conn.getSource().equals(node.getUUID())).count() == 0)
                 .collect(Collectors.toList());
         List<FlowFuture> flowFutureList = new ArrayList<>();
-        for (NodeProxy node : outputNodes) {
+        for (NodeModel node : outputNodes) {
             //updateStatus(box, NodeStatus.WAITING);
             flowFutureList.add(getResult(node.getUUID()));
         }
@@ -101,8 +105,8 @@ public class DataFlowEngine {
     }
 
     public FlowFuture getResult(UUID nodeUUID) throws NoSuchNodeException, NodeRuntimeException {
-        for (NodeProxy nodeProxy : sessionProxy.getNodes()){
-            setNodeConfig(getNode(nodeProxy.getUUID()), nodeProxy.getConfiguration());
+        for (NodeModel nodeModel : sessionModel.getNodes()){
+            setNodeConfig(getNode(nodeModel.getUUID()), nodeModel.getConfiguration());
         }
         AnnotatedBox<?> annotatedBox = getNode(nodeUUID);
         return startNode(annotatedBox, true);
@@ -137,11 +141,11 @@ public class DataFlowEngine {
                     for (OutputFuture outputFuture : outputFutures) {
                         try {
                             Object input = outputFuture.get();
-                            if (outputFuture.getIoPair().type == RouteProxy.Type.FLOW) {
+                            if (outputFuture.getIoPair().type == RouteModel.Type.FLOW) {
                                 if (input.getClass().getAnnotation(NodeOutputBean.class) != null) {
                                     for (Method method : input.getClass().getMethods()) {
                                         NodeOutput nodeOutput = method.getAnnotation(NodeOutput.class);
-                                        if (nodeOutput != null && CompilerUtil.getVarName(method).equals(outputFuture.getIoPair().outputName)) {
+                                        if (nodeOutput != null && BoxAnnotationProcessor.getVarName(method).equals(outputFuture.getIoPair().outputName)) {
                                             inputList.add(new FlowInput(outputFuture.getIoPair().inputName, method.invoke(input)));
                                         }
                                     }
@@ -234,11 +238,9 @@ public class DataFlowEngine {
             if (compiledNodeInfoOptional.isPresent()) {
                 BoxInfo boxInfo = compiledNodeInfoOptional.get();
                 for (Map.Entry<String, Object> config : configs.entrySet()) {
-                    Optional<BoxIODefinition> configDefOptional =
-                            boxInfo.getDefinition().getConfigurations().stream()
-                                    .filter(configDef -> configDef.getName().equals(config.getKey())).findFirst();
+                    Optional<BoxIODefinition> configDefOptional = null;
                     if (configDefOptional.isPresent()) {
-                        Method method = boxInfo.getConfigMethods().get(config.getKey());
+                        Method method = null;
                         Class<?> type = configDefOptional.get().getType();
                         Object value = config.getValue();
                         if (type.equals(Integer.class)) {
@@ -262,9 +264,9 @@ public class DataFlowEngine {
 
         public final AnnotatedBox<?> annotatedBox;
 
-        public final RouteProxy.Type type;
+        public final RouteModel.Type type;
 
-        public IOPair(String outputName, String inputName, AnnotatedBox<?> annotatedBox, RouteProxy.Type type) {
+        public IOPair(String outputName, String inputName, AnnotatedBox<?> annotatedBox, RouteModel.Type type) {
             this.outputName = outputName;
             this.inputName = inputName;
             this.annotatedBox = annotatedBox;
@@ -273,11 +275,11 @@ public class DataFlowEngine {
     }
 
     public List<IOPair> getIOPairList(UUID nodeUUID) throws NoSuchNodeException {
-        List<RouteProxy> inputConnections = sessionProxy.getRoutes().stream()
+        List<RouteModel> inputConnections = sessionModel.getRoutes().stream()
                 .filter(flowConnection -> flowConnection.getTarget().equals(nodeUUID))
                 .collect(Collectors.toList());
         List<IOPair> IOPairList = new ArrayList<>();
-        for (RouteProxy inputConnection: inputConnections) {
+        for (RouteModel inputConnection: inputConnections) {
             IOPair ioPair = null;
 //                    new IOPair(inputConnection.getOutput(), inputConnection.getInputName(),
 //                            getNode(inputConnection.getSource()), inputConnection.getType());
@@ -292,8 +294,8 @@ public class DataFlowEngine {
                 .orElseThrow(() -> new NoSuchNodeException(nodeUUID));
     }
 
-    private NodeProxy getFlowNode(UUID nodeUUID) throws NoSuchNodeException {
-        return sessionProxy.getNodes().stream().filter(node -> node.getUUID().equals(nodeUUID))
+    private NodeModel getFlowNode(UUID nodeUUID) throws NoSuchNodeException {
+        return sessionModel.getNodes().stream().filter(node -> node.getUUID().equals(nodeUUID))
                 .findFirst()
                 .orElseThrow(() -> new NoSuchNodeException(nodeUUID));
     }

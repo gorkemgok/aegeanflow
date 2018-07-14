@@ -1,8 +1,9 @@
 package com.aegeanflow.application;
 
 import com.aegeanflow.core.AegeanFlow;
-import com.aegeanflow.core.CoreModule;
+import com.aegeanflow.core.ioc.CoreModule;
 import com.aegeanflow.core.spi.AegeanFlowService;
+import com.aegeanflow.essentials.EssentialsModule;
 import com.google.inject.*;
 import com.google.inject.multibindings.Multibinder;
 import com.gorkemgok.annoconf.*;
@@ -26,6 +27,7 @@ public class BootstrapModule extends AbstractModule {
         Multibinder<AegeanFlowService> serviceMultibinder = Multibinder.newSetBinder(binder(), AegeanFlowService.class);
         install(new InitSyncUtilModule());
         install(new CoreModule());
+        install(new EssentialsModule());
 
         ConfigOptions configOptions = null;
         AnnoConfModule annoConfModule = null;

@@ -1,6 +1,6 @@
 package com.aegeanflow.core.workspace;
 
-import com.aegeanflow.core.proxy.SessionProxy;
+import com.aegeanflow.core.model.SessionModel;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,11 +8,11 @@ import java.util.UUID;
 
 public interface Workspace {
 
-    SessionProxy save(SessionProxy sessionProxy) throws IOException;
+    SessionModel save(SessionModel sessionModel) throws IOException;
 
-    SessionProxy getFlow(UUID uuid) throws IOException;
+    SessionModel getFlow(UUID uuid) throws IOException;
 
-    List<SessionProxy> getFlowList() throws IOException;
+    List<SessionModel> getFlowList() throws IOException;
 
     void changePath(String path);
 

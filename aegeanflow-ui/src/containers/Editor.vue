@@ -17,9 +17,9 @@
     </div>
     <div class="sessionProxy-tabs">
       <at-tabs type="card" size="small" @on-change="tabChange">
-        <at-tab-pane v-for="sessionProxy in sessionProxyList" :key="sessionProxy.uuid"
-                     :label="sessionProxy.title" :label="sessionProxy.uuid">
-          <sessionProxy v-if="sessionProxy" :sessionProxy="sessionProxy" ref="flows"></sessionProxy>
+        <at-tab-pane v-for="session in sessionProxyList" :key="session.title"
+                     :label="session.title">
+          <flow v-if="selectedFlow" :sessionProxy="sessionProxy" ref="flows"></flow>
         </at-tab-pane>
         <div slot="extra">
           <at-button size="small" @click="addFlow"><i class="icon icon-plus"></i></at-button>
@@ -31,11 +31,11 @@
   </div>
 </template>
 <script>
-import Node from '@/sessionProxy/Node'
+import Node from '@/flow/Node'
 import { HTTP } from '@/helpers/http-helpers.js'
 import Vue from 'vue'
 import VueDragDrop from 'vue-drag-drop'
-import Flow from '@/sessionProxy/Flow'
+import Flow from '@/flow/Flow'
 
 Vue.use(VueDragDrop)
 
@@ -77,7 +77,7 @@ export default {
       this.sessionProxyList.push(sessionProxy)
     },
     getFlows: function () {
-      HTTP.get('/sessionProxy/list')
+      HTTP.get('/model/list')
         .then(res => {
           const sessionProxyList = []
           res.data.forEach(rawFlow => {

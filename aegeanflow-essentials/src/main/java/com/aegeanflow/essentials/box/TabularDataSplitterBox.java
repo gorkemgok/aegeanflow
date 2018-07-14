@@ -1,7 +1,7 @@
 package com.aegeanflow.essentials.box;
 
 import com.aegeanflow.core.exchange.Exchange;
-import com.aegeanflow.core.spi.AbstractAnnotatedBox;
+import com.aegeanflow.core.spi.box.AbstractAnnotatedBox;
 import com.aegeanflow.essentials.data.SplittedTabularData;
 import com.aegeanflow.essentials.data.TabularData;
 import com.aegeanflow.core.spi.annotation.NodeEntry;

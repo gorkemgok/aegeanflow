@@ -7,6 +7,7 @@ import com.gorkemgok.annoconf.annotation.LoadService;
 
 @LoadService(
         autoLoad = true,
+        name = "File Workspace",
         ifConfig = "workspace.store",
         equalsTo = "file"
 )

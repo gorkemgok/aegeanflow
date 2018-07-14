@@ -1,7 +1,6 @@
 package com.aegeanflow.core.exchange;
 
-import com.aegeanflow.core.NotPersistentException;
-import com.aegeanflow.core.exchange.Exchange;
+import com.aegeanflow.core.exception.NotPersistentException;
 
 public class UnpersistentExchange<T> implements Exchange<T> {
 

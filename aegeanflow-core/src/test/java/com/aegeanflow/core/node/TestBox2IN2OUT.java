@@ -1,7 +1,7 @@
 package com.aegeanflow.core.node;
 
 import com.aegeanflow.core.exchange.Exchange;
-import com.aegeanflow.core.spi.AbstractAnnotatedBox;
+import com.aegeanflow.core.spi.box.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
@@ -30,7 +30,7 @@ public class TestBox2IN2OUT extends AbstractAnnotatedBox<TestNodeOutput> {
         return someConfig;
     }
 
-    @NodeConfig(order = 1)
+    @NodeInput(order = 1)
     public void setSomeConfig(Long someConfig) {
         this.someConfig = someConfig;
     }
@@ -39,7 +39,7 @@ public class TestBox2IN2OUT extends AbstractAnnotatedBox<TestNodeOutput> {
         return someConfigList;
     }
 
-    @NodeConfig(label = NODE_CONG_NAME)
+    @NodeInput(label = NODE_CONG_NAME)
     public void setSomeConfigList(List<Long> someConfigList) {
         this.someConfigList = someConfigList;
     }

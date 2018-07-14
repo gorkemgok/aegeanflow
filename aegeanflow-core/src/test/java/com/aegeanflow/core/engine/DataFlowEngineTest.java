@@ -1,15 +1,10 @@
 package com.aegeanflow.core.engine;
 
-import com.aegeanflow.core.BoxRepository;
-import com.aegeanflow.core.proxy.SessionProxy;
-import com.aegeanflow.core.proxy.RouteProxy;
-import com.aegeanflow.core.proxy.NodeProxy;
-import com.aegeanflow.core.node.flowtest.Box1;
-import com.aegeanflow.core.node.flowtest.Box2;
-import com.aegeanflow.core.node.flowtest.Box3;
-import com.aegeanflow.core.spi.AnnotatedBox;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import com.aegeanflow.core.box.BoxRepository;
+import com.aegeanflow.core.model.SessionModel;
+import com.aegeanflow.core.model.RouteModel;
+import com.aegeanflow.core.model.NodeModel;
+import com.aegeanflow.core.spi.box.AnnotatedBox;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -19,10 +14,10 @@ import static org.testng.Assert.*;
 
 public class DataFlowEngineTest {
 
-    SessionProxy sessionProxy;
-    List<NodeProxy> nodeProxyList = new ArrayList<>();
+    SessionModel sessionModel;
+    List<NodeModel> nodeModelList = new ArrayList<>();
     List<AnnotatedBox<?>> annotatedBoxList = new ArrayList<>();
-    List<RouteProxy> routeProxyList = new ArrayList<>();
+    List<RouteModel> routeModelList = new ArrayList<>();
     BoxRepository boxRepository;
 
     @BeforeTest
@@ -96,7 +91,7 @@ public class DataFlowEngineTest {
 
     @Test
     public void testGetIOPairList() throws Exception {
-        DataFlowEngine dfe = new DataFlowEngine(sessionProxy, annotatedBoxList, boxRepository, null);
+        DataFlowEngine dfe = new DataFlowEngine(sessionModel, annotatedBoxList, boxRepository, null);
         List<DataFlowEngine.IOPair> ioPairs = dfe.getIOPairList(annotatedBoxList.get(2).getUUID());
         assertEquals(ioPairs.size(), 3);
 

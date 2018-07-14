@@ -1,16 +1,19 @@
 package com.aegeanflow.essentials.node;
 
-import com.aegeanflow.core.*;
-import com.aegeanflow.core.exchange.StringExchange;
+import com.aegeanflow.core.exchange.Exchange;
+import com.aegeanflow.core.spi.node.AbstractSynchronizedNode;
+import com.aegeanflow.core.spi.parameter.Parameter;
+import com.aegeanflow.core.spi.parameter.Input;
+import com.aegeanflow.core.spi.parameter.Output;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SomeNode extends AbstractNode {
+public class SomeNode extends AbstractSynchronizedNode {
 
-    public static final NodeId ID = NodeId.of(SomeNode.class);
+    public static final String NAME = "Some Node (Test Purpose)";
 
     public static final Input<String> STRING_INPUT = Parameter.input("string_input", String.class);
 
@@ -23,9 +26,14 @@ public class SomeNode extends AbstractNode {
     private Integer integerInput;
 
     @Override
-    public void execute() {
-        router.next(STRING_OUTPUT, new StringExchange(stringInput + "_" + integerInput));
+    public void run() {
+        router.next(STRING_OUTPUT, Exchange.of(stringInput + "_" + integerInput));
         System.out.println(stringInput + "_" + integerInput);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 
     @Override
@@ -45,11 +53,6 @@ public class SomeNode extends AbstractNode {
     @Override
     public Set<Input<?>> getInputs() {
         return new HashSet<>(Arrays.asList(STRING_INPUT, INTEGER_INPUT));
-    }
-
-    @Override
-    public NodeId getId() {
-        return ID;
     }
 
 }

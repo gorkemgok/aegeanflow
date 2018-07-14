@@ -29,4 +29,9 @@ public class ApartedTabularDataExchange implements Exchange<ApartedTabularData> 
     public byte[] serialize() {
         return new byte[0];
     }
+
+    @Override
+    public ApartedTabularData deserialize(byte[] value) {
+        return null;
+    }
 }

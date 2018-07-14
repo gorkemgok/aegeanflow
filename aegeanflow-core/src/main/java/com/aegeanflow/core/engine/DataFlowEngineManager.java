@@ -1,9 +1,9 @@
 package com.aegeanflow.core.engine;
 
-import com.aegeanflow.core.BoxRepository;
-import com.aegeanflow.core.proxy.SessionProxy;
-import com.aegeanflow.core.proxy.NodeProxy;
-import com.aegeanflow.core.spi.AnnotatedBox;
+import com.aegeanflow.core.box.BoxRepository;
+import com.aegeanflow.core.model.SessionModel;
+import com.aegeanflow.core.model.NodeModel;
+import com.aegeanflow.core.spi.box.AnnotatedBox;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -28,27 +28,27 @@ public class DataFlowEngineManager {
         this.engineMap = new Hashtable<>();
     }
 
-    public DataFlowEngine create(SessionProxy sessionProxy, boolean reset) throws ClassNotFoundException {
-        if (sessionProxy.getUuid() == null) {
+    public DataFlowEngine create(SessionModel sessionModel, boolean reset) throws ClassNotFoundException {
+        if (sessionModel.getUuid() == null) {
             //sessionProxy.setUuid(UUID.randomUUID());
         }
         DataFlowEngine prevDFE = null;
         if (!reset) {
-            prevDFE = engineMap.get(sessionProxy.getUuid());
+            prevDFE = engineMap.get(sessionModel.getUuid());
         }
-        DataFlowEngine dataFlowEngine = create(sessionProxy, prevDFE);
-        engineMap.put(sessionProxy.getUuid(), dataFlowEngine);
+        DataFlowEngine dataFlowEngine = create(sessionModel, prevDFE);
+        engineMap.put(sessionModel.getUuid(), dataFlowEngine);
         return dataFlowEngine;
     }
 
-    public DataFlowEngine create(SessionProxy sessionProxy, @Nullable DataFlowEngine stateProvider) throws ClassNotFoundException {
+    public DataFlowEngine create(SessionModel sessionModel, @Nullable DataFlowEngine stateProvider) throws ClassNotFoundException {
         List<AnnotatedBox<?>> annotatedBoxList = new ArrayList<>();
-        for (NodeProxy nodeProxy : sessionProxy.getNodes()){
-            AnnotatedBox annotatedBox = injector.getInstance(nodeProxy.getBoxType());
-            annotatedBox.setUUID(nodeProxy.getUUID());
-            annotatedBox.setName(nodeProxy.getLabel());
+        for (NodeModel nodeModel : sessionModel.getNodes()){
+            AnnotatedBox annotatedBox = injector.getInstance(nodeModel.getBoxType());
+            annotatedBox.setUUID(nodeModel.getUUID());
+            annotatedBox.setName(nodeModel.getLabel());
             annotatedBoxList.add(annotatedBox);
         }
-        return new DataFlowEngine(sessionProxy, annotatedBoxList, boxRepository, stateProvider);
+        return new DataFlowEngine(sessionModel, annotatedBoxList, boxRepository, stateProvider);
     }
 }

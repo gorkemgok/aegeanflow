@@ -1,6 +1,6 @@
 package com.aegeanflow.core.workspace.file;
 
-import com.aegeanflow.core.proxy.SessionProxy;
+import com.aegeanflow.core.model.SessionModel;
 import com.aegeanflow.core.workspace.Workspace;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
@@ -31,35 +31,35 @@ public class FileWorkspace implements Workspace {
     }
 
     @Override
-    public SessionProxy save(SessionProxy sessionProxy) throws IOException {
+    public SessionModel save(SessionModel sessionModel) throws IOException {
         try {
             //TODO: fix null
-            objectMapper.writeValue(new File(format("%s%s%s.aflow", path, File.separator, null)), sessionProxy);
-            return sessionProxy;
+            objectMapper.writeValue(new File(format("%s%s%s.aflow", path, File.separator, UUID.randomUUID())), sessionModel);
+            return sessionModel;
         } catch (IOException e) {
             throw e;
         }
     }
 
     @Override
-    public SessionProxy getFlow(UUID uuid) throws IOException{
-        SessionProxy sessionProxy = objectMapper.readValue(new File(format("%s.aflow", uuid.toString())), SessionProxy.class);
-        return sessionProxy;
+    public SessionModel getFlow(UUID uuid) throws IOException{
+        SessionModel sessionModel = objectMapper.readValue(new File(format("%s.aflow", uuid.toString())), SessionModel.class);
+        return sessionModel;
     }
 
     @Override
-    public List<SessionProxy> getFlowList() throws IOException {
+    public List<SessionModel> getFlowList() throws IOException {
         File dir = new File(path);
         if (!dir.exists()) {
             dir.mkdirs();
         }
         File[] files = dir.listFiles(pathname -> pathname.getName().endsWith(".aflow"));
-        List<SessionProxy> sessionProxyList = new ArrayList<>();
+        List<SessionModel> sessionModelList = new ArrayList<>();
         for (File file : files) {
-            SessionProxy sessionProxy = objectMapper.readValue(file, SessionProxy.class);
-            sessionProxyList.add(sessionProxy);
+            SessionModel sessionModel = objectMapper.readValue(file, SessionModel.class);
+            sessionModelList.add(sessionModel);
         }
-        return sessionProxyList;
+        return sessionModelList;
     }
 
     @Override

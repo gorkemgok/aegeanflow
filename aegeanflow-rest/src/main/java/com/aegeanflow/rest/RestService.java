@@ -2,10 +2,11 @@ package com.aegeanflow.rest;
 
 import static spark.Spark.*;
 import com.aegeanflow.core.AegeanFlow;
-import com.aegeanflow.core.engine.DataFlowEngine;
-import com.aegeanflow.core.engine.DataFlowEngineManager;
 import com.aegeanflow.core.exception.NodeRuntimeException;
-import com.aegeanflow.core.proxy.SessionProxy;
+import com.aegeanflow.core.node.NodeRepository;
+import com.aegeanflow.core.model.SessionModel;
+import com.aegeanflow.core.session.Session;
+import com.aegeanflow.core.session.SessionBuilder;
 import com.aegeanflow.core.spi.AegeanFlowService;
 import com.aegeanflow.core.workspace.Workspace;
 import com.aegeanflow.rest.proxy.NodeErrorProxy;
@@ -35,18 +36,24 @@ public class RestService implements AegeanFlowService {
 
     private final Workspace workspace;
 
-    private final DataFlowEngineManager flowManager;
-
     private final ObjectMapper objectMapper;
 
+    private final SessionBuilder sessionBuilder;
+
+    private final NodeRepository nodeRepository;
+
     @Inject
-    public RestService(RestConfig restConfig, AegeanFlow aegeanFlow, JsonTransformer jsonTransformer,
-                       Workspace workspace, DataFlowEngineManager flowManager) {
+    public RestService(RestConfig restConfig,
+                       AegeanFlow aegeanFlow,
+                       JsonTransformer jsonTransformer,
+                       Workspace workspace,
+                       SessionBuilder sessionBuilder, NodeRepository nodeRepository) {
         this.restConfig = restConfig;
         this.aegeanFlow = aegeanFlow;
         this.jsonTransformer = jsonTransformer;
         this.workspace = workspace;
-        this.flowManager = flowManager;
+        this.sessionBuilder = sessionBuilder;
+        this.nodeRepository = nodeRepository;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -72,31 +79,27 @@ public class RestService implements AegeanFlowService {
             }, jsonTransformer);
 
             //NODE
-            get("/box/list", MediaType.APPLICATION_JSON, (req, res) -> {
+            get("/node/list", MediaType.APPLICATION_JSON, (req, res) -> {
                 res.type("application/json");
-                return aegeanFlow.getNodeRepository().getBoxDefinitionList();
+                return nodeRepository.getNodeDefinitions();
             }, jsonTransformer);
 
             //FLOW
-            post("/proxy",  MediaType.APPLICATION_JSON, (req, res) -> {
-                SessionProxy sessionProxy = objectMapper.readValue(req.body(), SessionProxy.class);
-                sessionProxy = workspace.save(sessionProxy);
-                return new UUIDProxy(sessionProxy.getUuid());
+            post("/model",  MediaType.APPLICATION_JSON, (req, res) -> {
+                SessionModel sessionModel = objectMapper.readValue(req.body(), SessionModel.class);
+                workspace.save(sessionModel);
+                return "ok";
             }, jsonTransformer);
 
-            post("/proxy/execute",  (req, res) -> {
-                SessionProxy sessionProxy = new ObjectMapper().readValue(req.body(), SessionProxy.class);
-                DataFlowEngine de = flowManager.create(sessionProxy, true);
-                List<Object> resultList = de.getResultList();
-                for (Object result : resultList) {
-                    System.out.println(result);
-                }
-                return new UUIDProxy(sessionProxy.getUuid());
+            post("/session",  (req, res) -> {
+                SessionModel sessionModel = new ObjectMapper().readValue(req.body(), SessionModel.class);
+                Session session = sessionBuilder.buildFrom(sessionModel);
+                return new UUIDProxy(session.getUuid());
             });
 
-            get("/proxy/list",  (req, res) -> {
-                List<SessionProxy> sessionProxyList = workspace.getFlowList();
-                return sessionProxyList;
+            get("/model/list",  (req, res) -> {
+                List<SessionModel> sessionModelList = workspace.getFlowList();
+                return sessionModelList;
             }, jsonTransformer);
         });
 
@@ -112,7 +115,7 @@ public class RestService implements AegeanFlowService {
         });
 
         exception(Exception.class, (e, req, res) -> {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
             LOGGER.error(e.getCause().getMessage());
             res.status(500);
             res.body(e.getMessage());
@@ -134,7 +137,10 @@ public class RestService implements AegeanFlowService {
                }
                return "OK";
            });
+
         before((request, response) -> response.header("Access-Control-Allow-Origin", "*"));
+
+        LOGGER.info("Rest service started");
     }
 
     @Override

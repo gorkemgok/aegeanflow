@@ -1,5 +1,7 @@
 package com.aegeanflow.core;
 
+import com.aegeanflow.core.box.BoxRepository;
+import com.aegeanflow.core.ioc.CoreModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -54,7 +56,7 @@ public class AegeanFlow {
         this.singletons = injector.getInstance(AegeanFlowSingletons.class);
     }
 
-    public BoxRepository getNodeRepository(){
+    public BoxRepository getBoxRepository(){
         return singletons.boxRepository;
     }
 

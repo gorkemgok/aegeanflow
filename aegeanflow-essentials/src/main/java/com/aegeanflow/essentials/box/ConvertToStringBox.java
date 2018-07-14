@@ -2,7 +2,7 @@ package com.aegeanflow.essentials.box;
 
 import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.exchange.StringExchange;
-import com.aegeanflow.core.spi.AbstractAnnotatedBox;
+import com.aegeanflow.core.spi.box.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
@@ -16,7 +16,7 @@ public class ConvertToStringBox extends AbstractAnnotatedBox<String> {
 
     @Override
     public Exchange<String> call() throws Exception {
-        return new StringExchange(input.toString());
+        return Exchange.of(input.toString());
     }
 
     @NodeInput

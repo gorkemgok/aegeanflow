@@ -1,7 +1,7 @@
 package com.aegeanflow.essentials.box;
 
 import com.aegeanflow.core.exchange.Exchange;
-import com.aegeanflow.core.spi.AbstractAnnotatedBox;
+import com.aegeanflow.core.spi.box.AbstractAnnotatedBox;
 import com.aegeanflow.essentials.data.TabularData;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
@@ -76,17 +76,17 @@ public class DatabaseWriterBox extends AbstractAnnotatedBox<Void> {
         this.data = data;
     }
 
-    @NodeConfig
+    @NodeInput
     public void setFieldMap(Map<String, String> fieldMap) {
         this.fieldMap = fieldMap;
     }
 
-    @NodeConfig(label = "Insert Table Name", order = 1)
+    @NodeInput(label = "Insert Table Name", order = 1)
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
 
-    @NodeConfig(label = "Batch Count", order = 2)
+    @NodeInput(label = "Batch Count", order = 2)
     public void setBatchCount(Integer batchCount) {
         this.batchCount = batchCount;
     }

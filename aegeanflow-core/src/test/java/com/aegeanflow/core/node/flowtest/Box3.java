@@ -1,7 +1,7 @@
 package com.aegeanflow.core.node.flowtest;
 
 import com.aegeanflow.core.exchange.Exchange;
-import com.aegeanflow.core.spi.AbstractAnnotatedBox;
+import com.aegeanflow.core.spi.box.AbstractAnnotatedBox;
 import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
@@ -23,7 +23,7 @@ public class Box3 extends AbstractAnnotatedBox<StringIntegerPairOutput> {
         return Exchange.createUnpersistent(new StringIntegerPairOutput(seedText + "," + text, length));
     }
 
-    @NodeConfig
+    @NodeInput
     public void setLength(Integer length) {
         this.length = length;
     }
