@@ -25,7 +25,7 @@ public class MathAddNode extends AbstractNode{
     }
 
     @Override
-    public void execute() {
+    public void run() {
         Double total = input1 + input2;
         router.next(OUT_2, total);
     }

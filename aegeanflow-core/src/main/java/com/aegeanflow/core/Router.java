@@ -21,7 +21,7 @@ public class Router {
         List<Route<T, Object>> matchingRoutes = routeList.stream().filter(route -> route.isOutputOf(node, output))
                 .map(route -> (Route<T, Object>) route)
                 .collect(Collectors.toList());
-        matchingRoutes.forEach(route -> route.getTarget().getNode().acceptAndRun(route.getTarget().getInput(), value.get()));
+        matchingRoutes.forEach(route -> route.getTarget().getNode().acceptAndExecute(route.getTarget().getInput(), value.get()));
     }
 
     public <O extends I, I> Route<O, I> connect(Node sourceNode, Output<O> sourceParameter,

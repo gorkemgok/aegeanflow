@@ -1,15 +1,57 @@
 package com.aegeanflow.core;
 
 import java.util.*;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 public abstract class AbstractNode implements Node{
+
+    protected State state;
 
     protected NodeRouter router;
 
     private UUID uuid;
 
     private Set<Input<?>> completedParameterNames = new HashSet<>();
+
+    private final static ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
+
+    private void setState(State state) {
+        try {
+            rwLock.writeLock().lock();
+            this.state = state;
+        } finally {
+            rwLock.writeLock().unlock();
+        }
+    }
+
+    public AbstractNode() {
+        state = State.WAITING;
+    }
+
+    @Override
+    public void execute() {
+        try {
+            run();
+        } catch (Exception e) {
+            rwLock.writeLock().lock();
+            setState(State.FAILED);
+            throw e;
+        }
+        setState(State.DONE);
+    }
+
+    protected abstract void run();
+
+    @Override
+    public State getState() {
+        try {
+            rwLock.readLock().lock();
+            return state;
+        } finally {
+            rwLock.readLock().unlock();
+        }
+    }
 
     @Override
     public UUID getUUID() {
@@ -28,9 +70,16 @@ public abstract class AbstractNode implements Node{
         completedParameterNames.add(input);
     }
 
-    public  <T> void acceptAndRun(Input<T> input, T value) {
+    public  <T> void acceptAndExecute(Input<T> input, T value) {
         accept(input, value);
         executeIfSatisfied();
+    }
+
+    @Override
+    public void executeWaitingIfSatisfied() {
+        if (State.WAITING == getState()) {
+            executeIfSatisfied();
+        }
     }
 
     @Override

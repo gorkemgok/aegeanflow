@@ -40,7 +40,7 @@ public class TestMain {
 
         uuidGeneratorNode.execute();
 
-        someNode2.acceptAndRun(SomeNode.INTEGER_INPUT, 2);
+        someNode2.acceptAndExecute(SomeNode.INTEGER_INPUT, 2);
 
 
 

@@ -23,7 +23,7 @@ public class AnnotatedNode<T> extends AbstractNode{
     private NodeId id;
 
     @Override
-    public void execute() {
+    public void run() {
         try {
             Exchange<T> exchange = annotatedBox.call();
             boxInfo.getDefinition().getOutputs()

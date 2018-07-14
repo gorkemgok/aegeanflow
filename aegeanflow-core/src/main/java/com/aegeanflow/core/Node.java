@@ -6,6 +6,10 @@ import java.util.UUID;
 
 public interface Node {
 
+    enum State {
+        WAITING, RUNNING, CANCELED, FAILED, DONE
+    }
+
     default boolean is(UUID uuid) {
         return getUUID().equals(uuid);
     }
@@ -24,9 +28,13 @@ public interface Node {
 
     boolean isSatisfied();
 
+    State getState();
+
     <T> void accept(Input<T> input, T value);
 
-    <T> void acceptAndRun(Input<T> input, T value);
+    <T> void acceptAndExecute(Input<T> input, T value);
+
+    void executeWaitingIfSatisfied();
 
     Collection<String> getInputNames();
 

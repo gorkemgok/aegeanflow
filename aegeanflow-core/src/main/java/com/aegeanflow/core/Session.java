@@ -43,8 +43,7 @@ public class Session {
     }
 
     public void run() {
-        //nodeList.forEach(node -> executor.submit(() -> node.execute()));
-        nodeList.forEach(node -> node.executeIfSatisfied());
+        nodeList.forEach(node -> executor.submit(() -> node.executeWaitingIfSatisfied()));
     }
 
     public <T> void setInput(UUID uuid, Input<T> input, T value){
