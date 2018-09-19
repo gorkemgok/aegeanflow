@@ -1,10 +1,8 @@
 package com.aegeanflow.essentials.box;
 
-import com.aegeanflow.core.box.definition.BoxIODefinition;
 import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 import com.aegeanflow.core.spi.box.AbstractAnnotatedBox;
-import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 
 import java.sql.Connection;
@@ -34,7 +32,7 @@ public class DatabaseConnectionBox extends AbstractAnnotatedBox<Connection> {
         Properties properties = new Properties();
         properties.setProperty("user", user);
         properties.setProperty("password", password);
-        return Exchange.createUnpersistent(driver.connect(jdbcUrl, properties));
+        return Exchange.createNonpersistent(driver.connect(jdbcUrl, properties));
     }
 
     @NodeInput(label = "Driver Class", order = 1, inputType = CONGIF)

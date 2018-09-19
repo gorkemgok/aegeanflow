@@ -1,9 +1,11 @@
 package com.aegeanflow.core.session;
 
-import com.aegeanflow.core.ioc.CoreModule;
+import com.aegeanflow.core.concurrent.ThreadManager;
 import com.aegeanflow.core.box.BoxRepository;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
 import com.aegeanflow.core.node.AnnotatedNode;
+import com.aegeanflow.core.route.RouteOptions;
+import com.aegeanflow.core.route.RouterFactory;
 import com.aegeanflow.core.spi.box.AnnotatedBox;
 import com.aegeanflow.core.spi.node.Node;
 import com.aegeanflow.core.spi.parameter.Input;
@@ -11,12 +13,10 @@ import com.aegeanflow.core.spi.parameter.Output;
 import com.aegeanflow.core.route.Router;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
 
 public class Session {
 
@@ -32,29 +32,36 @@ public class Session {
 
     private final UUID uuid;
 
-    private final ExecutorService executor;
+    private final ThreadManager threadManager;
 
     @Inject
-    public Session(Router router, BoxRepository boxRepository, Injector injector,
-                   @Named(CoreModule.MAIN_EXECUTOR_SERVICE) ExecutorService executor) {
-        this.router = router;
+    public Session(Injector injector,
+                   SessionContext sessionContext,
+                   BoxRepository boxRepository,
+                   RouterFactory routerFactory,
+                   ThreadManager threadManager) {
         this.boxRepository = boxRepository;
         this.injector = injector;
-        this.executor = executor;
+        this.router = routerFactory.create(this);
+        this.threadManager = threadManager;
         this.nodeList = new ArrayList<>();
-        this.uuid = UUID.randomUUID();
+        this.uuid = sessionContext.getSessionId();
     }
 
     public UUID getUuid() {
         return uuid;
     }
 
+    public void awaitCompletion() {
+        threadManager.awaitCompletion(this);
+    }
+
     public void run() {
-        nodeList.forEach(node -> executor.submit(() -> {
-            if (node.getState()== Node.State.WAITING && node.isSatisfied()) {
-                node.execute();
+        nodeList.forEach(node -> {
+            if (node.getState()== Node.State.WAITING && node.isReady()) {
+                threadManager.run(this, node);
             }
-        }));
+        });
     }
 
     public <T> void setInput(UUID uuid, Input<T> input, T value){
@@ -79,7 +86,7 @@ public class Session {
         return node;
     }
 
-    public void connect(UUID sourceUUID, String outputName, UUID targetUUID, String inputName) {
+    public void connect(UUID sourceUUID, String outputName, UUID targetUUID, String inputName, RouteOptions routeOptions) {
         Optional<Node> sourceNodeOptional = nodeList.stream().filter(node -> node.getUUID().equals(sourceUUID)).findFirst();
         if (sourceNodeOptional.isPresent()) {
             Optional<Node> targetNodeOptional =
@@ -94,7 +101,7 @@ public class Session {
                     if (inputOptional.isPresent()) {
                         Output output = outputOptional.get();
                         Input input = inputOptional.get();
-                        router.connect(sourceNode, output, targetNode, input);
+                        router.connect(sourceNode, output, targetNode, input, routeOptions);
                     } else {
                         //TODO: log
                         LOGGER.warn("Cant find input {} of {}", inputName, targetUUID);

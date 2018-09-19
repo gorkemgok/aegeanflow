@@ -49,7 +49,7 @@ public class AnnotatedNode<T> extends AbstractSynchronizedNode {
                             } else {
                                 ex = exchange;
                             }
-                            router.next(output, ex);
+                            router.next(output, ex.get());
                         } catch (IllegalAccessException e) {
                             LOGGER.error("Illegal configured class {}", annotatedBox.getNodeClass());
                         } catch (InvocationTargetException e) {

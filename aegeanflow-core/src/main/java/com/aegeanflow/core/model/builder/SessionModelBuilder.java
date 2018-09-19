@@ -13,7 +13,6 @@ public final class SessionModelBuilder {
     private Collection<RouteModel> routes;
     private UUID uuid;
     private String title;
-    private Long id;
 
     private SessionModelBuilder() {
         nodes = new ArrayList<>();
@@ -22,6 +21,16 @@ public final class SessionModelBuilder {
 
     public static SessionModelBuilder aSessionProxy() {
         return new SessionModelBuilder();
+    }
+
+    public SessionModelBuilder withUUID(UUID uuid) {
+        this.uuid = uuid;
+        return this;
+    }
+
+    public SessionModelBuilder withRandomUUID() {
+        this.uuid = UUID.randomUUID();
+        return this;
     }
 
     public SessionModelBuilder addNode(NodeModel node) {
@@ -40,6 +49,6 @@ public final class SessionModelBuilder {
     }
 
     public SessionModel build() {
-        return new SessionModel(title, nodes, routes);
+        return new SessionModel(uuid, title, nodes, routes);
     }
 }

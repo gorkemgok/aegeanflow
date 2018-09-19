@@ -1,14 +1,13 @@
 package com.aegeanflow.core.spi.node;
 
-import com.aegeanflow.core.spi.node.Node;
-import com.aegeanflow.core.spi.parameter.Input;
-import com.aegeanflow.core.spi.parameter.Output;
 import com.aegeanflow.core.route.NodeRouter;
 import com.aegeanflow.core.route.Router;
+import com.aegeanflow.core.spi.parameter.Input;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.stream.Collectors;
 
 public abstract class AbstractNode implements Node {
 
@@ -83,7 +82,7 @@ public abstract class AbstractNode implements Node {
     }
 
     @Override
-    public boolean isSatisfied() {
+    public boolean isReady() {
         return getCompletedParameters().containsAll(getInputs());
     }
 
@@ -92,47 +91,4 @@ public abstract class AbstractNode implements Node {
         return completedParameterNames;
     }
 
-    @Override
-    public Collection<String> getInputNames() {
-        return getInputs().stream().map(Input::name).collect(Collectors.toList());
-    }
-
-    @Override
-    public Collection<String> getOutputNames() {
-        return getOutputs().stream().map(Output::name).collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<Class> getInputType(String name) {
-        Optional<Class> classOptional =  getInputs().stream()
-            .filter(input -> input.name().equals(name))
-            .map(input -> (Class)input.type())
-            .findAny();
-        return classOptional;
-    }
-
-    @Override
-    public Optional<Class> getOutputType(String name) {
-        Optional<Class> classOptional =  getOutputs().stream()
-            .filter(output -> output.name().equals(name))
-            .map(output -> (Class)output.type())
-            .findAny();
-        return classOptional;
-    }
-
-    @Override
-    public Optional<Output<?>> getOutput(String name) {
-        Optional<Output<?>> outputOptional =  getOutputs().stream()
-            .filter(output -> output.name().equals(name))
-            .findAny();
-        return outputOptional;
-    }
-
-    @Override
-    public Optional<Input<?>> getInput(String name) {
-        Optional<Input<?>> inputOptional =  getInputs().stream()
-            .filter(input -> input.name().equals(name))
-            .findAny();
-        return inputOptional;
-    }
 }

@@ -19,7 +19,7 @@ public class Box2 extends AbstractAnnotatedBox<StringIntegerPairOutput> {
         for (int i = 0; i < length; i++) {
             sb.append(text);
         }
-        return Exchange.createUnpersistent(new StringIntegerPairOutput(sb.toString(), length));
+        return Exchange.createNonpersistent(new StringIntegerPairOutput(sb.toString(), length));
     }
 
     @NodeInput(inputType = CONGIF)

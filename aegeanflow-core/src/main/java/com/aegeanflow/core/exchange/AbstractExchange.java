@@ -1,12 +1,12 @@
 package com.aegeanflow.core.exchange;
 
+import com.aegeanflow.core.route.tunnel.StreamTunnel;
+
 public abstract class AbstractExchange<T> implements Exchange<T>{
 
     protected final T value;
 
-    public AbstractExchange(byte[] value) {
-        this.value = deserialize(value);
-    }
+    protected StreamTunnel streamTunnel;
 
     public AbstractExchange(T value) {
         this.value = value;
@@ -17,4 +17,7 @@ public abstract class AbstractExchange<T> implements Exchange<T>{
         return value;
     }
 
+    public void setStreamTunnel(StreamTunnel streamTunnel) {
+        this.streamTunnel = streamTunnel;
+    }
 }

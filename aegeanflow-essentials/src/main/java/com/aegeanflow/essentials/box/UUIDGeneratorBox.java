@@ -13,6 +13,6 @@ import java.util.UUID;
 public class UUIDGeneratorBox extends AbstractAnnotatedBox<UUID> {
     @Override
     public Exchange<UUID> call() throws Exception {
-        return Exchange.createUnpersistent(UUID.randomUUID());
+        return Exchange.createNonpersistent(UUID.randomUUID());
     }
 }

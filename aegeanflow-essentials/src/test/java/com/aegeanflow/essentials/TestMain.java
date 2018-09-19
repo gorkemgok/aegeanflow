@@ -3,6 +3,7 @@ package com.aegeanflow.essentials;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
 import com.aegeanflow.core.ioc.CoreModule;
 import com.aegeanflow.core.node.AnnotatedNode;
+import com.aegeanflow.core.route.RouteOptions;
 import com.aegeanflow.core.session.Session;
 import com.aegeanflow.core.spi.node.Node;
 import com.aegeanflow.core.spi.parameter.Parameter;
@@ -40,16 +41,14 @@ public class TestMain {
 
         Input toStringInput = toStringNode.getInput("input").get();
 
-        session.getRouter().connect(uuidGeneratorNode, uuidMainOut, toStringNode, toStringInput);
+        session.getRouter().connect(uuidGeneratorNode, uuidMainOut, toStringNode, toStringInput, new RouteOptions());
 
-        session.getRouter().connect(toStringNode, Parameter.output("main", String.class), someNode2, SomeNode.STRING_INPUT);
+        session.getRouter().connect(toStringNode, Parameter.output("main", String.class), someNode2, SomeNode.STRING_INPUT, new RouteOptions());
 
         uuidGeneratorNode.execute();
 
         someNode2.accept(SomeNode.INTEGER_INPUT, 2);
-
-
-
+        
 
     }
 }

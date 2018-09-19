@@ -25,13 +25,4 @@ public class TabularDataExchange implements Exchange<TabularData> {
         return false;
     }
 
-    @Override
-    public byte[] serialize() {
-        return new byte[0];
-    }
-
-    @Override
-    public TabularData deserialize(byte[] value) {
-        return null;
-    }
 }

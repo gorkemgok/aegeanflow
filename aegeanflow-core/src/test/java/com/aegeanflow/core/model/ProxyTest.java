@@ -51,6 +51,7 @@ public class ProxyTest {
     public void setup() {
         injector = Guice.createInjector(new CoreModule(), new TestModule());
         sessionModel = SessionModelBuilder.aSessionProxy()
+            .withRandomUUID()
             .withTitle("Test Session Proxy")
             .addNode(
                 NodeModelBuilder.aNodeProxy()

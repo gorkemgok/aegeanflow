@@ -2,7 +2,6 @@ package com.aegeanflow.core.node;
 
 import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.spi.box.AbstractAnnotatedBox;
-import com.aegeanflow.core.spi.annotation.NodeConfig;
 import com.aegeanflow.core.spi.annotation.NodeEntry;
 import com.aegeanflow.core.spi.annotation.NodeInput;
 
@@ -65,7 +64,7 @@ public class TestBox2IN2OUT extends AbstractAnnotatedBox<TestNodeOutput> {
             sj.add(text);
         }
         TestNodeOutput tno = new TestNodeOutput(text, sj.toString());
-        return Exchange.createUnpersistent(tno);
+        return Exchange.createNonpersistent(tno);
     }
 }
 

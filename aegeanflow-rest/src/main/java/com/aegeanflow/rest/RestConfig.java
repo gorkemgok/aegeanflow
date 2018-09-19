@@ -11,7 +11,7 @@ public class RestConfig {
 
     public final int port;
 
-    public RestConfig(@ConfigParam(key = "rest.port") int port) {
+    public RestConfig(@ConfigParam(keys = "rest.port") int port) {
         this.port = port;
     }
 }

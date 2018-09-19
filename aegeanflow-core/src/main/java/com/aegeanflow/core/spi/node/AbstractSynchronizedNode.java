@@ -8,8 +8,5 @@ public abstract class AbstractSynchronizedNode extends AbstractNode implements N
     public <T> void accept(Input<T> input, T value) {
         setInput(input, value);
         getCompletedParameters().add(input);
-        if (State.WAITING == getState() && isSatisfied()) {
-            execute();
-        }
     }
 }

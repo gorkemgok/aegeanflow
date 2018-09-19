@@ -1,5 +1,8 @@
 package com.aegeanflow.core.route;
 
+import com.aegeanflow.core.spi.Streamable;
+import com.aegeanflow.core.route.tunnel.StreamTunnel;
+import com.aegeanflow.core.exchange.StreamExchange;
 import com.aegeanflow.core.spi.parameter.Output;
 import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.spi.node.Node;
@@ -15,7 +18,19 @@ public class NodeRouter {
         this.router = router;
     }
 
+    public <T> void next(Output<T> output, T value) {
+
+    }
+
+    public <T extends Streamable<I>, I> StreamTunnel<I> next(Output<T> output, T value) {
+        return router.next(node, output, value);
+    }
+
     public <T> void next(Output<T> output, Exchange<T> value) {
+        router.next(node, output, value);
+    }
+
+    public <T extends Streamable<I>, I> void next(Output<T> output, StreamExchange<T, I> value) {
         router.next(node, output, value);
     }
 

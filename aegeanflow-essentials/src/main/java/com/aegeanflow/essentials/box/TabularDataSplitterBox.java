@@ -14,7 +14,7 @@ public class TabularDataSplitterBox extends AbstractAnnotatedBox<SplittedTabular
 
     @Override
     public Exchange<SplittedTabularData> call() throws Exception {
-        return Exchange.createUnpersistent(new SplittedTabularData(input, input, input));
+        return Exchange.createNonpersistent(new SplittedTabularData(input, input, input));
     }
 
     @NodeInput

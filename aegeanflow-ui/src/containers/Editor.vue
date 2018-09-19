@@ -17,8 +17,8 @@
     </div>
     <div class="sessionProxy-tabs">
       <at-tabs type="card" size="small" @on-change="tabChange">
-        <at-tab-pane v-for="session in sessionProxyList" :key="session.title"
-                     :label="session.title">
+        <at-tab-pane v-for="sessionContext in sessionProxyList" :key="sessionContext.title"
+                     :label="sessionContext.title">
           <flow v-if="selectedFlow" :sessionProxy="sessionProxy" ref="flows"></flow>
         </at-tab-pane>
         <div slot="extra">

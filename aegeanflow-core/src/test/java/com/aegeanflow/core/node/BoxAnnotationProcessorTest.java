@@ -5,13 +5,14 @@ import com.aegeanflow.core.box.processor.BoxInputAnnotationProcessor;
 import com.aegeanflow.core.box.processor.BoxOutputAnnotationProcessor;
 import com.aegeanflow.core.box.BoxInfo;
 import com.aegeanflow.core.box.definition.BoxIODefinition;
+import org.testng.annotations.Test;
 
 import java.util.List;
 
 import static org.testng.Assert.*;
 
 public class BoxAnnotationProcessorTest {
-    @org.testng.annotations.Test
+    @Test
     public void testCompile() throws Exception {
         BoxInputAnnotationProcessor ip = new BoxInputAnnotationProcessor();
         BoxOutputAnnotationProcessor op = new BoxOutputAnnotationProcessor();

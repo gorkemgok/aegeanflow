@@ -9,7 +9,7 @@ public class WorkspaceConfig {
     public final String store;
 
     public WorkspaceConfig(
-            @ConfigParam(key = "workspace.store", env = "WORKSPACE_STORE") String store) {
+            @ConfigParam(keys = {"workspace.store", "WORKSPACE_STORE"}) String store) {
         this.store = store;
     }
 }

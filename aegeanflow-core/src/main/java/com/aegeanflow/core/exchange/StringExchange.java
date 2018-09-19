@@ -2,10 +2,6 @@ package com.aegeanflow.core.exchange;
 
 public final class StringExchange extends AbstractExchange<String> {
 
-    protected StringExchange(byte[] value) {
-        super(value);
-    }
-
     protected StringExchange(String value) {
         super(value);
     }
@@ -23,16 +19,6 @@ public final class StringExchange extends AbstractExchange<String> {
     @Override
     public boolean isPersistable() {
         return true;
-    }
-
-    @Override
-    public byte[] serialize() {
-        return value.getBytes();
-    }
-
-    @Override
-    public String deserialize(byte[] value) {
-        return new String(value);
     }
 
 }

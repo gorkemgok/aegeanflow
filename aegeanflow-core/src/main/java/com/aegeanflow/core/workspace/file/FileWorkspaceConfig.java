@@ -9,7 +9,7 @@ public class FileWorkspaceConfig {
     public final String path;
 
     public FileWorkspaceConfig(
-            @ConfigParam(key = "workspace.file.path", env = "WORKSPACE_PATH", defaultValue = "./workspace") String path) {
+            @ConfigParam(keys = {"workspace.file.path", "WORKSPACE_PATH"}, defaultValue = "./workspace") String path) {
         this.path = path;
     }
 }

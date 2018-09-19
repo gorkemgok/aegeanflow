@@ -2,8 +2,8 @@ package com.aegeanflow.core.exchange;
 
 public interface Exchange<T> {
 
-    static <T> Exchange<T> createUnpersistent(T value) {
-        return new UnpersistentExchange<>(value);
+    static <T> Exchange<T> createNonpersistent(T value) {
+        return new NonpersistentExchange<>(value);
     }
 
     static Exchange<String> of (String value) {
@@ -20,7 +20,4 @@ public interface Exchange<T> {
 
     boolean isPersistable();
 
-    byte[] serialize();
-
-    T deserialize(byte[] value);
 }

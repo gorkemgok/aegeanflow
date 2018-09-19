@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  * Created by gorkem on 12.01.2018.
  */
 public class SessionModel extends IdModel{
+
+    private final UUID uuid;
 
     private final Collection<NodeModel> nodes;
 
@@ -18,9 +21,11 @@ public class SessionModel extends IdModel{
 
     @JsonCreator
     public SessionModel(
-            @JsonProperty("title") String title,
-            @JsonProperty("nodes") Collection<NodeModel> nodes,
-            @JsonProperty("routes") Collection<RouteModel> routes) {
+        @JsonProperty("uuid")  UUID uuid,
+        @JsonProperty("title") String title,
+        @JsonProperty("nodes") Collection<NodeModel> nodes,
+        @JsonProperty("routes") Collection<RouteModel> routes) {
+        this.uuid = uuid;
         this.nodes = nodes;
         this.routes = routes;
         this.title = title;
