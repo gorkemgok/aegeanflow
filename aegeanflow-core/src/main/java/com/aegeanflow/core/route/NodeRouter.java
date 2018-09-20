@@ -19,7 +19,7 @@ public class NodeRouter {
     }
 
     public <T> void next(Output<T> output, T value) {
-
+        router.next(node, output, value);
     }
 
     public <T extends Streamable<I>, I> StreamTunnel<I> next(Output<T> output, T value) {

@@ -1,5 +1,6 @@
 package com.aegeanflow.core.route;
 
+import com.aegeanflow.core.concurrent.ThreadManager;
 import com.aegeanflow.core.route.tunnel.*;
 import com.aegeanflow.core.deployment.Deployment;
 import com.aegeanflow.core.session.Session;
@@ -28,20 +29,27 @@ public class Router {
 
     private final Session session;
 
+    private final ThreadManager threadManager;
+
     @Inject
     public Router(FlowTunnelProvider flowTunnelProvider,
                   FlowTunnelListener flowTunnelListener,
-                  @Assisted Session session) {
+                  @Assisted Session session, ThreadManager threadManager) {
         this.session = session;
         this.flowTunnelProvider = flowTunnelProvider;
         this.flowTunnelListener = flowTunnelListener;
+        this.threadManager = threadManager;
         this.routeList = new ArrayList<>();
     }
 
     public <T> void next(Node node, Output<T> output, T value) {
         forMatchingRoutes(node, output, route -> {
-            if (route.getTarget().equals(Deployment.LOCAL)) {
-                route.getTarget().getNode().accept(route.getTarget().getInput(), value);
+            Node targetNode = route.getTarget().getNode();
+            if (route.getTarget().getDeployment().equals(Deployment.LOCAL)) {
+                targetNode.accept(route.getTarget().getInput(), value);
+                if (targetNode.isReady() && targetNode.getState() == Node.State.WAITING) {
+                    threadManager.run(session, targetNode);
+                }
             } else {
                 flowTunnelProvider.get(route.getOptions().getTunnelType()).accept(route.getTarget(), value);
             }
@@ -55,7 +63,7 @@ public class Router {
             if (route.getTarget().getDeployment().equals(Deployment.LOCAL)) {
                 targetNode.accept(route.getTarget().getInput(), value);
                 if (targetNode.isReady() && targetNode.getState() == Node.State.WAITING) {
-                    new SessionThread(targetNode, session).start();
+                    threadManager.run(session, targetNode);
                 }
                 streamTunnels.add(new LocalStreamTunnel<>(value));
             } else {

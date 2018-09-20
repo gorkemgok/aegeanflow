@@ -1,9 +1,7 @@
 package com.aegeanflow.core.ioc;
 
 import com.aegeanflow.core.plugin.CorePlugin;
-import com.aegeanflow.core.session.Session;
 import com.aegeanflow.core.session.SessionFactory;
-import com.aegeanflow.core.session.SessionModule;
 import com.aegeanflow.core.spi.Plugin;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -29,6 +27,7 @@ public class CoreModule extends AbstractModule {
         install(new CodecModule());
         install(new RouterModule());
         install(new TunnelModule());
+        install(new DatasourceModule());
 //        //ANNOCONF
 //        ConfigOptions configOptions = ConfigOptions.withSystemPropertySource();
 //        try {

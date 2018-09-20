@@ -58,7 +58,7 @@ public class Session {
 
     public void run() {
         nodeList.forEach(node -> {
-            if (node.getState()== Node.State.WAITING && node.isReady()) {
+            if (node.getState() == Node.State.WAITING && node.isReady()) {
                 threadManager.run(this, node);
             }
         });
