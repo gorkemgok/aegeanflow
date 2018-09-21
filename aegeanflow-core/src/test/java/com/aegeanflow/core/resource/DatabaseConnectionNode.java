@@ -34,16 +34,10 @@ public class DatabaseConnectionNode extends AbstractSynchronizedNode {
     }
 
     @Override
-    protected void run() {
-        try {
-            Class.forName(driverClass);
-            Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
-            router.next(CONNECTION, connection);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    protected void run() throws Exception{
+        Class.forName(driverClass);
+        Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
+        router.next(CONNECTION, connection);
     }
 
     @Override

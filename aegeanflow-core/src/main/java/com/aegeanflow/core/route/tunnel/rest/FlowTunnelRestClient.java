@@ -10,8 +10,8 @@ public class FlowTunnelRestClient {
 
     public <T> void acceptInput(InputPoint<T> inputPoint, InputStream inputStream) {
         String path = format("tunnel/flow/accept/%s/%s/%s",
-            inputPoint.getSession().getUuid(),
-            inputPoint.getNode().getUUID(),
+            inputPoint.getSession().getId(),
+            inputPoint.getNode().getId(),
             inputPoint.getInput().name());
         //TODO send
     }

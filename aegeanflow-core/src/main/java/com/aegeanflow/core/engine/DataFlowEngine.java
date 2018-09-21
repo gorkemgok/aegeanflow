@@ -63,11 +63,11 @@ public class DataFlowEngine {
     }
 
     private void updateStatus(Node node, NodeStatus status){
-        statusMap.put(node.getUUID(), status);
+        statusMap.put(node.getId(), status);
         if (status != NodeStatus.RUNNING) {
-            runningTasks.remove(node.getUUID());
+            runningTasks.remove(node.getId());
         }
-        //LOGGER.info(format("%s, %s, %s : %s", box.getLabel(), box.getType().getSimpleName(), box.getUUID(), status));
+        //LOGGER.info(format("%s, %s, %s : %s", box.getLabel(), box.getType().getSimpleName(), box.getId(), status));
     }
 
     public List<Object> getResultList()  throws NoSuchNodeException, NodeRuntimeException {

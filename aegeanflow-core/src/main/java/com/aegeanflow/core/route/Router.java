@@ -4,7 +4,6 @@ import com.aegeanflow.core.concurrent.ThreadManager;
 import com.aegeanflow.core.route.tunnel.*;
 import com.aegeanflow.core.deployment.Deployment;
 import com.aegeanflow.core.session.Session;
-import com.aegeanflow.core.session.SessionThread;
 import com.aegeanflow.core.spi.Streamable;
 import com.aegeanflow.core.exchange.StreamExchange;
 import com.aegeanflow.core.spi.parameter.Input;

@@ -21,7 +21,7 @@ public class FlowFuture<T> extends CompletableFuture<T> {
     }
 
     public UUID getUuid() {
-        return node.getUUID();
+        return node.getId();
     }
 
     public Node getNode() {

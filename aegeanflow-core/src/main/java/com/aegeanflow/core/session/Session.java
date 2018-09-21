@@ -3,6 +3,8 @@ package com.aegeanflow.core.session;
 import com.aegeanflow.core.concurrent.ThreadManager;
 import com.aegeanflow.core.box.BoxRepository;
 import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
+import com.aegeanflow.core.logger.SessionLogManager;
+import com.aegeanflow.core.logger.SessionLogManagerFactory;
 import com.aegeanflow.core.node.AnnotatedNode;
 import com.aegeanflow.core.route.RouteOptions;
 import com.aegeanflow.core.route.RouterFactory;
@@ -34,21 +36,27 @@ public class Session {
 
     private final ThreadManager threadManager;
 
+    private final SessionLogManager logManager;
+
+    private final SessionContext context;
+
     @Inject
-    public Session(Injector injector,
-                   SessionContext sessionContext,
+    public Session(Injector mainInjector,
                    BoxRepository boxRepository,
                    RouterFactory routerFactory,
+                   SessionLogManagerFactory logManagerFactory,
                    ThreadManager threadManager) {
         this.boxRepository = boxRepository;
-        this.injector = injector;
         this.router = routerFactory.create(this);
         this.threadManager = threadManager;
         this.nodeList = new ArrayList<>();
-        this.uuid = sessionContext.getSessionId();
+        this.uuid = UUID.randomUUID();
+        this.logManager = logManagerFactory.create(this);
+        this.injector = mainInjector.createChildInjector(new SessionModule(this, logManager));
+        this.context = this.injector.getInstance(SessionContext.class);
     }
 
-    public UUID getUuid() {
+    public UUID getId() {
         return uuid;
     }
 
@@ -87,10 +95,10 @@ public class Session {
     }
 
     public void connect(UUID sourceUUID, String outputName, UUID targetUUID, String inputName, RouteOptions routeOptions) {
-        Optional<Node> sourceNodeOptional = nodeList.stream().filter(node -> node.getUUID().equals(sourceUUID)).findFirst();
+        Optional<Node> sourceNodeOptional = nodeList.stream().filter(node -> node.getId().equals(sourceUUID)).findFirst();
         if (sourceNodeOptional.isPresent()) {
             Optional<Node> targetNodeOptional =
-                nodeList.stream().filter(node -> node.getUUID().equals(targetUUID)).findFirst();
+                nodeList.stream().filter(node -> node.getId().equals(targetUUID)).findFirst();
             if (targetNodeOptional.isPresent()) {
                 Node sourceNode = sourceNodeOptional.get();
                 Node targetNode = targetNodeOptional.get();
@@ -122,5 +130,9 @@ public class Session {
 
     public Router getRouter() {
         return router;
+    }
+
+    public SessionContext getContext() {
+        return context;
     }
 }

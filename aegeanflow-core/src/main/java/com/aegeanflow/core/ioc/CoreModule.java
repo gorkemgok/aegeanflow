@@ -1,10 +1,8 @@
 package com.aegeanflow.core.ioc;
 
 import com.aegeanflow.core.plugin.CorePlugin;
-import com.aegeanflow.core.session.SessionFactory;
 import com.aegeanflow.core.spi.Plugin;
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
 import com.google.inject.multibindings.Multibinder;
 import com.gorkemgok.annoconf.guice.InitSyncUtilModule;
 import org.slf4j.Logger;
@@ -21,12 +19,12 @@ public class CoreModule extends AbstractModule {
         Multibinder<Plugin> pluginMultibinder = Multibinder.newSetBinder(binder(), Plugin.class);
         pluginMultibinder.addBinding().to(CorePlugin.class);
 
-        bind(SessionFactory.class).in(Scopes.SINGLETON);
         install(new InitSyncUtilModule());
         install(new RuntimeModule());
         install(new CodecModule());
         install(new RouterModule());
         install(new TunnelModule());
+        install(new LogManagerModule());
         install(new DatasourceModule());
 //        //ANNOCONF
 //        ConfigOptions configOptions = ConfigOptions.withSystemPropertySource();

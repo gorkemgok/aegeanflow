@@ -15,13 +15,13 @@ public interface Node extends InputAcceptor {
         WAITING, RUNNING, CANCELED, FAILED, DONE
     }
 
-    UUID getUUID();
+    UUID getId();
 
     String getName();
 
     void initialize(UUID uuid, Router router);
 
-    void execute();
+    void execute() throws Exception;
 
     State getState();
 
@@ -52,7 +52,7 @@ public interface Node extends InputAcceptor {
     }
 
     default boolean is(UUID uuid) {
-        return getUUID().equals(uuid);
+        return getId().equals(uuid);
     }
 
     default Collection<String> getInputNames() {

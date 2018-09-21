@@ -94,7 +94,7 @@ public class RestService implements AegeanFlowService {
             post("/session",  (req, res) -> {
                 SessionModel sessionModel = new ObjectMapper().readValue(req.body(), SessionModel.class);
                 Session session = sessionBuilder.buildFrom(sessionModel);
-                return new UUIDProxy(session.getUuid());
+                return new UUIDProxy(session.getId());
             });
 
             get("/model/list",  (req, res) -> {

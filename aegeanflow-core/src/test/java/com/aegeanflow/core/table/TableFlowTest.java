@@ -5,10 +5,10 @@ import com.aegeanflow.core.resource.*;
 import com.aegeanflow.core.route.RouteOptions;
 import com.aegeanflow.core.route.Router;
 import com.aegeanflow.core.session.Session;
-import com.aegeanflow.core.session.SessionFactory;
 import com.aegeanflow.core.spi.node.Node;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 import org.testng.Assert;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
@@ -19,16 +19,16 @@ import java.util.UUID;
 public class TableFlowTest {
 
     @Inject
-    SessionFactory sessionFactory;
+    Provider<Session> sessionFactory;
 
     @Inject
     Injector injector;
 
     @Test
     public void test() {
-        Session session1 = sessionFactory.create();
-        Session session2 = sessionFactory.create();
-        Assert.assertNotEquals(session1.getUuid(), session2.getUuid());
+        Session session1 = sessionFactory.get();
+        Session session2 = sessionFactory.get();
+        Assert.assertNotEquals(session1.getId(), session2.getId());
 
         Node randomTableNode = session1.newNode(UUID.randomUUID(), RandomTableGeneratorNode.class);
         Node tableStdOutNode = session1.newNode(UUID.randomUUID(), TableStdOutNode.class);
@@ -48,11 +48,11 @@ public class TableFlowTest {
         router.connect(reader, TableReaderNode.TABLE, filter, TableFilterNode.INPUT_TABLE, new RouteOptions());
         router.connect(filter, TableFilterNode.OUTPUT_TABLE, groupBy, TableGroupByNode.INPUT_TABLE, new RouteOptions());
         router.connect(groupBy, TableGroupByNode.OUTPUT_TABLE, printer, TableStdOutNode.TABLE_INPUT, new RouteOptions());
-        session2.setInput(connection.getUUID(), DatabaseConnectionNode.DRIVER_CLASS, "com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        session2.setInput(connection.getUUID(), DatabaseConnectionNode.JDBC_URL, "jdbc:sqlserver://195.214.147.187:2533;loginTimeout=30;");
-        session2.setInput(connection.getUUID(), DatabaseConnectionNode.USERNAME, "13TE3YEx");
-        session2.setInput(connection.getUUID(), DatabaseConnectionNode.PASSWORD, "5d14Bh06xff0%Pw");
-        session2.setInput(reader.getUUID(), TableReaderNode.QUERY, "exec INTEGRATION.dbo.COREBI_CEGID_COGS_NEW 2017, 2020");
+        session2.setInput(connection.getId(), DatabaseConnectionNode.DRIVER_CLASS, "com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        session2.setInput(connection.getId(), DatabaseConnectionNode.JDBC_URL, "jdbc:sqlserver://195.214.147.187:2533;loginTimeout=30;");
+        session2.setInput(connection.getId(), DatabaseConnectionNode.USERNAME, "13TE3YEx");
+        session2.setInput(connection.getId(), DatabaseConnectionNode.PASSWORD, "5d14Bh06xff0%Pw");
+        session2.setInput(reader.getId(), TableReaderNode.QUERY, "exec INTEGRATION.dbo.COREBI_CEGID_COGS_NEW 2017, 2020");
 
         session2.run();
         session2.awaitCompletion();

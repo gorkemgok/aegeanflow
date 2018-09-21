@@ -25,7 +25,7 @@ public abstract class AbstractNode implements Node {
         state = State.WAITING;
     }
 
-    protected abstract void run();
+    protected abstract void run() throws Exception;
 
     protected abstract <T> void setInput(Input<T> input, T value);
 
@@ -39,7 +39,7 @@ public abstract class AbstractNode implements Node {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws Exception{
         try {
             run();
         } catch (Exception e) {
@@ -77,7 +77,7 @@ public abstract class AbstractNode implements Node {
     }
 
     @Override
-    public UUID getUUID() {
+    public UUID getId() {
         return uuid;
     }
 

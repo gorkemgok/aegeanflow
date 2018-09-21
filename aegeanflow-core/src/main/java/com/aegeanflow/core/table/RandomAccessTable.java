@@ -49,5 +49,6 @@ public class RandomAccessTable extends AbstractTable{
     @Override
     public void close() {
         isFinished = true;
+        iterator.finish();
     }
 }

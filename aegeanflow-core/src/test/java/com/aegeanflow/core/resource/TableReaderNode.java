@@ -26,20 +26,19 @@ public class TableReaderNode extends AbstractSynchronizedNode {
     private String query;
 
     @Override
-    protected void run() {
-        try {
-            ResultSet resultSet = connection.createStatement().executeQuery(query);
-            Table table = new RandomAccessTable(null);
-            StreamTunnel<Row> stream = router.next(TABLE, table);
-            while (resultSet.next()) {
+    protected void run() throws Exception{
+        ResultSet resultSet = connection.createStatement().executeQuery(query);
+        Table table = new RandomAccessTable(null);
+        try(StreamTunnel<Row> stream = router.next(TABLE, table)) {
+            int k = 0;
+            while (resultSet.next() && k < 1000) {
+                k++;
                 Object[] values = new Object[resultSet.getMetaData().getColumnCount()];
                 for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
-                    values[i] = resultSet.getObject(i+1);
+                    values[i] = resultSet.getObject(i + 1);
                     stream.send(new Row(values));
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 

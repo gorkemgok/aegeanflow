@@ -1,19 +1,23 @@
 package com.aegeanflow.core.session;
 
-import com.google.inject.Inject;
-
-import java.util.UUID;
+import com.aegeanflow.core.logger.SessionLogManager;
 
 public class SessionContext {
 
-    private final UUID sessionId;
+    private final Session session;
 
-    @Inject
-    public SessionContext(UUID sessionId) {
-        this.sessionId = sessionId;
+    private final SessionLogManager logManager;
+
+    public SessionContext(Session session, SessionLogManager logManager) {
+        this.session = session;
+        this.logManager = logManager;
     }
 
-    public UUID getSessionId() {
-        return sessionId;
+    public Session getSession() {
+        return session;
+    }
+
+    public SessionLogManager getLogManager() {
+        return logManager;
     }
 }

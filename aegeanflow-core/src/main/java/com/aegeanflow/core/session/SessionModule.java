@@ -1,22 +1,24 @@
 package com.aegeanflow.core.session;
 
-import com.aegeanflow.core.ioc.TunnelModule;
+import com.aegeanflow.core.logger.SessionLogManager;
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Scopes;
-
-import java.util.UUID;
 
 
 public class SessionModule extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        bind(SessionContext.class).in(Scopes.SINGLETON);
+    private final Session session;
+
+    private final SessionLogManager logManager;
+
+    public SessionModule(Session session, SessionLogManager logManager) {
+        this.session = session;
+        this.logManager = logManager;
     }
 
-    @Provides
-    UUID provideRandomUUID() {
-        return UUID.randomUUID();
+    @Override
+    protected void configure() {
+        bind(SessionContext.class)
+                .toInstance(new SessionContext(session, logManager));
     }
+
 }

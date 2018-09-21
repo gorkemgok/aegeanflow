@@ -8,15 +8,15 @@ import com.google.inject.Provider;
 
 public class SessionBuilder {
 
-    private final SessionFactory sessionFactory;
+    private final Provider<Session> sessionFactory;
 
     @Inject
-    public SessionBuilder(SessionFactory sessionFactory) {
+    public SessionBuilder(Provider<Session> sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     public Session buildFrom(SessionModel proxy) {
-        Session session = sessionFactory.create();
+        Session session = sessionFactory.get();
         proxy.getNodes().forEach(nodeProxy -> {
             if (nodeProxy.getBoxType() != null) {
                 try {
