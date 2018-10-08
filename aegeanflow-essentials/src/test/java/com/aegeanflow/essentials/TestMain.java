@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public class TestMain {
 
-    public static void main(String[] args) throws IllegalNodeConfigurationException, ClassNotFoundException {
+    public static void main(String[] args) throws Exception {
         Injector injector = Guice.createInjector(new CoreModule(), new EssentialsModule());
 
         Session session = injector.getInstance(Session.class);

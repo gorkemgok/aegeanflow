@@ -1,4 +1,4 @@
-package com.aegeanflow.core.table;
+package com.aegeanflow.essentials.table;
 
 import java.util.Arrays;
 
@@ -12,6 +12,10 @@ public class Row {
 
     public Object get(int i) {
         return values[i];
+    }
+
+    public int size() {
+        return  values.length;
     }
 
     @Override

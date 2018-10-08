@@ -17,7 +17,8 @@ public class SessionLogManager {
     }
 
     public void log(Throwable ex) {
-        System.out.println(ex.getMessage());
+        ex.printStackTrace();
+        //System.out.println(ex.getMessage());
     }
 
     public void log(Node node) {

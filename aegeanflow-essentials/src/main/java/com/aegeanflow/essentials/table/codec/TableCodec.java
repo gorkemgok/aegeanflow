@@ -1,9 +1,9 @@
-package com.aegeanflow.core.table.codec;
+package com.aegeanflow.essentials.table.codec;
 
 import com.aegeanflow.core.spi.codec.Codec;
 import com.aegeanflow.core.spi.codec.Decoder;
 import com.aegeanflow.core.spi.codec.Encoder;
-import com.aegeanflow.core.table.Table;
+import com.aegeanflow.essentials.table.Table;
 import com.google.inject.Inject;
 
 public class TableCodec implements Codec<Table> {

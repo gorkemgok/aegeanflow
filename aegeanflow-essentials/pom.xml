@@ -11,12 +11,45 @@
 
     <artifactId>aegeanflow-essentials</artifactId>
 
+    <properties>
+        <slf4j.version>1.7.25</slf4j.version>
+        <testng.version>6.11</testng.version>
+        <presto-jdbc.version>0.193</presto-jdbc.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>com.aegeanflow</groupId>
             <artifactId>aegeanflow-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.facebook.presto</groupId>
+            <artifactId>presto-jdbc</artifactId>
+            <version>${presto-jdbc.version}</version>
+        </dependency>
+        <!--SLF4J-->
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <!-- TESTNG -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 

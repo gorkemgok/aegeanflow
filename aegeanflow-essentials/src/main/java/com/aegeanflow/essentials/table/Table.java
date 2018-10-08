@@ -1,4 +1,4 @@
-package com.aegeanflow.core.table;
+package com.aegeanflow.essentials.table;
 
 import com.aegeanflow.core.spi.Streamable;
 import com.aegeanflow.core.exchange.Exchange;

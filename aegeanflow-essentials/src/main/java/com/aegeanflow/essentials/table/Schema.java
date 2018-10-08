@@ -1,4 +1,4 @@
-package com.aegeanflow.core.table;
+package com.aegeanflow.essentials.table;
 
 import java.util.Collections;
 import java.util.List;

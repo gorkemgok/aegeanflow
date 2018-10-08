@@ -13,10 +13,10 @@
 
     <build>
         <resources>
-            <resource>
+            <com.aegeanflow.essentials.resource>
                 <directory>../aegeanflow-ui/dist</directory>
                 <targetPath>ui</targetPath>
-            </resource>
+            </com.aegeanflow.essentials.resource>
         </resources>
     </build>
 

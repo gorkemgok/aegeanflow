@@ -1,12 +1,11 @@
-package com.aegeanflow.core.resource;
+package com.aegeanflow.essentials.resource;
 
-import com.aegeanflow.core.spi.node.AbstractNode;
 import com.aegeanflow.core.spi.node.AbstractSynchronizedNode;
 import com.aegeanflow.core.spi.parameter.Input;
 import com.aegeanflow.core.spi.parameter.Output;
 import com.aegeanflow.core.spi.parameter.Parameter;
-import com.aegeanflow.core.table.Row;
-import com.aegeanflow.core.table.Table;
+import com.aegeanflow.essentials.table.Row;
+import com.aegeanflow.essentials.table.Table;
 
 import java.util.Arrays;
 import java.util.Collection;

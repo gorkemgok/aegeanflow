@@ -1,4 +1,4 @@
-package com.aegeanflow.core.resource;
+package com.aegeanflow.essentials.resource;
 
 import com.aegeanflow.core.plugin.datasource.DatasourceFactory;
 import com.aegeanflow.core.spi.node.AbstractSynchronizedNode;
@@ -9,7 +9,6 @@ import com.google.inject.Inject;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 

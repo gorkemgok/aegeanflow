@@ -5,7 +5,6 @@ import com.aegeanflow.core.ioc.CoreModule;
 import com.aegeanflow.core.session.Session;
 import com.aegeanflow.core.session.SessionBuilder;
 import com.aegeanflow.core.box.MathAddBox;
-import com.aegeanflow.core.resource.MathAddNode;
 import com.aegeanflow.core.box.StdOutBox;
 import com.aegeanflow.core.model.builder.*;
 import com.fasterxml.jackson.databind.ObjectMapper;

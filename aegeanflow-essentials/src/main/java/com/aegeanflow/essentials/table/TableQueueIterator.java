@@ -1,10 +1,10 @@
-package com.aegeanflow.core.table;
+package com.aegeanflow.essentials.table;
 
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class TableListIterator implements Iterator<Row> {
+public class TableQueueIterator implements Iterator<Row> {
 
     private final BlockingQueue<Row> queue;
 
@@ -12,7 +12,7 @@ public class TableListIterator implements Iterator<Row> {
 
     private boolean isFinished = false;
 
-    protected TableListIterator(BlockingQueue<Row> queue) {
+    protected TableQueueIterator(BlockingQueue<Row> queue) {
         this.queue = queue;
     }
 

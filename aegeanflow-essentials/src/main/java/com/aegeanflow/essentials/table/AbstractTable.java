@@ -1,4 +1,4 @@
-package com.aegeanflow.core.table;
+package com.aegeanflow.essentials.table;
 
 public abstract class AbstractTable implements Table {
 
