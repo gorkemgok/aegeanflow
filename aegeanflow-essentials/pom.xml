@@ -15,12 +15,19 @@
         <slf4j.version>1.7.25</slf4j.version>
         <testng.version>6.11</testng.version>
         <presto-jdbc.version>0.193</presto-jdbc.version>
+        <mustache.version>0.9.5</mustache.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>com.aegeanflow</groupId>
             <artifactId>aegeanflow-core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.spullara.mustache.java</groupId>
+            <artifactId>compiler</artifactId>
+            <version>${mustache.version}</version>
         </dependency>
 
         <dependency>

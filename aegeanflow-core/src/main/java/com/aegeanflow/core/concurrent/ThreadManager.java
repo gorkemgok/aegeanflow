@@ -26,6 +26,7 @@ public class ThreadManager {
         CompletableFuture future = CompletableFuture.runAsync(() -> {
             try {
                 node.execute();
+                session.getRouter().done(node);
             } catch (Exception e) {
                 throw new NodeRuntimeException(e, node.getId());
             }

@@ -1,6 +1,7 @@
 package com.aegeanflow.essentials.table;
 
-import com.aegeanflow.core.ioc.CoreModule;
+import com.aegeanflow.core.ioc.AegeanFlowCoreModule;
+import com.aegeanflow.essentials.database.DatabaseConnectionNode;
 import com.aegeanflow.essentials.database.DatabaseReaderNode;
 import com.aegeanflow.essentials.resource.*;
 import com.aegeanflow.core.route.RouteOptions;
@@ -16,7 +17,7 @@ import org.testng.annotations.Test;
 
 import java.util.UUID;
 
-@Guice(modules = CoreModule.class)
+@Guice(modules = AegeanFlowCoreModule.class)
 public class TableFlowTest1 {
 
     @Inject

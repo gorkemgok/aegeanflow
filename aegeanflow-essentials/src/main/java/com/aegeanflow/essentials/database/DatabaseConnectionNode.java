@@ -1,4 +1,4 @@
-package com.aegeanflow.essentials.resource;
+package com.aegeanflow.essentials.database;
 
 import com.aegeanflow.core.plugin.datasource.DatasourceFactory;
 import com.aegeanflow.core.spi.node.AbstractSynchronizedNode;

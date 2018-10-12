@@ -1,7 +1,6 @@
 package com.aegeanflow.essentials;
 
-import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
-import com.aegeanflow.core.ioc.CoreModule;
+import com.aegeanflow.core.ioc.AegeanFlowCoreModule;
 import com.aegeanflow.core.node.AnnotatedNode;
 import com.aegeanflow.core.route.RouteOptions;
 import com.aegeanflow.core.session.Session;
@@ -19,7 +18,7 @@ import java.util.UUID;
 public class TestMain {
 
     public static void main(String[] args) throws Exception {
-        Injector injector = Guice.createInjector(new CoreModule(), new EssentialsModule());
+        Injector injector = Guice.createInjector(new AegeanFlowCoreModule(), new EssentialsModule());
 
         Session session = injector.getInstance(Session.class);
 

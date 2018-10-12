@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by gorkem on 12.01.2018.
  */
-public class CoreModule extends AbstractModule {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CoreModule.class);
+public class AegeanFlowCoreModule extends AbstractModule {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AegeanFlowCoreModule.class);
 
     @Override
     protected void configure() {

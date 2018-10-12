@@ -12,15 +12,49 @@ import com.aegeanflow.core.exchange.Exchange;
 import com.aegeanflow.core.spi.node.Node;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import org.omg.PortableInterceptor.SUCCESSFUL;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class Router {
 
+    private class PrecedenceTuple{
+        private final Node precedenceNode;
+        private final Node node;
+
+        private PrecedenceTuple(Node precedenceNode, Node node) {
+            this.precedenceNode = precedenceNode;
+            this.node = node;
+        }
+
+        public Node getPrecedenceNode() {
+            return precedenceNode;
+        }
+
+        public Node getNode() {
+            return node;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PrecedenceTuple that = (PrecedenceTuple) o;
+            return Objects.equals(precedenceNode, that.precedenceNode) &&
+                    Objects.equals(node, that.node);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(precedenceNode, node);
+        }
+    }
+
     private final List<Route<?, ?>> routeList;
+
+    private final Set<PrecedenceTuple> precedences;
 
     private final FlowTunnelProvider flowTunnelProvider;
 
@@ -39,6 +73,30 @@ public class Router {
         this.flowTunnelListener = flowTunnelListener;
         this.threadManager = threadManager;
         this.routeList = new ArrayList<>();
+        this.precedences = new HashSet<>();
+    }
+
+    public void precedence(Node precedenceNode, Node node) {
+        precedences.add(new PrecedenceTuple(precedenceNode, node));
+    }
+
+    public boolean isPrecedencesDone(Node node) {
+        return precedences.stream()
+                .filter(tuple -> tuple.getNode().equals(node))
+                .map(PrecedenceTuple::getPrecedenceNode)
+                .map(Node::getState)
+                .allMatch(Node.State.DONE::equals);
+    }
+
+    public void done(Node node) {
+        precedences.stream()
+                .filter(tuple -> tuple.getPrecedenceNode().equals(node))
+                .map(PrecedenceTuple::getNode)
+                .forEach(targetNode -> {
+                    if (isPrecedencesDone(targetNode) && targetNode.isReady() && targetNode.getState() == Node.State.WAITING) {
+                        threadManager.run(session, targetNode);
+                    }
+                });
     }
 
     public <T> void next(Node node, Output<T> output, T value) {
@@ -46,7 +104,7 @@ public class Router {
             Node targetNode = route.getTarget().getNode();
             if (route.getTarget().getDeployment().equals(Deployment.LOCAL)) {
                 targetNode.accept(route.getTarget().getInput(), value);
-                if (targetNode.isReady() && targetNode.getState() == Node.State.WAITING) {
+                if (isPrecedencesDone(targetNode) && targetNode.isReady() && targetNode.getState() == Node.State.WAITING) {
                     threadManager.run(session, targetNode);
                 }
             } else {

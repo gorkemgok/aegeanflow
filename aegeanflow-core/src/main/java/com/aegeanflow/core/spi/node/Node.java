@@ -1,5 +1,6 @@
 package com.aegeanflow.core.spi.node;
 
+import com.aegeanflow.core.exception.IllegalNodeConfigurationException;
 import com.aegeanflow.core.spi.parameter.Input;
 import com.aegeanflow.core.spi.parameter.Output;
 import com.aegeanflow.core.route.Router;

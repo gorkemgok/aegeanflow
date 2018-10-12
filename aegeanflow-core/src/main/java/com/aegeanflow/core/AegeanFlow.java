@@ -1,7 +1,7 @@
 package com.aegeanflow.core;
 
 import com.aegeanflow.core.box.BoxRepository;
-import com.aegeanflow.core.ioc.CoreModule;
+import com.aegeanflow.core.ioc.AegeanFlowCoreModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -39,7 +39,7 @@ public class AegeanFlow {
         if (aegeanFlow == null){
             synchronized (LOCK){
                 if (aegeanFlow == null){
-                    Injector injector = Guice.createInjector(new CoreModule());
+                    Injector injector = Guice.createInjector(new AegeanFlowCoreModule());
                     aegeanFlow = new AegeanFlow(injector);
                 }
             }
