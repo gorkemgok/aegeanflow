@@ -27,6 +27,7 @@ public final class RowUtil {
             if (v1 instanceof Number && v2 instanceof Number) {
                 return ((Number)v1).doubleValue() - ((Number)v2).doubleValue() < delta;
             }
+            return false;
         }
         return true;
     }

@@ -1,5 +1,7 @@
 package com.aegeanflow.core.spi.parameter;
 
+import com.google.inject.TypeLiteral;
+
 import java.util.Objects;
 
 public class ParameterImpl<T> implements Parameter<T> {
@@ -8,9 +10,18 @@ public class ParameterImpl<T> implements Parameter<T> {
 
     private final Class<T> type;
 
+    private final TypeLiteral<T> typeLiteral;
+
     protected ParameterImpl(String name, Class<T> type) {
         this.name = name;
         this.type = type;
+        this.typeLiteral = null;
+    }
+
+    protected ParameterImpl(String name, TypeLiteral<T> typeLiteral) {
+        this.name = name;
+        this.type = null;
+        this.typeLiteral = typeLiteral;
     }
 
     public String name() {
@@ -21,11 +32,17 @@ public class ParameterImpl<T> implements Parameter<T> {
         return type;
     }
 
+    @Override
+    public TypeLiteral<T> typeLiteral() {
+        return typeLiteral;
+    }
+
     public boolean isAssignable(Parameter parameter) {
         if (this == parameter) return true;
         if (parameter == null || getClass() != parameter.getClass()) return false;
         return Objects.equals(name, parameter.name()) &&
-                type.isAssignableFrom(parameter.type());
+                ((type != null && type.isAssignableFrom(parameter.type())) ||
+                        (typeLiteral != null && typeLiteral.equals(parameter.typeLiteral())));
     }
 
     @Override

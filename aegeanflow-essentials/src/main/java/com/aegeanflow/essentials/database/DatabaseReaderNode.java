@@ -34,8 +34,8 @@ public class DatabaseReaderNode extends AbstractSynchronizedNode {
                 Object[] values = new Object[resultSet.getMetaData().getColumnCount()];
                 for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
                     values[i] = resultSet.getObject(i + 1);
-                    stream.send(new Row(values));
                 }
+                stream.send(new Row(values));
             }
         }
     }

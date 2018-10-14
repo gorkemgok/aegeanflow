@@ -4,7 +4,6 @@ import com.aegeanflow.core.spi.node.AbstractSynchronizedNode;
 import com.aegeanflow.core.spi.parameter.Input;
 import com.aegeanflow.core.spi.parameter.Output;
 import com.aegeanflow.core.spi.parameter.Parameter;
-import com.facebook.presto.jdbc.internal.guava.collect.Streams;
 import com.github.mustachejava.Code;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
