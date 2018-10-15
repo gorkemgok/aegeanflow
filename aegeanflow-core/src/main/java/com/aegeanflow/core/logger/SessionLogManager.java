@@ -4,10 +4,14 @@ import com.aegeanflow.core.session.Session;
 import com.aegeanflow.core.spi.node.Node;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
 
 public class SessionLogManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SessionLogManager.class);
 
     private final Session session;
 
@@ -17,11 +21,10 @@ public class SessionLogManager {
     }
 
     public void log(Throwable ex) {
-        ex.printStackTrace();
-        //System.out.println(ex.getMessage());
+        LOGGER.error(ex.getMessage());
     }
 
     public void log(Node node) {
-        System.out.println(format("%s:%s - %s", node.getName(), node.getState(), node.getId()));
+        LOGGER.info(format("%s:%s - %s", node.getName(), node.getState(), node.getId()));
     }
 }
